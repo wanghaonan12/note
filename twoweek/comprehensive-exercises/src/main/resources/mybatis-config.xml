@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-        <!DOCTYPE configurationPUBLIC "-//mybatis.org//DTD Config 3.0//EN""http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <!--起别名-->
     <typeAliases>
-        <package name="com.mqxu.web.exercise.entity"/>
+        <package name="com.example.comprehensiveexercises.entity"/>
     </typeAliases>
 
     <environments default="development">
@@ -11,9 +13,9 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:///javaweb?useSSL=false&amp;useServerPrepStmts=true"/>
+                <property name="url" value="jdbc:mysql:///rj2116?useSSL=false&amp;useServerPrepStmts=true"/>
                 <property name="username" value="root"/>
-                <property name="password" value="123456"/>
+                <property name="password" value="134679"/>
             </dataSource>
         </environment>
     </environments>

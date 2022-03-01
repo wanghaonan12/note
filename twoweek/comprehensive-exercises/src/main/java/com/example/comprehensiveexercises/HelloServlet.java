@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "helloServlet", value = "/hello-servlet")
+@WebServlet("/hello-servlet")
 public class HelloServlet extends HttpServlet {
     private String message;
 

@@ -18,9 +18,8 @@ this.doPost(request, response);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/plain;charset=UTF-8");
-//获取用户名和你妈
+
+//获取用户名和密码
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 //        是否勾选"记住我"

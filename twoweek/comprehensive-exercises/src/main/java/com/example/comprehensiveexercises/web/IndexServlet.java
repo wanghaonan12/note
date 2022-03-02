@@ -20,6 +20,8 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        request.setCharacterEncoding("UTF-8");
+//        response.setContentType("text/plain;charset=UTF-8");
         //调用BrandService完成查询
         List<Brand> brands=brandService.selectAll();
 //        存入request域中

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>注册页面</title>
     <link href="css/register.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <div class="form-div">
@@ -45,6 +46,41 @@
         document.getElementById("verifyCodeImg").src = "/verifyCode?" + new Date().getMilliseconds();
         return false;
     }
+
+    var id = document.getElementById("username");
+    var elementById = document.getElementById("username_err");
+    id.onblur = function () {
+        var value = this.value;
+        var xHttp;
+        if (XMLHttpRequest) {
+            xHttp = new XMLHttpRequest();
+        } else {
+            xHttp=new ActiveXObject();
+        }
+        xHttp.open("get","http://localhost:80/check?username="+value);
+        xHttp.send();
+        xHttp.onreadystatechange = function () {
+            if (this.responseText === "true") {
+                elementById.style.display = "none";
+                alert(value)
+            } else {
+                elementById.style.display = "block";
+            }
+        };
+    };
+    // id.onblur = function () {
+    //     let value = this.value;
+    //     axios.get("http://localhost:80/check?username="+value).then((resp)=>{
+    //         console.log(resp.data)
+    //         if (resp.data) {
+    //             elementById.style.display="none";
+    //         } else {
+    //             elementById.style.display="block";
+    //         }
+    //     })
+    // };
+
+
 </script>
 </body>
 </html>

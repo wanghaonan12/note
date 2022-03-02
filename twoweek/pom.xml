@@ -8,7 +8,7 @@
     <artifactId>twoweek</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>twoweek</name>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,12 +17,23 @@
         <junit.version>5.8.2</junit.version>
     </properties>
 
+
     <dependencies>
+        <!-- mybatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.9</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>5.0.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId></groupId>
+            <artifactId>fastjson</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -17,6 +17,9 @@ this.doPost(request, response);
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //创建cookie对象
         Cookie cookie = new Cookie("username", "wanghaonan");
+//        设置cookie的存活时间
+        cookie.setMaxAge(3000);
 //        通过response发送cookie
-        response.addCookie(cookie);    }
+        response.addCookie(cookie);
+    }
 }

@@ -22,6 +22,7 @@ this.doPost(request, response);
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
+
         Object name = session.getAttribute("name");
         log.info((String) name);
 //        销毁session

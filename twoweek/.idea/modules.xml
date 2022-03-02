@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Cookie/Cookie.iml" filepath="$PROJECT_DIR$/Cookie/Cookie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ajax/ajax.iml" filepath="$PROJECT_DIR$/ajax/ajax.iml" />
       <module fileurl="file://$PROJECT_DIR$/comprehensive-exercises/comprehensive-exercises.iml" filepath="$PROJECT_DIR$/comprehensive-exercises/comprehensive-exercises.iml" />
       <module fileurl="file://$PROJECT_DIR$/quickstart/quickstart.iml" filepath="$PROJECT_DIR$/quickstart/quickstart.iml" />
       <module fileurl="file://$PROJECT_DIR$/twoweek.iml" filepath="$PROJECT_DIR$/twoweek.iml" />

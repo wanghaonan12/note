@@ -31,19 +31,19 @@ this.doPost(request, response);
 //        程序生成的验证码
         HttpSession session = request.getSession();
         String verifyCode =(String) session.getAttribute("verifyCode");
-        response.setContentType("text/html:charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         String contextPath = request.getContextPath();
 //        忽略大小写
         if (!verifyCode.equalsIgnoreCase(inputCode)){
-            response.getWriter().write("<script>alert('验证码错误');location='/register';)</script>");
+            response.getWriter().write("<script>alert('验证码错误');location='/register.html';</script>");
         }
 //        调用service注册
         boolean flag=userService.register(user);
 //        判断注册是否成功
         if(flag){
-            response.getWriter().write("<script>alert('注册成功';location='/login.html';)</script>");
+            response.getWriter().write("<script>alert('注册成功');location='/login.html';</script>");
         }else {
-            response.getWriter().write("<script>alert('用户已存在');location='/register';)</script>");
+            response.getWriter().write("<script>alert('用户已存在');location='/register.html';</script>");
         }
 
     }

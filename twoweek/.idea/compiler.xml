@@ -10,12 +10,13 @@
         <module name="Cookie" />
         <module name="quickstart" />
         <module name="comprehensive-exercises" />
-        <module name="twoweek" />
+        <module name="ajax" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="ajax" target="1.8" />
       <module name="comprehensive-exercises" target="1.8" />
-      <module name="Cookie" target="1.8" />
+      <module name="Cookie" target="10" />
       <module name="quickstart" target="1.8" />
       <module name="twoweek" target="1.8" />
     </bytecodeTargetLevel>

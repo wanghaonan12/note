@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/ServletB")
 @Slf4j
@@ -30,7 +33,17 @@ this.doPost(request, response);
                 log.info("name="+value);
                 break;
             }
-
         }
+        String value="你好";
+//        编码设置
+        value= URLEncoder.encode(value, StandardCharsets.UTF_8);
+//        输出到屏幕
+        response.getWriter().write(value);
+//        设置服务器编码格式
+        response.setContentType("text/plain;charset=UTF-8");
+//        解码
+        value= URLDecoder.decode(value,StandardCharsets.UTF_8);
+        response.getWriter().write(value);
+
     }
 }

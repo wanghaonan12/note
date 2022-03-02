@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="war" name="comprehensive-exercises:war">
+  <artifact type="war" build-on-make="true" name="comprehensive-exercises:war">
     <output-path>$PROJECT_DIR$/comprehensive-exercises/target</output-path>
     <properties id="maven-jee-properties">
       <options>

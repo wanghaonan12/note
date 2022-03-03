@@ -1,0 +1,73 @@
+body {
+    background-image: url("/images/1.jpg");
+    background-size: cover;
+    color: white;
+}
+form {
+    box-sizing: border-box;
+    width: 450px;
+    height: 320px;
+    background-color: rgba(255,255,255,0.5);
+    padding: 30px 50px;
+    border-radius: 8px; }
+label {
+    display: block;
+    margin-bottom: 10px;
+    padding: 20px; }
+input {
+    border: none;
+    outline: none;
+    border-radius: 5px; }
+input[type="text"], input[type="password"] {
+    background-color: #fff;
+    color: #333;
+    padding: 8px 80px 8px 5px;
+    letter-spacing: 1px; }
+input[type="submit"], input[type="button"], input[type="file"] {
+    background-color: rgba(85, 91, 77, 0.62);
+    color: #fff;
+    padding: 10px 90px;
+    letter-spacing: 5px;
+    font-size: 15px; }
+.parent {
+    background-color: rgba(255,255,255,.5);
+    position: relative;
+}
+.child {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 450px;
+    height: 320px;
+    margin: 160px 0 0 -225px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 30px 50px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 10px 20px 30px 40px rgba(0,0,0,.5);
+}
+.file {
+    position: relative;
+    display: inline-block;
+    background: #5b6870;
+    border: 1px solid #3c4244;
+    border-radius: 5px;
+    padding: 8px 20px;
+    margin-left: 20px;
+    overflow: hidden;
+    color: #fcfcfc;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px; }
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer; }
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none; }

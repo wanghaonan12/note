@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+    <title>前后端分离POST请求——⽂件上传并回显</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h2>前后端分离POST请求——⽂件上传</h2>
+<div class="parent">
+    <div class="child">
+        <label for="account">
+            账号：
+            <input type="text" name="account" placeholder="请输⼊账号" id="account"/>
+        </label>
+    <!--选择上传的⽂件-->
+        <input type="file" name="file" id="file" style="padding-left:20px; width: 100px">
+        <label for="btn">
+            <input type="button" value="注册" id="btn">
+        </label>
+    </div>
+</div>
+<img src="" alt="上传图⽚显示" style="display: none;" id="preview" width="150">
+
+<script>
+    const btn = document.getElementById("btn");
+    const file = document.getElementById('file')
+    btn.onclick = function () {
+//      alert(file.files[0].name)
+        const account = document.getElementById("account").value;
+        let formData = new FormData();
+//      账号
+        formData.append("account", account)
+//      选中的图⽚
+        formData.append("file", file.files[0])
+        axios({
+            url: '/upload1',
+            method: 'post',
+            headers: {'Content-Type': 'multipart/form-data'},
+            data: formData
+        }).then((res) => {
+            alert(res.data)
+            let previewImg = document.getElementById("preview");
+// 注意js设置属性的值，要⽤引号包裹，这⾥⽤反引号（模版字符串）包裹返回的路
+            径变量
+            previewImg.src = `${res.data}`;
+// 预览图⽚设为可⻅
+            previewImg.style.display = 'block'
+        })
+    }
+    //获取⽂件路径
+    function getObjectURL(file) {
+        let url = null;
+// basic
+        if (window.createObjectURL !== undefined) {
+            url = window.createObjectURL(file)
+// mozilla(firefox)
+        } else if (window.URL !== undefined) {
+            url = window.URL.createObjectURL(file)
+// webkit or chrome
+        } else if (window.webkitURL !== undefined) {
+            url = window.webkitURL.createObjectURL(file)
+        }
+        return url;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax请求实例起步--原生的异步请求</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<button id="btn">请求</button>
+<h2 id="info">data</h2>
+<script>
+    document.getElementById("btn").onclick = function () {
+    //     axios({
+    //         method: "get",
+    //         url: "/ajaxServlet1?username=zhangsan1"
+    //     }).then(function (resp) {
+    //         document.getElementById("info").innerHTML=resp.toString();
+    //     });
+    // };
+    axios({
+            method: "get",
+            url: "/ajaxServlet1",
+        data:"username=zhangsan1"
+        }).then(function (resp) {
+            document.getElementById("info").innerHTML=JSON.stringify(resp);
+        });
+    };
+</script>
+</body>
+</html>

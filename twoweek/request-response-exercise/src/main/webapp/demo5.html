@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>前后端分离POST请求——传递键值对参数</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+
+    .parent {
+        position: relative;
+    }
+    .child {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 450px;
+        height: 320px;
+        margin: 160px 0 0 -225px;
+        background-color: #b0cbdc;
+        padding: 30px 50px;
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+    label {
+        display: block;
+        margin-bottom: 10px;
+        padding: 20px;
+    }
+    label:last-child {
+        padding-left: 50px;
+    }
+    input {
+        border: none;
+        outline: none;
+        border-radius: 5px;
+    }
+    input[type="text"], input[type="password"] {
+        background-color: #fff;
+        color: #333;
+        padding: 8px 80px 8px 5px;
+        letter-spacing: 1px;
+    }
+    input[type="button"] {
+        background-color: #3c6e8d;
+        color: #fff;
+        padding: 10px 90px;
+        letter-spacing: 10px;
+        font-size: 15px;
+    }
+</style>
+</head>
+<body>
+<div class="parent">
+    <div class="child">
+        <label for="account">
+            账号：
+            <input type="text" name="account" placeholder="请输⼊账号"
+           id="account"/>
+        </label>
+        <label for="password">
+            密码：
+            <input type="password" name="password" placeholder="请输⼊密码"
+           id="password"/>
+        </label>
+        <label for="btn">
+            <input type="button" value="登录" id="btn"/>
+        </label>
+    </div>
+</div>
+<script>
+    const btn = document.getElementById("btn");
+
+    btn.onclick = function () {
+        const account = document.getElementById("account");
+        const password = document.getElementById("password");
+        //创建url属性
+        let params = new URLSearchParams();
+        //插入键值对
+        params.append('account', account.value);
+        params.append('password', password.value);
+
+
+        // var xmlHttpRequest = new XMLHttpRequest();
+        // xmlHttpRequest.open("post","/login?"+params)
+        // xmlHttpRequest.send();
+        // xmlHttpRequest.onreadystatechange = function () {
+        //     // btn.onclick = function (){
+        //         alert(this.responseText)
+        //     // }
+        // };
+
+//URL 的查询字符串
+        axios.post('/login', params).then(function (response) {
+                //
+                alert(JSON.stringify(response.data))
+            }).catch(function (error) {
+            alert(JSON.stringify(error));
+        });
+    }
+</script>
+</body>
+</html>

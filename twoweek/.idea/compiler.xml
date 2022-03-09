@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Cookie" />
+        <module name="filter" />
+        <module name="quickstart" />
+        <module name="comprehensive-exercises" />
+        <module name="request-response-exercise" />
+        <module name="exercises" />
+        <module name="homework" />
+        <module name="ajax" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ajax" target="11" />
+      <module name="comprehensive-exercises" target="11" />
+      <module name="Cookie" target="10" />
+      <module name="exercises" target="11" />
+      <module name="filter" target="11" />
+      <module name="homework" target="11" />
+      <module name="quickstart" target="11" />
+      <module name="request-response-exercise" target="10" />
+      <module name="twoweek" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-encoding utf-8" />
+  </component>
+</project>

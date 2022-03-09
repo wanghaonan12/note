@@ -1,0 +1,4 @@
+server:
+  port: 8080
+  people.id=10
+  people.name=王浩南

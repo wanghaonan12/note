@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax请求实例起步--原生的异步请求</title>
+</head>
+<body>
+<h1>服务器返回的数据</h1>
+<h2 id="clock"></h2>
+<hr>
+<button id="btn">按钮1</button>
+<input name="text" id="account">
+<button id="btn2">stop</button>
+<button id="btn3">start</button>
+<h2 id="info">请求前2</h2>
+<script>
+<!--    1创建核心对象-->
+var btn = document.getElementById("btn");
+// btn.onclick=function (){
+//     document.getElementById("info").innerText="请求后"
+// }
+
+var elementById = document.getElementById("account");
+elementById.onblur = function () {
+
+};
+
+var change=setInterval(function (){
+    let time=new Date();
+    document.getElementById("clock").innerText=time.toLocaleTimeString()
+},1000)
+document.getElementById("btn3").onclick=function (){
+    change=setInterval(function (){
+        let time=new Date();
+        document.getElementById("clock").innerText=time.toLocaleTimeString()
+    },1000)
+}
+
+
+btn.onclick=function (){
+    let xHttp= new XMLHttpRequest();
+    // if (window.XMLHttpRequest) {
+    //     xHttp = new XMLHttpRequest();
+    // } else {
+    //     //for IE5 IE6
+    //     xHttp =new ActiveXObject("Microsoft.XMLTYPE")
+    // }
+//发送请求
+    xHttp.open("GET","/ajaxServlet")
+    xHttp.send();
+//获取相应
+    xHttp.onreadystatechange = function () {
+        document.getElementById("info").innerText=this.responseText
+        document.getElementById("btn2").onclick=function (){
+            clearInterval(change);
+        }
+
+        // if (this.readyState === 4 && this.state === 200) {
+        //     //回调函数
+        //     // alert(this.responseText);
+        // }
+    };
+}
+
+
+</script>
+</body>
+</html>

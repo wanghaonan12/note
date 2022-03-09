@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="comprehensive-exercises:war">
+    <output-path>$PROJECT_DIR$/comprehensive-exercises/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>false</exploded>
+        <module>comprehensive-exercises</module>
+        <packaging>war</packaging>
+        <unpackNestedArchives>false</unpackNestedArchives>
+      </options>
+    </properties>
+    <root id="archive" name="comprehensive-exercises-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="comprehensive-exercises:war exploded" />
+    </root>
+  </artifact>
+</component>

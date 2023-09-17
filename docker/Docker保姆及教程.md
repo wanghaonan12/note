@@ -584,7 +584,7 @@ docker tag 镜像id 设置的镜像名:镜像标签
         "https://824wohwf.mirror.aliyuncs.com"
     ],
     "insecure-registries": [
-        "43.138.25.182:5000"
+        "宿主机id:5000"
     ]
 }
 ```
@@ -598,30 +598,30 @@ docker tag 镜像id 设置的镜像名:镜像标签
    > 按照规范命名仓库地址/镜像名:镜像标签
 
    ```bash
-   docker tag upload_image:1.0.0  43.138.25.182:5000/upload_image:1.0.0
+   docker tag upload_image:1.0.0  宿主机ID:5000/upload_image:1.0.0
    ```
 
-   将`upload_image:1.0.0 `改为`43.138.25.182:5000/upload_image:1.0.0`
+   将`upload_image:1.0.0 `改为`宿主机ID:5000/upload_image:1.0.0`
 
-   ![**image-20230916184932646**](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916184932646.png)
+   ![image-20230917224635030](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224635030.png)
 
    
 
 5. 推送代码
 
 ```bash
-docker push 43.138.25.182:5000/upload_image:1.0.0
+docker push 宿主机ID:5000/upload_image:1.0.0
 ```
 
 docker push 镜像名称:镜像id
 
-![image-20230916185126645](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185126645.png)
+![](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224635030.png)
 
 完成之后就好了,检验一下
 
 ![image-20230916185500775](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185500775.png)
 
-![image-20230916185942602](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185942602.png)
+![image-20230917224813396](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224813396.png)
 
 1. 移除本地镜像
 2. 查看是否删除
@@ -722,7 +722,7 @@ docker run -it  --privileged=true --volumes-from 父类容器ID
 
 1. 我们在之前的数据库添加上数据
 
-![image-20230917173234410](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917173234410.png)
+![image-20230917224911767](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224911767.png)
 
 2. 创建新的数据库继承他的数据卷
 
@@ -953,11 +953,11 @@ docker run -d -p 8080:8080 --name mytomcat8 billygoo/tomcat8-jdk8
 
 ![image-20230917212458906](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917212458906.png)
 
-![image-20230917212130781](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917212130781.png)
+![image-20230917225016578](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917225016578.png)
 
 ### mysql
 
-> 之前在容器数据卷里面有使用mysql[指令公式](#指令公式)
+> 之前在容器数据卷里面有使用mysql[指令公式](#指令公式)主从复制在[mysql主从复制](#mysql主从复制)
 
 
 

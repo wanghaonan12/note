@@ -4,6 +4,8 @@
 
 [typora官网](https://typora.io/#download)
 
+**安装后需要打开一次typora**
+
 2. 修改文件
 
 - 打开显示包内容

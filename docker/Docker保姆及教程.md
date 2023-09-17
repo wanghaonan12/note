@@ -110,6 +110,47 @@ docker run hello-world
 
 ![image-20230820214451230](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230820214451230.png)
 
+### docker镜像加速
+
+1. 登陆阿里云开发者账户
+
+[阿里云](https://www.aliyun.com/)
+
+![image-20230916180501436](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916180501436.png)
+
+2. 选择容器镜像服务
+
+- 控制台->左上角的三横-> 容器镜像服务
+
+![image-20230916181002275](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916181002275.png)
+
+- 选择镜像工具->镜像加速器
+
+> **注意自己的操作系统**
+
+
+
+![image-20230916181258629](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916181258629.png)
+
+```bash
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://824wohwf.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+- 复制代码执行就可以了
+
+![image-20230916181533422](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916181533422.png)
+
+![image-20230916181610087](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916181610087.png)
+
+就配置好了!!!
+
 ### Docker卸载
 
 刚装好就要卸载，苦瓜脸，叹气~
@@ -463,6 +504,14 @@ docker load -i 镜像地址
 3. 镜像标签修改
 4. 查看镜像标签
 
+#### 修改标签
+
+```bash
+docker tag 镜像id 设置的镜像名:镜像标签
+```
+
+![image-20230916173445420](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916173445420.png)
+
 ### 上传到阿里云
 
 这个就算了吧,和 GitHub 差不多,主要是大陆的比较慢,主要是我懒得去注册 DockerHub.
@@ -505,5 +554,413 @@ docker load -i 镜像地址
    自己的ip:5000/v2/_catalog
    ```
 
-   ![image-20230911162319384](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230911162319384.png)
+   ![image-20230911162319384](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230911162319384.png)	
+   
+   可以看到上面是空的没有任何镜像数据!!
 
+3. 修改配置文件支持http协议
+
+> docker 私服库默认不支持http请求,我们需要修改配置取消限制
+> 修改文件etc/docker/daemon.json
+> 之前在配置镜像加速的时候创建的文件
+
+修改前
+
+```json
+{
+    "registry-mirrors": [
+        "https://824wohwf.mirror.aliyuncs.com"
+    ]
+}
+```
+
+修改后
+
+> 将我们的地址添加进去
+
+```json
+{
+    "registry-mirrors": [
+        "https://824wohwf.mirror.aliyuncs.com"
+    ],
+    "insecure-registries": [
+        "43.138.25.182:5000"
+    ]
+}
+```
+
+![image-20230916183202599](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916183202599.png)
+
+如果改了之后不生效重启动一下!!
+
+4. 修改镜像命名规范
+
+   > 按照规范命名仓库地址/镜像名:镜像标签
+
+   ```bash
+   docker tag upload_image:1.0.0  43.138.25.182:5000/upload_image:1.0.0
+   ```
+
+   将`upload_image:1.0.0 `改为`43.138.25.182:5000/upload_image:1.0.0`
+
+   ![**image-20230916184932646**](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916184932646.png)
+
+   
+
+5. 推送代码
+
+```bash
+docker push 43.138.25.182:5000/upload_image:1.0.0
+```
+
+docker push 镜像名称:镜像id
+
+![image-20230916185126645](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185126645.png)
+
+完成之后就好了,检验一下
+
+![image-20230916185500775](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185500775.png)
+
+![image-20230916185942602](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230916185942602.png)
+
+1. 移除本地镜像
+2. 查看是否删除
+3. 拉取远程仓库的镜像
+4. 检查是否拉取下来
+
+## 容器卷
+
+### 什么是容器数据卷?
+
+容器数据卷（Container Data Volumes）是一种用于在容器化环境中持久性存储和共享数据的机制。容器数据卷允许容器之间或容器与宿主机之间共享和存储数据，而不受容器的生命周期限制。这些数据卷通常用于在容器之间传递配置文件、日志、数据库文件、应用程序代码等。
+
+以下是容器数据卷的一些关键特点和用途：
+
+1. **持久性存储**：容器数据卷在容器的生命周期内是持久性的，即使容器停止或被删除，数据仍然保留在数据卷中。
+
+2. **共享数据**：多个容器可以共享同一个数据卷，这使得容器之间可以轻松共享数据，例如共享配置信息或共享一个共享的数据库。
+
+3. **数据隔离**：容器数据卷可以用于将容器的数据与宿主机分开，提供了额外的隔离性，保护数据免受容器本身的影响。
+
+4. **挂载点**：容器可以将数据卷挂载到其文件系统中的指定位置，使容器内的应用程序能够访问数据卷中的数据。
+
+5. **备份和恢复**：容器数据卷可以用于进行数据备份，以便在需要时恢复数据。
+
+6. **容器迁移**：容器数据卷使容器在不同主机上迁移变得更加容易，因为数据可以在容器之间共享而不必复制。
+
+**总结:简单来说就是将容器运行时的数据实时映射到宿主机的指定位置,当容器迁移或是删除的时候能够保证数据在宿主记得备份.**
+
+### 作用
+
+将运用与运行的环境打包镜像，run后形成容器实例运行 ，但是我们对数据的要求希望是持久化的 Docker容器产生的数据，如果不备份，那么当容器实例删除后，容器内的数据自然也就没有了。为了能保存数据在docker中我们使用卷。 
+
+**特点：**
+
+1. 数据卷可在容器之间共享或重用数据
+2. 卷中的更改可以直接实时生效
+3. 数据卷中的更改不会包含在镜像的更新中
+4. 数据卷的生命周期一直持续到没有容器使用它为止 
+
+### 使用
+
+> 1 docker修改，主机同步获得 2 主机修改，docker同步获得3 docker容器stop，主机修改，docker容器重启看数据是否同步。
+
+#### **指令公式**
+
+```bash
+ docker run -it --privileged=true -v /宿主机绝对路径目录:/容器内目录 镜像名
+```
+
+**补充**
+
+> 修改读写规则
+>
+> 默认读写规则是读写:rw
+>
+> 容器数据卷的读写规则通常指的是**容器内部**对数据卷的读写权限，而不是宿主机的读写规则。这些规则决定了容器内的应用程序是否能够读取和写入容器数据卷中的内容。
+
+```bash
+ docker run -it --privileged=true -v /宿主机绝对路径目录:/容器内目录:ro 镜像名
+```
+
+**--privileged=true**
+
+ Docker挂载主机目录访问如果出现cannot open directory .: Permission denied解决办法：在挂载目录后多加一个--privileged=true参数即可 如果是CentOS7安全模块会比之前系统版本加强，不安全的会先禁止，所以目录挂载的情况被默认为不安全的行为，在SELinux里面挂载目录被禁止掉了额，如果要开启，我们一般使用--privileged=true命令，扩大容器的权限解决挂载目录没有权限的问题，也即使用该参数，container内的root拥有真正的root权限，否则，container内的root只是外部的一个普通用户权限。
+
+**示例**
+
+```bash
+docker run -dp 3307:3306 \
+  -v /home/pde/data:/var/lib/mysql \
+  -v /home/pde/config:/etc/mysql \
+  -v /home/pde/log:/var/log/mysql \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  --name mysql2 mysql:5.7.36
+```
+
+创建成功!
+
+![image-20230917171325387](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917171325387.png)
+
+#### 查看挂载状态
+
+指令公式
+
+```json
+ docker inspect 容器ID  
+```
+
+![image-20230917173053587](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917173053587.png)
+
+#### 卷的继承和共享
+
+挂在到卷到容器二(效果和java的继承差不多)
+
+```bash
+docker run -it  --privileged=true --volumes-from 父类容器ID
+```
+
+1. 我们在之前的数据库添加上数据
+
+![image-20230917173234410](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917173234410.png)
+
+2. 创建新的数据库继承他的数据卷
+
+```bash
+docker run -dp 3307:3306 \
+  --volumes-from 70d867f7695d \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  --name mysql2 mysql:5.7.36
+```
+
+![image-20230917173913959](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917173913959.png)
+
+3. 连接上新的数据库查看我们的数据是否存在
+
+**容器启动失败!!!,暂时搁浅**
+
+
+
+## Docker复杂安装
+
+### mysql主从复制
+
+1. 启动容器挂载数据卷
+
+```bash
+docker run -dp 3307:3306 \
+  -v /home/master/data:/var/lib/mysql \
+  -v /home/master/config:/etc/mysql \
+  -v /home/master/log:/var/log/mysql \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  --name mysql_master mysql:5.7.36
+```
+
+![image-20230917220548350](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917220548350.png)
+
+2. 配置cnf文件
+
+在mysql的配置文件的映射文件夹下添加my.cnf配置文件内容如下:
+
+```bash
+[mysqld]
+## 设置server_id，同一局域网中需要唯一
+server_id=101 
+## 指定不需要同步的数据库名称
+binlog-ignore-db=mysql  
+## 开启二进制日志功能
+log-bin=mall-mysql-bin  
+## 设置二进制日志使用内存大小（事务）
+binlog_cache_size=1M  
+## 设置使用的二进制日志格式（mixed,statement,row）
+binlog_format=mixed  
+## 二进制日志过期清理时间。默认值为0，表示不自动清理。
+expire_logs_days=7  
+## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。
+## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致
+slave_skip_errors=1062
+```
+
+![image-20230917221059922](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917221059922.png)
+
+3. 重启
+
+```bash
+docker restart mysql_master
+```
+
+![image-20230917221111346](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917221111346.png)
+
+4. 进入容器查看是否可以使用数据库,并创建同步用户
+
+```bash
+# 进入容器mysql_master
+docker exec -it mysql_master bash
+
+# 登陆mysql
+mysql -uroot -p
+
+# 创建用户slave
+CREATE USER 'slave'@'%' IDENTIFIED BY '123456';
+
+# 户赋权
+GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';
+```
+
+![image-20230917221412728](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917221412728.png)
+
+5. 新建mysql从服务器
+
+```bash
+docker run -dp 3308:3306 \
+  -v /home/slave/data:/var/lib/mysql \
+  -v /home/slave/config:/etc/mysql \
+  -v /home/slave/log:/var/log/mysql \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  --name mysql_slave mysql:5.7.36
+```
+
+![image-20230917221858695](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917221858695.png)
+
+6. 配置从cnf文件
+
+```bash
+[mysqld]
+## 设置server_id，同一局域网中需要唯一
+server_id=102
+## 指定不需要同步的数据库名称
+binlog-ignore-db=mysql  
+## 开启二进制日志功能，以备Slave作为其它数据库实例的Master时使用
+log-bin=mall-mysql-slave1-bin  
+## 设置二进制日志使用内存大小（事务）
+binlog_cache_size=1M  
+## 设置使用的二进制日志格式（mixed,statement,row）
+binlog_format=mixed  
+## 二进制日志过期清理时间。默认值为0，表示不自动清理。
+expire_logs_days=7  
+## 跳过主从复制中遇到的所有错误或指定类型的错误，避免slave端复制中断。
+## 如：1062错误是指一些主键重复，1032错误是因为主从数据库数据不一致
+slave_skip_errors=1062  
+## relay_log配置中继日志
+relay_log=mall-mysql-relay-bin  
+## log_slave_updates表示slave将复制事件写进自己的二进制日志
+log_slave_updates=1  
+## slave设置为只读（具有super权限的用户除外）
+read_only=1
+```
+
+![image-20230917222031520](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222031520.png)
+
+7. 重启丛mysql
+
+```bash
+docker restart mysql_slave
+```
+
+![image-20230917222126743](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222126743.png)
+
+8. 前往主mysql查看主从同步状态
+
+```mysql
+show master status;
+```
+
+![image-20230917222337281](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222337281.png)
+
+9. 在从数据库配置主从复制
+
+```mysql
+change master to master_host='宿主机ip', master_user='slave', master_password='123456', master_port=3307, master_log_file='mall-mysql-bin.000001', master_log_pos=617, master_connect_retry=30;  
+```
+
+`master_host`：主数据库的IP地址；
+
+`master_port`：主数据库的运行端口；
+
+`master_user`：在主数据库创建的用于同步数据的用户账号；
+
+`master_password`：在主数据库创建的用于同步数据的用户密码；
+
+`master_log_file`：指定从数据库要复制数据的日志文件，通过查看主数据的状态，获取File参数；
+
+`master_log_pos`：指定从数据库从哪个位置开始复制数据，通过查看主数据的状态，获取Position参数；
+
+`master_connect_retry`：连接失败重试的时间间隔，单位为秒。 
+
+![image-20230917222855930](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222855930.png)
+
+10. 从数据库查看并设置主从同步状态
+
+- 查看
+
+```mysql
+show slave status \G;
+```
+
+`\G`:以键值对的形式展示
+
+![image-20230917223007055](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917223007055.png)
+
+- 设置启用
+
+```mysql
+start slave;
+```
+
+![image-20230917223309470](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917223309470.png)
+
+11. 测试状况
+
+![image-20230917224037535](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224037535.png)
+
+### redis集群
+
+## Dockerfile
+
+## Docker微服务
+
+## Docker网络
+
+## Docker-compose
+
+## Docker轻量级可视化工具Portainer
+
+## Docker容器监控
+
+## 常用软件安装
+
+### tomcat
+
+1. 检索tomact
+
+```bash
+docker search tomact
+```
+
+![image-20230917211255458](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917211255458.png)
+
+2. 运行
+
+   > 这里使用免修改版本
+
+```bash
+docker run -d -p 8080:8080 --name mytomcat8 billygoo/tomcat8-jdk8
+```
+
+![image-20230917212327180](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917212327180.png)
+
+3. 查看结果
+
+![image-20230917212458906](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917212458906.png)
+
+![image-20230917212130781](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917212130781.png)
+
+### mysql
+
+> 之前在容器数据卷里面有使用mysql[指令公式](#指令公式)
+
+
+
+### redis
+
+## Docker总结

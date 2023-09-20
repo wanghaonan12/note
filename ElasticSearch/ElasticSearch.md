@@ -54,32 +54,27 @@ The Elastic Stack, 包括 Elasticsearch、 Kibana、 Beats 和 Logstash（也称
 
 ### elasticSearch安装
 
-#### 本地运行
-
-[ Elastic 官网](https://www.elastic.co/cn/downloads/enterprise-search)根据需求自己下载
-
-
-
 #### docker安装部署
+
+> 一直在尝试添加数据卷,但是每次只要添加就会报错,这里就为了能够继续下去没有添加,会在后面补充
 
 ```bash
 docker run -d \
-  --restart=always \
-  --name es \
-  --network es-net \
-  -p 9200:9200 \
-  -p 9300:9300 \
-  --privileged \
-  -v /usr/local/es/log:/usr/share/elasticsearch/logs \
-  -v /usr/local/es/data:/usr/share/elasticsearch/data \
-  -v /usr/local/es/plugins:/usr/share/elasticsearch/plugins \
-  -v /usr/local/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
-  -e "discovery.type=single-node" \
-  -e ES_JAVA_OPTS="-Xms512m -Xms512m" \
-elasticsearch:last
+     -p 9200:9200 \
+     -p 9300:9300 \
+     --name es01 \
+     --network es_network \
+     -e "discovery.type=single-node" \
+     -e ES_JAVA_OPTS="-Xms100m -Xmx200m" \
+     -e TAKE_FILE_OWNERSHIP=true \
+ elasticsearch:7.17.5
 ```
 
+![image-20230920101706637](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230920101706637.png)
 
+**验证**
+
+![image-20230920102008514](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230920102008514.png)
 
 #### docker集群部署
 

@@ -4,6 +4,8 @@
 
 [Elasticsearch](https://blog.csdn.net/u011863024/article/details/115721328)
 
+[Elasticsearch: 权威指南](https://www.elastic.co/guide/cn/elasticsearch/guide/current/running-elasticsearch.html)
+
 结构化数据(能以二维表形式展开的数据信息)
 
 ![image-20230918211747699](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230918211747699.png)
@@ -82,17 +84,30 @@ docker run -d \
 #####  添加容器数据卷
 
 ```bash
- docker run -d \
+ docker run -it \
+     -p 9200:9200 \
+     -p 9300:9300 \
+     --name es00 \
+     --network es_network \
+     -v /home/es00/plugins:/usr/share/elasticsearch/plugins \
+     -v /home/es00/data:/usr/share/elasticsearch/data \
+     -v /home/es00/log:/usr/share/elasticsearch/logs \
+     -v /home/es00/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+     -e "discovery.type=single-node" \
+     -e ES_JAVA_OPTS="-Xms200m -Xmx200m" \
+     -e TAKE_FILE_OWNERSHIP=true \
+ elasticsearch:7.17.5
+ 
+  docker run -it \
      -p 9201:9200 \
      -p 9301:9300 \
-     --name es02 \
+     --name es01 \
      --network es_network \
-     -v /home/es/plugins:/usr/share/elasticsearch/plugins \
-     -v /home/es/data:/usr/share/elasticsearch/data \
-     -v /home/es/log:/usr/share/elasticsearch/logs \
-     -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
-     -e "discovery.type=single-node" \
-     -e ES_JAVA_OPTS="-Xms100m -Xmx200m" \
+     -v /home/es01/plugins:/usr/share/elasticsearch/plugins \
+     -v /home/es01/data:/usr/share/elasticsearch/data \
+     -v /home/es01/log:/usr/share/elasticsearch/logs \
+     -v /home/es01/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+     -e ES_JAVA_OPTS="-Xms200m -Xmx200m" \
      -e TAKE_FILE_OWNERSHIP=true \
  elasticsearch:7.17.5
 ```
@@ -139,9 +154,211 @@ ik**分分词器与默认分词器区别**
 
 ![image-20230921111600801](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921111600801.png)
 
+#### kibana安装
+
+```bash
+ docker run \
+     -dp 5601:5601 \
+     --name kibana \
+     --privileged=true \
+     -v /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml \
+     kibana:7.17.5
+```
+
+```yml
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: ["http://127.0.0.0:9200"]  # es地址
+monitoring.ui.container.elasticsearch.enabled: true
+```
+
+
+
+![image-20230921184405693](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184405693.png)
+
+![image-20230921184421661](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184421661.png)
+
 #### docker集群部署
 
 [docker-compose部署](https://blog.csdn.net/iampatrick_star/article/details/127263346)
+
+**docker-compose.yml**
+
+```yml
+services:
+  cerebro:
+    image: lmenezes/cerebro:0.8.4
+    container_name: cerebro
+    ports:
+      - "9000:9000"
+    command:
+      - -Dhosts.0.host=http://es00:9200
+    networks:
+      - es_network
+  kibana:
+    image: kibana:7.17.5
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es01:9201
+      # 需要将Kibana配置文件中的小写转换成大写，然后这个才能用于变量，才能被设置到
+      - I18N_LOCALE=zh-CN
+      - xpack.monitoring.ui.container.elasticsearch.enabled=false
+    volumes:
+      - /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - es_network
+  es00:
+    image: elasticsearch:7.17.5
+    container_name: es00
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Des.insecure.allow.root=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/es00/plugins:/usr/share/elasticsearch/plugins
+      - /home/es00/data:/usr/share/elasticsearch/data
+      - /home/es00/log:/usr/share/elasticsearch/logs
+      - /home/es00/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - es_network
+  es01:
+    image: elasticsearch:7.17.5
+    container_name: es01
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Des.insecure.allow.root=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/es01/plugins:/usr/share/elasticsearch/plugins
+      - /home/es01/data:/usr/share/elasticsearch/data
+      - /home/es01/log:/usr/share/elasticsearch/logs
+      - /home/es01/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9201:9201
+      - 9301:9301
+    networks:
+      - es_network
+
+networks:
+  es_network:
+```
+
+**es00/config/elasticsearch.yml**
+
+```yml
+# Elasticsearch集群名称
+cluster.name: "es-cluster"
+
+# 节点名称
+node.name: es00
+
+# 是否允许成为主节点
+node.master: false
+
+# 是否允许存储数据
+node.data: true
+
+# 索引数据存储路径
+# path.data: /usr/share/elasticsearch/data
+
+# 日志存储路径
+# path.logs: /usr/share/elasticsearch/logs
+
+# 内存锁定
+bootstrap.memory_lock: true
+
+# 绑定的网络接口 0.0.0.0表示节点将监听所有可用的网络接口
+network.host: 0.0.0.0
+
+# HTTP通信端口
+http.port: 9200
+
+# 初始主节点列表
+cluster.initial_master_nodes: ["es00"]
+
+# 种子主机列表，用于发现其他节点
+discovery.seed_hosts: ["es00"]
+
+# 启用CORS（跨域资源共享）
+http.cors.enabled: true
+
+# 允许CORS的来源
+http.cors.allow-origin: "*"
+
+# 启用Elasticsearch安全性
+xpack.security.enabled: false
+
+# 启用传输层安全性（TLS/SSL）
+xpack.security.transport.ssl.enabled: false
+
+
+
+```
+
+**es01/config/elasticsearch.yml**
+
+```yml
+# Elasticsearch集群名称
+cluster.name: "es-cluster"
+
+# 节点名称
+node.name: es01
+
+# 是否允许成为主节点
+node.master: false
+
+# 是否允许存储数据
+node.data: true
+
+# 索引数据存储路径
+# path.data: /usr/share/elasticsearch/data
+
+# 日志存储路径
+# path.logs: /usr/share/elasticsearch/logs
+
+# 内存锁定
+bootstrap.memory_lock: true
+
+# 绑定的网络接口 0.0.0.0表示节点将监听所有可用的网络接口
+network.host: 0.0.0.0
+
+# HTTP通信端口
+http.port: 9201
+
+# 初始主节点列表
+cluster.initial_master_nodes: ["es00"]
+
+# 种子主机列表，用于发现其他节点
+discovery.seed_hosts: ["es00"]
+
+# 启用CORS（跨域资源共享）
+http.cors.enabled: true
+
+# 允许CORS的来源
+http.cors.allow-origin: "*"
+
+# 启用Elasticsearch安全性
+xpack.security.enabled: false
+
+# 启用传输层安全性（TLS/SSL）
+xpack.security.transport.ssl.enabled: false
+
+
+
+```
 
 ### 2. RestFul风格
 
@@ -185,7 +402,7 @@ RESTful风格是一种设计和构建网络应用程序的软件架构风格。�
 
 > PUT请求是幂等的，即对同一个文档多次执行相同的PUT请求会产生相同的结果。这意味着多次执行PUT请求不会导致文档的重复或多次更新。而POST请求不是幂等的，多次执行相同的POST请求会创建多个相同的文档。
 
-```
+```json
 PUT http://{{ServiceIP}}/index_name
 ```
 
@@ -193,7 +410,7 @@ PUT http://{{ServiceIP}}/index_name
 
 ### 2. 检索创建的索引
 
-```
+```json
 GET http://{{ServiceIP}}/_cat/indices?v
 ```
 
@@ -215,7 +432,7 @@ GET http://{{ServiceIP}}/_cat/indices?v
 
 ### 3. 检索索引详情
 
-```
+```json
 GET http://{{ServiceIP}}/index_name
 ```
 
@@ -253,7 +470,7 @@ GET http://{{ServiceIP}}/index_name
 
 ### 4. 删除索引
 
-```
+```json
 DELETE http://{{ServiceIP}}/index_name
 ```
 
@@ -263,7 +480,7 @@ DELETE http://{{ServiceIP}}/index_name
 
 #### 添加随机id文档
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_doc
 ```
 
@@ -273,7 +490,7 @@ POST http://{{ServiceIP}}/index_name/_doc
 
 #### 指定id添加文档
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_doc/id
 ```
 
@@ -287,7 +504,7 @@ POST http://{{ServiceIP}}/index_name/_doc/id
 
 > `match`会将你搜索的`query`进行分词的查询方法和`mysql`中的模糊查询差不多
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_search
 {
   "query": {
@@ -310,7 +527,7 @@ POST http://{{ServiceIP}}/index_name/_search
 
 > match_phrase和match一样也是会对你的搜索query进行分词，但是，不同的是它不是匹配到某一处分词的结果就算是匹配成功了，而是需要query中所有的词都匹配到，而且相对顺序还要一致，而且默认还是连续的
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_search
 {
   "query": {
@@ -329,7 +546,7 @@ POST http://{{ServiceIP}}/index_name/_search
 
 > multi_match比是可以设置多个字段检索
 
-```
+```json
 POST http://{{ServiceIP}}/user/_search
 {
   "query": {
@@ -349,7 +566,7 @@ POST http://{{ServiceIP}}/user/_search
 
 > `terms`和`mysql`中的`in` 一样
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_search
 {
     "query": {
@@ -369,7 +586,7 @@ POST http://{{ServiceIP}}/index_name/_search
 
 > fuzzy和term一样，也不会将query进行分词，但是不同的是它在进行匹配时可以容忍你的词语拼写有错误，至于容忍度如何，是根据参数fuzziness决定的。fuzziness默认是2，也就是在默认情况下，fuzzy查询容忍你有两个字符及以下的拼写错误。即如果你要匹配的词语为test，但是你的query是text，那也可以匹配到.
 
-```
+```json
 POST http://{{ServiceIP}}/user/_search
 {
   "query": {
@@ -393,7 +610,7 @@ POST http://{{ServiceIP}}/user/_search
 > 3. lt：小于
 > 4. lte：小于等于
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_search
 {
     "query": {
@@ -409,11 +626,61 @@ POST http://{{ServiceIP}}/index_name/_search
 
 ![image-20230921000200665](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230921000200665.png)
 
+#### 高亮检索
+
+```json
+POST http://{{ServiceIP}}/{{Index_name}}/_search
+{
+    "query": {
+        "match": {
+            "query_field_name": "query content"
+        }name
+    },
+    "_source": [
+        "show_field_name"
+    ],
+    "highlight": {
+        "fields": {
+            "highlight_field_na'me": {}
+        }
+    }
+}
+```
+
+![image-20230921155636970](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921155636970.png)
+
+高亮字段可以是正则匹配,匹配上的字符便会加上高亮
+
+![image-20230921161436450](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921161436450.png)
+
+#### 聚合查询
+
+```json
+POST http://{{ServiceIP}}/{{Index_name}}/_doc/_search
+{
+    "from": 0,
+    "size": 0,
+    "aggs": {
+        "all_add": {// 聚合的名字
+            "terms": {
+                "field": "age"
+            }
+        }
+    }
+}
+```
+
+![image-20230921163631562](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921163631562.png)
+
+> 官网上还给了例子再局和内部还可以镜像其他的操作,聚合加强版操作
+>
+> ![image-20230921164016549](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921164016549.png)
+
 #### 使用id进行检索
 
 > 这个方法很少用太笨了
 
-```
+```json
 GET http://{{ServiceIP}}/index_name/_doc/id
 ```
 
@@ -437,7 +704,7 @@ GET http://{{ServiceIP}}/index_name/_search
 
 #### 排序检索
 
-```
+```json
 POST http://{{ServiceIP}}/index_name/_search
 {
     "query": {
@@ -460,7 +727,7 @@ POST http://{{ServiceIP}}/index_name/_search
 
 > bool查询是上面查询的一个综合，它可以用多个查询去组合出一个大的查询语句
 
-```
+```json
 GET http://{{ServiceIP}}/index_name/_search
 {
     "query": {
@@ -505,13 +772,15 @@ GET http://{{ServiceIP}}/index_name/_search
 
 ### 8. 分词器
 
-```
+```json
 POST http://{{ServiceIP}}/_analyze
 ```
 
 > 这里需要指定一个分词器，ES默认的分词器是standard，不过只支持英文分词，如果你用它来对中文进行分词的话会直接按字拆分，有一些中文分词器可以下载使用，像ik或者jieba之类的，这里便不去介绍如何安装了，感兴趣的可以查阅相关文章。
 
 ![image-20230920225056686](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920225056686.png)
+
+### 
 
 ElasticSearch
 

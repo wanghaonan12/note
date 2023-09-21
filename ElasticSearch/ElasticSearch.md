@@ -58,6 +58,8 @@ The Elastic Stack, 包括 Elasticsearch、 Kibana、 Beats 和 Logstash（也称
 
 > 一直在尝试添加数据卷,但是每次只要添加就会报错,这里就为了能够继续下去没有添加,会在后面补充
 
+##### 普通安装
+
 ```bash
 docker run -d \
      -p 9200:9200 \
@@ -68,6 +70,7 @@ docker run -d \
      -e ES_JAVA_OPTS="-Xms100m -Xmx200m" \
      -e TAKE_FILE_OWNERSHIP=true \
  elasticsearch:7.17.5
+
 ```
 
 ![image-20230920101706637](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230920101706637.png)
@@ -75,6 +78,66 @@ docker run -d \
 **验证**
 
 ![image-20230920102008514](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230920102008514.png)
+
+#####  添加容器数据卷
+
+```bash
+ docker run -d \
+     -p 9201:9200 \
+     -p 9301:9300 \
+     --name es02 \
+     --network es_network \
+     -v /home/es/plugins:/usr/share/elasticsearch/plugins \
+     -v /home/es/data:/usr/share/elasticsearch/data \
+     -v /home/es/log:/usr/share/elasticsearch/logs \
+     -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+     -e "discovery.type=single-node" \
+     -e ES_JAVA_OPTS="-Xms100m -Xmx200m" \
+     -e TAKE_FILE_OWNERSHIP=true \
+ elasticsearch:7.17.5
+```
+
+![image-20230921102536190](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921102536190.png)
+
+**验证**
+
+![image-20230921102612716](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921102612716.png)
+
+##### 添加分词器
+
+1. 官网下载所需分词器,我这里使用ik分词器
+   [ik分词下载地址](https://github.com/medcl/elasticsearch-analysis-ik/releases?page=2)
+
+   > 注意分词器与es的版本需要保持一致,如果没有保持一致请下载相近的版本并修改版本信息如下:
+   >
+   > 解压ik分词器之后修改`plugin-descriptor.properties`文件中的`version`和`elasticsearch.version`与你使用的`es`版本保持一致
+
+   ![image-20230921110323625](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921110323625.png)
+
+2. 修改好之后找打我们创建的plugins数据卷,并创建ik文件夹将内容放进去
+   ![image-20230921110656594](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921110656594.png)
+
+3. 重启es容器
+
+   ```bash
+   docker restart es02
+   ```
+
+   ![image-20230921110734285](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921110734285.png)
+
+4. 检验
+
+![image-20230921111243245](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921111243245.png)
+
+ik**分分词器与默认分词器区别**
+
+> 1. 细粒度分词模式（ik_smart）：
+> 这是默认的分词模式，它会尽可能地将句子切分为最小的词语单元。它不仅可以识别普通词汇，还可以识别一些常见的专有名词、地名、人名等。
+>
+> 2. 智能分词模式（ik_max_word）：
+> 这种模式会在细粒度分词的基础上，对长词进行进一步的切分。它可以识别更多的词语，但也会增加一些不必要的词语。
+
+![image-20230921111600801](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921111600801.png)
 
 #### docker集群部署
 

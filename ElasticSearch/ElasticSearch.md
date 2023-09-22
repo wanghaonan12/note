@@ -178,6 +178,16 @@ monitoring.ui.container.elasticsearch.enabled: true
 
 ![image-20230921184421661](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184421661.png)
 
+#### cerebro安装
+
+```bash
+docker run -dp 9000:9000  --network es_network --name cerebro lmenezes/cerebro:0.8.4
+```
+
+![image-20230922172328669](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172328669.png)
+
+![image-20230922172422029](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172422029.png)
+
 #### docker集群部署
 
 [docker-compose部署](https://blog.csdn.net/iampatrick_star/article/details/127263346)
@@ -191,18 +201,11 @@ services:
     container_name: cerebro
     ports:
       - "9000:9000"
-    command:
-      - -Dhosts.0.host=http://es00:9200
     networks:
       - es_network
   kibana:
     image: kibana:7.17.5
     container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://es01:9201
-      # 需要将Kibana配置文件中的小写转换成大写，然后这个才能用于变量，才能被设置到
-      - I18N_LOCALE=zh-CN
-      - xpack.monitoring.ui.container.elasticsearch.enabled=false
     volumes:
       - /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
@@ -216,10 +219,6 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "ES_JAVA_OPTS=-Des.insecure.allow.root=true"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     volumes:
       - /home/es00/plugins:/usr/share/elasticsearch/plugins
       - /home/es00/data:/usr/share/elasticsearch/data
@@ -237,18 +236,14 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - "ES_JAVA_OPTS=-Des.insecure.allow.root=true"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     volumes:
       - /home/es01/plugins:/usr/share/elasticsearch/plugins
       - /home/es01/data:/usr/share/elasticsearch/data
       - /home/es01/log:/usr/share/elasticsearch/logs
       - /home/es01/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
-      - 9201:9201
-      - 9301:9301
+      - 9201:9200
+      - 9301:9300
     networks:
       - es_network
 
@@ -266,19 +261,19 @@ cluster.name: "es-cluster"
 node.name: es00
 
 # 是否允许成为主节点
-node.master: false
+node.master: true
 
 # 是否允许存储数据
 node.data: true
 
 # 索引数据存储路径
-# path.data: /usr/share/elasticsearch/data
+#path.data: /usr/share/elasticsearch/data
 
 # 日志存储路径
-# path.logs: /usr/share/elasticsearch/logs
+#path.logs: /usr/share/elasticsearch/logs
 
 # 内存锁定
-bootstrap.memory_lock: true
+#bootstrap.memory_lock: true
 
 # 绑定的网络接口 0.0.0.0表示节点将监听所有可用的网络接口
 network.host: 0.0.0.0
@@ -289,8 +284,8 @@ http.port: 9200
 # 初始主节点列表
 cluster.initial_master_nodes: ["es00"]
 
-# 种子主机列表，用于发现其他节点
-discovery.seed_hosts: ["es00"]
+# 种子主机列表，用于发现其他节点,集群中的节点都在这个地址列表中
+discovery.seed_hosts: ["es00","es01"]
 
 # 启用CORS（跨域资源共享）
 http.cors.enabled: true
@@ -299,13 +294,10 @@ http.cors.enabled: true
 http.cors.allow-origin: "*"
 
 # 启用Elasticsearch安全性
-xpack.security.enabled: false
+#xpack.security.enabled: false
 
 # 启用传输层安全性（TLS/SSL）
-xpack.security.transport.ssl.enabled: false
-
-
-
+#xpack.security.transport.ssl.enabled: false
 ```
 
 **es01/config/elasticsearch.yml**
@@ -318,31 +310,31 @@ cluster.name: "es-cluster"
 node.name: es01
 
 # 是否允许成为主节点
-node.master: false
+node.master: true
 
 # 是否允许存储数据
 node.data: true
 
 # 索引数据存储路径
-# path.data: /usr/share/elasticsearch/data
+#path.data: /usr/share/elasticsearch/data
 
 # 日志存储路径
-# path.logs: /usr/share/elasticsearch/logs
+#path.logs: /usr/share/elasticsearch/logs
 
 # 内存锁定
-bootstrap.memory_lock: true
+#bootstrap.memory_lock: true
 
 # 绑定的网络接口 0.0.0.0表示节点将监听所有可用的网络接口
 network.host: 0.0.0.0
 
 # HTTP通信端口
-http.port: 9201
+http.port: 9200
 
 # 初始主节点列表
 cluster.initial_master_nodes: ["es00"]
 
-# 种子主机列表，用于发现其他节点
-discovery.seed_hosts: ["es00"]
+# 种子主机列表，用于发现其他节点,集群中的节点都在这个地址列表中
+discovery.seed_hosts: ["es00","es01"]
 
 # 启用CORS（跨域资源共享）
 http.cors.enabled: true
@@ -351,13 +343,10 @@ http.cors.enabled: true
 http.cors.allow-origin: "*"
 
 # 启用Elasticsearch安全性
-xpack.security.enabled: false
+#xpack.security.enabled: false
 
 # 启用传输层安全性（TLS/SSL）
-xpack.security.transport.ssl.enabled: false
-
-
-
+#xpack.security.transport.ssl.enabled: false
 ```
 
 ### 2. RestFul风格

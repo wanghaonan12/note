@@ -382,14 +382,9 @@ public class MainApplication {
 
 ##### 3、@ComponentScan、@Import
 
-```java
- * 4、@Import({User.class, DBHelper.class})
- *      给容器中自动创建出这两个类型的组件、默认组件的名字就是全类名
- *
- *
- *
- */
+` @Import({User.class, DBHelper.class})	`给容器中自动创建出这两个类型的组件、默认组件的名字就是全类名
 
+```java
 @Import({User.class, DBHelper.class})
 @Configuration(proxyBeanMethods = false) //告诉SpringBoot这是一个配置类 == 配置文件
 public class MyConfig {
@@ -475,6 +470,9 @@ public static void main(String[] args) {
         <property name="name" value="tomcat"></property>
     </bean>
 </beans>
+```
+
+```java
 @ImportResource("classpath:beans.xml")
 public class MyConfig {}
 
@@ -485,11 +483,11 @@ public class MyConfig {}
         System.out.println("hehe："+hehe);//true
 ```
 
-
-
 #### 2.3、配置绑定 
 
 如何使用Java读取到properties文件中的内容，并且把它封装到JavaBean中，以供随时使用；
+
+`使用原生代码`
 
 ```java
 public class getProperties {
@@ -548,13 +546,32 @@ public class Car {
 
 ##### 2、@EnableConfigurationProperties + @ConfigurationProperties
 
-##### 3、@Component + @ConfigurationProperties
+```JAVA
+@ConfigurationProperties(prefix = "mycar")//指定properties数据绑定
+public class Car {
+    private String brand;
+    private Integer price;
+}
+```
 
-```java
+```JAVA
 @EnableConfigurationProperties(Car.class)
 //1、开启Car配置绑定功能
 //2、把这个Car这个组件自动注册到容器中
 public class MyConfig {
+}
+```
+
+##### 3、@Component + @ConfigurationProperties
+
+```java
+@ToString
+@Data
+@Component
+@ConfigurationProperties(prefix = "mycar")
+public class Car {
+    private String brand;
+    private Integer price;
 }
 ```
 

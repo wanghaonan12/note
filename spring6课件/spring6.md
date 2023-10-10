@@ -1,6 +1,6 @@
-#   Spring6
+Spring6
 
-![image-20221209110043449](images\spring6\image-20221209110043449.png)
+![image-20221209110043449](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221209110043449.png)
 
 ## 1、概述
 
@@ -13,6 +13,8 @@ Spring 自诞生以来备受青睐，一直被广大开发人员作为 Java 企�
 自 2004 年 4 月，Spring 1.0 版本正式发布以来，Spring 已经步入到了第 6 个大版本，也就是 Spring 6。本课程采用Spring当前最新发布的正式版本**6.0.2**。
 
 ![image-20221216223135162](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221201102513199.png)
+
+![](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221201102513199.png)
 
 
 
@@ -62,7 +64,7 @@ Spring 有两个最核心模块： IoC 和 AOP。
 
 官网地址：https://spring.io/
 
-![image-20221207142746771](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221207142746771.png)
+![image-20221207142746771](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221207142746771.png)
 
 ![image-2097896352](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/2097896352.png)
 
@@ -115,7 +117,7 @@ spring core提供了IOC,DI,Bean配置装载创建的核心实现。核心概念�
 
 **（1）Spring6要求JDK最低版本是JDK17**
 
-![image-20221201103138194](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221201103138194.png)
+![image-20221201103138194](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221201103138194.png)
 
 #### 1.5.2、本课程软件版本
 
@@ -145,25 +147,23 @@ spring core提供了IOC,DI,Bean配置装载创建的核心实现。核心概念�
 
 在idea中，依次单击 File -> New -> Project -> New Project
 
-![image-20221205201741893](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221205201741893.png)
+![image-20221205201741893](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221205201741893.png)
 
 
 
 点击“Create”
 
-![image-20221205202000198](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221205202000198.png)
+![image-20221205202000198](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221205202000198.png)
 
 删除src目录
 
 **（2）构建子模块spring6-first**
 
-![image-20221205202117383](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221205202117383.png)
+![image-20221205202117383](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221205202117383.png)
 
 点击 Create 完成
 
-![image-20221205202154225](/Users/richwang/Documents/code/note/spring6课件/images\spring6\image-20221205202154225.png)
-
-
+![image-20221205202154225](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221205202154225.png)
 
 ### 2.3、程序开发
 

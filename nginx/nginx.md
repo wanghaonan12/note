@@ -134,3 +134,299 @@ firewall-cmd --add-service=http –permanent
 firewall-cmd --add-port=80/tcp --permanent
 ```
 
+# Nginx常用操作
+
+## nginx设置环境变量
+
+>  **不仅仅是`nginx	`这样配置环境变量,其他的比如`java`,`maven`都可以这样配置**
+
+1. 进入etc文件(因为我还没有学过vim操作所以这里我就使用了ssh工具进行编辑)
+
+```bash
+cd /etc
+```
+
+2. 编辑environment文件
+
+```bash
+# NGINX 环境变量
+export NGINX_HOME=/usr/local/nginx
+export PATH=${NGINX_HOME}/bin:$PATH:$PATH:${NGINX_HOME}/sbin
+```
+
+![image-20231024225859671](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024225859671.png)
+
+3. 刷新环境变量
+
+```bash 
+source /etc/environment
+```
+
+4. 验证环境变量
+
+```bash
+echo $NGINX_HOME
+```
+
+他会展示我们设置的地址![image-20231024230041539](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024230041539.png)
+
+5. 验证生效
+
+```bash
+nginx -v
+```
+
+展示nginx版本![image-20231024230116516](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024230116516.png)大功告成
+
+## 常用指令
+
+> 刚刚手滑一下关掉了,还好保存了,上了一天班真累啊
+
+1. 版本号查看
+
+```bash
+nginx -V
+```
+
+2. 启动
+
+```bash
+nginx
+```
+
+3. 停止
+
+```bash
+nginx stop
+```
+
+4. 重新加载
+
+```bash
+nginx -s reload
+```
+
+5. 帮助文档(最喜欢这个了)
+
+```bash
+nginx -h
+```
+
+![image-20231024230851673](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024230851673.png)
+
+## nginx配置文件
+
+**配置文件位置:**`/usr/local/nginx/conf/nginx.conf`
+
+>  nginx由三部分组成:全局块,events块,http块
+
+![image-20231024232003537](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024232003537.png)
+
+### 全局块
+
+从配置文件开始到 events 块之间的内容，主要会设置一些影响 nginx 服务器整体运行的配置指令，主要包括配置运行 Nginx 服务器的用户（组）、允许生成的 worker process 数，进程 PID 存放路径、日志存放路径和类型以及配置文件的引入等
+
+```bash
+worker_processes  1;
+```
+
+​	上面的配置这是 Nginx 服务器并发处理服务的关键配置，worker_processes 值越大，可以支持的并发处理量也越多，但是
+
+会受到硬件、软件等设备的制约.
+
+### events 块
+
+events 块涉及的指令主要影响 Nginx 服务器与用户的网络连接，常用的设置包括是否开启对多 work process下的网络连接进行序列化，是否允许同时接收多个网络连接，选取哪种事件驱动模型来处理连接请求，每个 wordprocess 可以同时支持的最大连接数等。
+
+```bash
+events {
+    worker_connections  1024;
+}
+```
+
+上述例子就表示每个 work process 支持的最大连接数为 1024.这部分的配置对 Nginx 的性能影响较大，在实际中应该灵活配置。
+
+### http 块
+
+这算是 Nginx 服务器配置中最频繁的部分，代理、缓存和日志定义等绝大多数功能和第三方模块的配置都在这里。
+
+>  需要注意的是：http 块也可以包括` http 全局块`、`server 块`。
+
+![image-20231024232937500](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231024232937500.png)
+
+1. **http 全局块**
+
+​	http 全局块配置的指令包括文件引入、MIME-TYPE 定义、日志自定义、连接超时时间、单链接请求数上限等。
+
+```bash
+		include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+```
+
+1. `include mime.types;`：包含了mime.types文件中定义的MIME类型。
+
+2. `default_type  application/octet-stream;`：设置默认的MIME类型为application/octet-stream。
+
+3. `#log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '`：注释掉了日志格式的定义，如果需要记录日志可以取消注释。
+
+4. `#access_log  logs/access.log  main;`：注释掉了访问日志的记录，如果需要记录可以取消注释。
+
+5. `#sendfile on;`：开启了sendfile模块，可以将文件内容直接传输给客户端，减少网络传输时间。
+
+6. `#tcp_nopush on;`：开启了TCP_NOPUSH选项，可以减少TCP连接的建立和关闭次数。
+
+7. `keepalive_timeout  65;`：设置keepalive连接的超时时间为65秒。
+
+8. `#gzip on;`：开启了gzip压缩模块，可以将响应数据进行压缩，减少网络带宽占用。
+
+
+
+2. **http server 块**
+
+​		这块和虚拟主机有密切关系，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的，该技术的产生	是	为了节省互联网服务器硬件成本。
+
+​		每个 http 块可以包括多个 server 块，而每个 server 块就相当于一个虚拟主机。而每个 server 块也分为全局 	server 块，以及可以同时包含多个 locaton 块。
+
+```bash
+				listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+
+
+    # another virtual host using mix of IP-, name-, and port-based configuration
+    #
+    #server {
+    #    listen       8000;
+    #    listen       somename:8080;
+    #    server_name  somename  alias  another.alias;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+
+    # HTTPS server
+    #
+    #server {
+    #    listen       443 ssl;
+    #    server_name  localhost;
+
+    #    ssl_certificate      cert.pem;
+    #    ssl_certificate_key  cert.key;
+
+    #    ssl_session_cache    shared:SSL:1m;
+    #    ssl_session_timeout  5m;
+
+    #    ssl_ciphers  HIGH:!aNULL:!MD5;
+    #    ssl_prefer_server_ciphers  on;
+
+    #    location / {
+    #        root   html;
+    #        index  index.html index.htm;
+    #    }
+    #}
+```
+
+这段代码是一个nginx配置文件的片段，包含了一些常用的指令和配置项。具体解释如下：
+
+1. `listen 80;`：监听80端口，即HTTP协议的端口。
+
+2. `server_name localhost;`：指定服务器名，这里是本地主机。
+
+3. `location / {...}`：定义了一个location块，匹配所有请求。
+
+4. `root html;`：指定根目录为html。
+
+5. `index index.html index.htm;`：当请求的文件不存在时，返回index.html或index.htm。
+
+6. `error_page 500 502 503 504  /50x.html;`：指定错误页面，当出现500、502、503、504等错误时，返回/50x.html页面。
+
+7. `location = /50x.html {...}`：指定错误页面的位置，即/50x.html页面。
+
+8. `location ~ \.php$ {...}`：定义了一个location块，匹配以.php结尾的请求。
+
+9. `fastcgi_pass 127.0.0.1:9000;`：将请求转发给FastCGI服务器，监听在127.0.0.1:9000端口。
+
+10. `location ~ \.ht {...}`：定义了一个location块，匹配以.ht结尾的请求。
+
+11. `deny  all;`：拒绝所有以.ht结尾的请求。
+
+12. `#charset koi8-r;`：定义了字符集，但被注释掉了。
+
+13. `#access_log  logs/host.access.log  main;`：定义了访问日志，但被注释掉了。
+
+14. `server_name  somename  alias  another.alias;`：定义了多个server_name，用逗号分隔。
+
+15. `listen 443 ssl;`：监听443端口，即HTTPS协议的端口。
+
+16. `ssl_certificate cert.pem;`：指定SSL证书文件。
+
+17. `ssl_certificate_key  cert.key;`：指定SSL证书密钥文件。
+
+18. `ssl_session_cache shared:SSL:1m;`：指定SSL会话缓存。
+
+19. `ssl_session_timeout 5m;`：指定SSL会话超时时间。
+
+20. `ssl_ciphers  HIGH:!aNULL:!MD5;`：指定SSL密码。
+
+21. `ssl_prefer_server_ciphers  on;`：优先使用服务器端的SSL密码。
+
+22. `location / {...}`：指定根目录为html。
+
+23. `index  index.html index.htm;`：当请求的文件不存在时，返回index.html或index.htm。

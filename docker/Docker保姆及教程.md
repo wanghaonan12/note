@@ -919,11 +919,61 @@ start slave;
 
 ## Dockerfile
 
+[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+
+> Dockerfile是用来构建Docker镜像的文本文件，是由一条条构建镜像所需的指令和参数构成的脚本。
+
+ 从应用软件的角度来看，Dockerfile、Docker镜像与Docker容器分别代表软件的三个不同阶段，
+
+**Dockerfile是软件的原材料**,***Docker镜像是软件的交付品*** ,**Docker容器则可以认为是软件镜像的运行态**，也即依照镜像运行的容器实例Dockerfile面向开发，Docker镜像成为交付标准，Docker容器则涉及部署与运维，三者缺一不可，合力充当Docker体系的基石。1 Dockerfile，需要定义一个Dockerfile，Dockerfile定义了进程需要的一切东西。Dockerfile涉及的内容包括执行代码或者是文件、环境变量、依赖包、运行时环境、动态链接库、操作系统的发行版、服务进程和内核进程(当应用进程需要和系统服务和内核进程打交道，这时需要考虑如何设计namespace的权限控制)等等; 2 Docker镜像，在用Dockerfile定义一个文件之后，docker build时会产生一个Docker镜像，当运行 Docker镜像时会真正开始提供服务; 3 Docker容器，容器是直接提供服务的。  
+
+
+
+### 编写DockerFile
+
+1. 每条保留字指令都必须为大写字母且后面要跟随至少一个参数(`FROM`就是保留字作用和java中的关键字一样)
+2. 指令按照从上到下顺序执行
+3. `#`表示注释
+4. 每条指令都会创建一个新的镜像层并进行提交
+5. docker从基础镜像运行一个容器(`FROM`就是基础镜像)
+6. 执行一条指令并对容器进行修改(之前说的联合文件系统)
+7. 执行类似docker commit的操作提交一个新的镜像
+8. docker 在基于刚提交的镜像运行一个新容器
+9. 执行dockerfile中的吓一跳指令直到所有指令都执行完毕
+
+![image-20231018100037368](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231018100037368.png)
+
+
+
+### 构建镜像
+
+### 运行容器实例
+
 ## Docker微服务
 
 ## Docker网络
 
 ## Docker-compose
+
+1. 安装
+
+> 安装docker-compose 如果有问题 删除 之前下载的`docker-compose.yml`文件,
+>
+> 到git上下载放到`/usr/local/bin/docker-compose`下面,演示中使用的是 `v2.18.1`版本
+>
+> [Releases · docker-compose git地址](https://github.com/docker/compose/releases)
+
+```bash
+curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+```
+
+2. 验证
+
+```bash
+docker-compose version
+```
+
+![image-20231030133850447](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030133850447.png)
 
 ## Docker轻量级可视化工具Portainer
 
@@ -964,5 +1014,135 @@ docker run -d -p 8080:8080 --name mytomcat8 billygoo/tomcat8-jdk8
 
 
 ### redis
+
+> redis 集群使用 docker-compose 安装配置
+
+1. 在`/home/docker_compose`添加`docker-compose.yml`文件
+
+```yml
+version: '2'
+services:
+  redis_node_00: 
+    image: redis:6.0.8
+    container_name: redis_node_00 # 容器名
+    command: # 容器内部执行的命令
+      [
+        "--cluster-enabled","yes", "--appendonly","yes", "--port","6380","--daemonize","NO"
+      ]
+    volumes: # 容器卷
+      - /home/redis_node_00/data:/data
+    ports:
+      - 6380:6380 # rediis端口
+      - 16380:16380 # 集群节点通讯接口在对外设置的端口基础上+10000
+    networks:
+      - redis_network # 容器网络
+  redis_node_01:
+    image: redis:6.0.8
+    container_name: redis_node_01
+    command:
+      [
+        "--cluster-enabled","yes","--appendonly","yes","--port","6381","--daemonize","NO"
+      ]
+    volumes:
+      - /home/redis_node_01/data:/data
+    ports:
+      - 6381:6381
+      - 16381:16381
+    networks:
+      - redis_network
+  redis_node_02:
+    image: redis:6.0.8
+    container_name: redis_node_02
+    command:
+      [
+        "--cluster-enabled","yes","--appendonly","yes","--port","6382","--daemonize","NO"
+      ]
+    volumes:
+      - /home/redis_node_02/data:/data
+    ports:
+      - 6382:6382
+      - 16382:16382
+    networks:
+      - redis_network
+  redis_node_03:
+    image: redis:6.0.8
+    container_name: redis_node_03
+    command:
+      [
+        "--cluster-enabled","yes","--appendonly","yes","--port","6383","--daemonize","NO"
+      ]
+    volumes:
+      - /home/redis_node_03/data:/data
+    ports:
+      - 6383:6383
+      - 16383:16383
+    networks:
+      - redis_network
+  redis_node_04:
+    image: redis:6.0.8
+    container_name: redis_node_04
+    command:
+      [
+        "--cluster-enabled","yes","--appendonly","yes","--port","6384","--daemonize","NO"
+      ]
+    volumes:
+      - /home/redis_node_04/data:/data
+    ports:
+      - 6384:6384
+      - 16384:16384
+    networks:
+      - redis_network
+  redis_node_05:
+    image: redis:6.0.8
+    container_name: redis_node_05
+    command:
+      [
+        "--cluster-enabled","yes","--appendonly","yes","--port","6385","--daemonize","NO"
+      ]
+    volumes:
+      - /home/redis_node_05/data:/data
+    ports:
+      - 6385:6385
+      - 16385:16385
+    networks:
+      - redis_network
+networks:
+  redis_network:
+```
+
+2. 运行
+
+```bash
+docker-compose up -d
+```
+
+![image-20231030115555728](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030115555728.png)
+
+3. 进去容器设置集群
+
+```bash
+docker exec -it redis_node_00 /bin/bash
+redis-cli --cluster create ip:6380 ip:6381 ip:6382 ip:6383 ip:6384 ip:6385 --cluster-replicas 1
+```
+
+![image-20231030132328434](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030132328434.png)
+
+4. 检查集群状态
+
+```bash
+redis-cli -c -h ip  -p 6380
+```
+
+![image-20231030132247198](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030132247198.png)
+
+5. 进行set测试
+
+```bash
+ redis-cli -c -h ip  -p 6380 # 集群中任意一个redis的端口都可以
+```
+
+![image-20231030132624114](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030132624114.png)
+
+
 
 ## Docker总结

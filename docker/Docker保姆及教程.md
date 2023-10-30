@@ -913,8 +913,6 @@ start slave;
 
 ![image-20230917224037535](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917224037535.png)
 
-### redis集群
-
 
 
 ## Dockerfile
@@ -955,6 +953,10 @@ start slave;
 
 ## Docker-compose
 
+​	Docker Compose是一个工具，可以使用一个单独的yaml文件来定义和运行多个Docker容器。它可以轻松地定义和运行复杂的应用程序，而无需手动创建和管理每个容器。使用Docker Compose，可以定义容器之间的依赖关系、网络设置、数据卷挂载等。它还可以在单个命令中启动、停止、重启和删除整个应用程序。Docker Compose是一个非常有用的工具，特别适用于开发人员、测试人员和部署人员。
+
+​	Docker 建议我们每一个容器中只运行一个服务,因为 Docker 容器本身占用资源极少,所以最好是将每个服务单独的分割开来但是这样我们又面临了一个问题？ 如果我需要同时部署好多个服务,难道要每个服务单独写 Dockerfile 然后在构建镜像,构建容器,这样累都累死了,所以 Docker 官方给我们提供了 docker-compose 多服务部署的工具 例如要实现一个 Web 微服务项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库mysql服务容器，redis服务器，注册中心eureka，甚至还包括负载均衡容器等等。 Compose 允许用户通过一个单独的`docker-compose.yml`模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。 可以很容易地用一个配置文件定义一个多容器的应用，然后使用一条指令安装这个应用的所有依赖，完成构建。Docker-Compose 解决了容器与容器之间如何管理编排的问题。
+
 1. 安装
 
 > 安装docker-compose 如果有问题 删除 之前下载的`docker-compose.yml`文件,
@@ -962,6 +964,10 @@ start slave;
 > 到git上下载放到`/usr/local/bin/docker-compose`下面,演示中使用的是 `v2.18.1`版本
 >
 > [Releases · docker-compose git地址](https://github.com/docker/compose/releases)
+>
+> [官网地址](https://docs.docker.com/compose/install/)
+>
+> [官网文档](https://docs.docker.com/compose/compose-file/compose-file-v3/)
 
 ```bash
 curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -974,6 +980,8 @@ docker-compose version
 ```
 
 ![image-20231030133850447](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231030133850447.png)
+
+3. 想要卸载的话把`/usr/local/bin/docker-compose`那个文件删掉就可以了
 
 ## Docker轻量级可视化工具Portainer
 

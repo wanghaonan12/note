@@ -1,4 +1,4 @@
-# Docker保姆及教程
+Docker保姆及教程
 
 ## 简介
 
@@ -1008,7 +1008,55 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ### 构建镜像
 
+目标:将服务jar制作成镜像
 
+![image-20231031145949484](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031145949484.png)
+
+1. 编写Dockerfile
+
+```bash
+# 基础镜像使用java
+FROM openjdk:8
+# VOLUME 指定临时文件目录为/tmp，在主机/var/lib/docker目录下创建了一个临时文件并链接到容器的/tmp
+VOLUME /tmp
+# 将jar包添加到容器中 注意这里的jar位置是在当前dockerfile的同目录
+ADD springboot.jar springboot.jar
+# 运行jar包
+RUN bash -c 'touch /springboot.jar'
+ENTRYPOINT ["java","-jar","/springboot.jar"]
+#暴露8888端口作为微服务
+EXPOSE 8888  
+```
+
+2. 上传jar包
+
+   ![image-20231031151314549](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031151314549.png)
+
+3. 制作镜像
+
+   ```bash
+   docker build -t springboot:2.4 . 
+   ```
+
+   `-t` :设置镜像名和标签Name and optionally a tag (format: "name:tag")
+
+   `. `: 是Dockerfile的位置
+
+   <img src="https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031151952352.png" alt="image-20231031151952352" style="zoom:50%;" />
+
+   **查看镜像**
+
+   ![image-20231031151332436](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031151332436.png)
+
+4. 运行镜像
+
+   ```bash
+   docker run -d -p 8888:8888 --name spring springboot:2.4
+   ```
+
+5. 测试
+
+![image-20231031151902217](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031151902217.png)
 
 ## Docker微服务
 

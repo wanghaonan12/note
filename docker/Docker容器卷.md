@@ -33,7 +33,11 @@
 
 ### 使用
 
-> 1 docker修改，主机同步获得 2 主机修改，docker同步获得3 docker容器stop，主机修改，docker容器重启看数据是否同步。
+> 1 docker修改，主机同步获得
+>
+>  2 主机修改，docker同步获得
+>
+> 3 docker容器stop，主机修改，docker容器重启看数据是否同步。
 
 #### **指令公式**
 
@@ -108,5 +112,31 @@ docker run -dp 3307:3306 \
 3. 连接上新的数据库查看我们的数据是否存在
 
 **容器启动失败!!!,暂时搁浅**
+
+数据库需要保证数据的安全性所以容器卷不支持共享,这里换成`ubantu`或是`centOS`的镜像就不会出想问题,所以我门使用`tomcat`测试,哈哈哈!!!
+
+1. 运行tomcat8
+
+```bash
+ docker run -d -p 8087:8080 -v /home/tomcatdata:/usr/local/tomcat/webapps/ROOT/index.html --name tomcat8 billygoo/tomcat8-jdk8
+```
+
+2. `/home/tomcatdata`添加文件
+
+   ![image-20231031155759465](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031155759465.png)
+
+3. 运行tomcat8_1
+
+   ```bash
+   docker run -d -p 8089:8080 --volumes-from tomcat8 --name tomcat8_1 billygoo/tomcat8-jdk8
+   ```
+
+4. 检查两个容器中的文件
+
+   > 修改后两个地方同时修改
+
+   ![image-20231031160015949](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031160015949.png)
+
+
 
 [学习视频笔记地址](blob:https://github.com/7a30ee28-c241-44d3-a53b-15d96e106143)

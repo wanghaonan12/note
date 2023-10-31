@@ -1,4 +1,4 @@
-Docker保姆及教程
+# Docker保姆及教程
 
 ## 简介
 
@@ -663,7 +663,11 @@ docker push 镜像名称:镜像id
 
 ### 使用
 
-> 1 docker修改，主机同步获得 2 主机修改，docker同步获得3 docker容器stop，主机修改，docker容器重启看数据是否同步。
+> 1 docker修改，主机同步获得
+>
+>  2 主机修改，docker同步获得
+>
+> 3 docker容器stop，主机修改，docker容器重启看数据是否同步。
 
 #### **指令公式**
 
@@ -739,7 +743,29 @@ docker run -dp 3307:3306 \
 
 **容器启动失败!!!,暂时搁浅**
 
+数据库需要保证数据的安全性所以容器卷不支持共享,这里换成`ubantu`或是`centOS`的镜像就不会出想问题,所以我门使用`tomcat`测试,哈哈哈!!!
 
+1. 运行tomcat8
+
+```bash
+ docker run -d -p 8087:8080 -v /home/tomcatdata:/usr/local/tomcat/webapps/ROOT/index.html --name tomcat8 billygoo/tomcat8-jdk8
+```
+
+2. `/home/tomcatdata`添加文件
+
+   ![image-20231031155759465](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031155759465.png)
+
+3. 运行tomcat8_1
+
+   ```bash
+   docker run -d -p 8089:8080 --volumes-from tomcat8 --name tomcat8_1 billygoo/tomcat8-jdk8
+   ```
+
+4. 检查两个容器中的文件
+
+   > 修改后两个地方同时修改
+
+   ![image-20231031160015949](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031160015949.png)
 
 ## Docker复杂安装
 
@@ -1014,6 +1040,8 @@ CMD ["nginx", "-g", "daemon off;"]
 
 1. 编写Dockerfile
 
+> 暴露的端口为服务的端口,在制作镜像之后的宿主机映射的端口可以随意
+
 ```bash
 # 基础镜像使用java
 FROM openjdk:8
@@ -1029,6 +1057,8 @@ EXPOSE 8888
 ```
 
 2. 上传jar包
+
+   [jar包下载](https://github.com/ab128118-3c3c-4ca5-9e7f-c510a47ac249)
 
    ![image-20231031151314549](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031151314549.png)
 

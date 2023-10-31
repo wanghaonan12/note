@@ -917,7 +917,7 @@ start slave;
 
 ## Dockerfile
 
-[Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+[Dockerfile 官网文档](https://docs.docker.com/engine/reference/builder/)
 
 > Dockerfile是用来构建Docker镜像的文本文件，是由一条条构建镜像所需的指令和参数构成的脚本。
 
@@ -925,9 +925,7 @@ start slave;
 
 **Dockerfile是软件的原材料**,***Docker镜像是软件的交付品*** ,**Docker容器则可以认为是软件镜像的运行态**，也即依照镜像运行的容器实例Dockerfile面向开发，Docker镜像成为交付标准，Docker容器则涉及部署与运维，三者缺一不可，合力充当Docker体系的基石。1 Dockerfile，需要定义一个Dockerfile，Dockerfile定义了进程需要的一切东西。Dockerfile涉及的内容包括执行代码或者是文件、环境变量、依赖包、运行时环境、动态链接库、操作系统的发行版、服务进程和内核进程(当应用进程需要和系统服务和内核进程打交道，这时需要考虑如何设计namespace的权限控制)等等; 2 Docker镜像，在用Dockerfile定义一个文件之后，docker build时会产生一个Docker镜像，当运行 Docker镜像时会真正开始提供服务; 3 Docker容器，容器是直接提供服务的。  
 
-
-
-### 编写DockerFile
+### 基础知识
 
 1. 每条保留字指令都必须为大写字母且后面要跟随至少一个参数(`FROM`就是保留字作用和java中的关键字一样)
 2. 指令按照从上到下顺序执行
@@ -941,21 +939,143 @@ start slave;
 
 ![image-20231018100037368](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231018100037368.png)
 
+当编写Dockerfile时，常用的指令可以整理成如下的表格，包括指令、作用、示例和解释：
 
+| **指令**  | **作用**                     | **示例**                                         | **解释**                                              |
+| --------- | ---------------------------- | ------------------------------------------------ | ----------------------------------------------------- |
+| `FROM`    | 指定基础镜像                 | `FROM ubuntu:latest`                             | 选择Ubuntu最新版本作为基础镜像。                      |
+| `WORKDIR` | 设置工作目录                 | `WORKDIR /app`                                   | 在容器中创建/app目录，所有后续指令在此目录下执行。    |
+| `COPY`    | 复制文件或目录到容器中       | `COPY . /app`                                    | 将主机上的所有文件复制到容器的/app目录下。            |
+| `RUN`     | 在容器内部执行命令           | `RUN apt-get update && apt-get install -y nginx` | 在容器内部运行更新和安装Nginx的命令。                 |
+| `ENV`     | 设置环境变量                 | `ENV NODE_ENV=production`                        | 设置环境变量NODE_ENV的值为production。                |
+| `EXPOSE`  | 声明容器监听的网络端口       | `EXPOSE 80`                                      | 声明容器将监听80端口。                                |
+| `CMD`     | 指定容器启动时默认执行的命令 | `CMD ["nginx", "-g", "daemon off;"]`             | 定义容器启动时的默认命令，运行Nginx并以前台模式启动。 |
+
+其中`RUN`有两种语法格式分别是`shell`和`exec`
+
+​	在编写Dockerfile时，可以根据需要选择合适的格式。如果需要使用 Shell 特性，或者有多个命令需要串联执行，可以选择 Shell 形式。如果追求性能，或者希望更清晰地了解指令的执行情况，可以选择 Exec 形式。
+
+**Shell**
+
+​	在 Shell 形式下，`RUN` 指令会直接在 `/bin/sh -c` 中执行。这种格式可以使用通常在 Shell 中可用的各种特性，例如管道操作、变量扩展等。在Shell形式中，多个命令可以使用 `&&` 连接，表示命令串联执行。
+
+```bash
+RUN <命令>
+RUN <命令> && <命令>
+```
+
+示例
+
+```bash
+RUN apt-get update && apt-get install -y nginx
+RUN echo "Hello, World!" > /app/index.html
+```
+
+**exec**
+
+​	在 Exec 形式下，`RUN` 指令会直接在不启动 shell 的情况下执行。这种格式使用 JSON 数组表示，命令及其参数作为独立的元素。Exec 形式通常更高效，因为不启动额外的 shell 进程。
+
+```bash
+RUN ["可执行文件", "参数1", "参数2"]
+```
+
+示例
+
+```bash
+RUN ["apt-get", "update", "&&", "apt-get", "install", "-y", "nginx"]
+RUN ["echo", "Hello, World!", ">", "/app/index.html"]
+```
+
+以以下Dockerfile为例：
+
+```bash
+FROM ubuntu:latest
+WORKDIR /app
+COPY . /app
+RUN apt-get update && apt-get install -y nginx
+ENV NODE_ENV=production
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+- `FROM ubuntu:latest`：选择Ubuntu最新版本作为基础镜像。
+- `WORKDIR /app`：在容器中创建/app目录，所有后续指令都将在此目录下执行。
+- `COPY . /app`：将主机上的所有文件复制到容器的/app目录下。
+- `RUN apt-get update && apt-get install -y nginx`：在容器内部运行更新和安装Nginx的命令。
+- `ENV NODE_ENV=production`：设置环境变量NODE_ENV的值为production。
+- `EXPOSE 80`：声明容器将监听80端口。
+- `CMD ["nginx", "-g", "daemon off;"]`：定义容器启动时的默认命令，运行Nginx并以前台模式启动。
 
 ### 构建镜像
 
-### 运行容器实例
+
 
 ## Docker微服务
 
 ## Docker网络
+
+Docker网络（Docker Network）是Docker提供的一种用于容器间通信和容器与外部网络通信的网络方案。Docker网络允许你创建、管理和连接多个Docker容器，提供了更灵活、可扩展的网络架构。
+
+### 1. **Docker网络的作用**
+
+- **容器间通信**：Docker网络允许不同容器之间进行网络通信，使得容器之间可以方便地交换数据和信息。
+  
+- **容器与外部网络通信**：Docker网络可以将容器连接到外部网络，使得容器可以与外部世界进行通信，例如访问互联网或局域网资源。
+
+### 2. **三种Docker网络类型的区别**
+
+Docker提供了三种基本的网络类型：
+
+- **Bridge Network（桥接网络）**：
+  - **作用**：默认的网络模式，容器通过网络桥接方式与主机相连，容器间互相隔离，但可以与主机和外部网络通信。
+  - **使用场景**：适用于多个容器需要在同一个宿主机上运行，相互隔离，但需要与外部通信的情况。
+  - **使用方式**：使用 `docker network create` 命令创建桥接网络，然后将容器连接到该网络。
+
+- **Host Network（主机网络）**：
+  - **作用**：容器直接使用宿主机的网络命名空间，与宿主机网络共享同一网络接口，容器间无网络隔离。
+  - **使用场景**：适用于对网络性能要求较高、不需要容器间隔离的场景。
+  - **使用方式**：使用 `--network host` 选项启动容器。
+
+- **Overlay Network（覆盖网络）**：
+  - **作用**：允许不同Docker守护进程间的容器进行通信，适用于跨主机的容器通信，提供多主机上的容器互联。
+  - **使用场景**：适用于分布式应用，跨多个主机运行的场景。
+  - **使用方式**：使用 `docker network create` 命令创建覆盖网络，然后将容器连接到该网络。
+
+### 3. **使用Docker网络的基本操作**
+
+- **创建网络**：使用 `docker network create` 命令创建新的Docker网络。
+
+  ```
+  docker network create mynetwork
+  ```
+
+- **查看网络**：使用 `docker network ls` 命令查看所有网络。
+
+  ```
+  docker network ls
+  ```
+
+- **将容器连接到网络**：在启动容器时使用 `--network` 选项将容器连接到指定的网络。
+
+  ```
+  docker run --network mynetwork mycontainer
+  ```
+
+- **断开容器与网络的连接**：使用 `docker network disconnect` 命令将容器与网络断开连接。
+
+  ```
+  docker network disconnect mynetwork mycontainer
+  ```
+
+以上操作示例展示了Docker网络的基本用法。根据具体场景，可以选择合适的网络类型，使得容器能够在不同的网络环境中进行通信和交互。
 
 ## Docker-compose
 
 ​	Docker Compose是一个工具，可以使用一个单独的yaml文件来定义和运行多个Docker容器。它可以轻松地定义和运行复杂的应用程序，而无需手动创建和管理每个容器。使用Docker Compose，可以定义容器之间的依赖关系、网络设置、数据卷挂载等。它还可以在单个命令中启动、停止、重启和删除整个应用程序。Docker Compose是一个非常有用的工具，特别适用于开发人员、测试人员和部署人员。
 
 ​	Docker 建议我们每一个容器中只运行一个服务,因为 Docker 容器本身占用资源极少,所以最好是将每个服务单独的分割开来但是这样我们又面临了一个问题？ 如果我需要同时部署好多个服务,难道要每个服务单独写 Dockerfile 然后在构建镜像,构建容器,这样累都累死了,所以 Docker 官方给我们提供了 docker-compose 多服务部署的工具 例如要实现一个 Web 微服务项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库mysql服务容器，redis服务器，注册中心eureka，甚至还包括负载均衡容器等等。 Compose 允许用户通过一个单独的`docker-compose.yml`模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。 可以很容易地用一个配置文件定义一个多容器的应用，然后使用一条指令安装这个应用的所有依赖，完成构建。Docker-Compose 解决了容器与容器之间如何管理编排的问题。
+
+### 准备
 
 1. 安装
 
@@ -965,9 +1085,7 @@ start slave;
 >
 > [Releases · docker-compose git地址](https://github.com/docker/compose/releases)
 >
-> [官网地址](https://docs.docker.com/compose/install/)
->
-> [官网文档](https://docs.docker.com/compose/compose-file/compose-file-v3/)
+> [官网安装教程](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
 
 ```bash
 curl -L https://get.daocloud.io/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -983,9 +1101,221 @@ docker-compose version
 
 3. 想要卸载的话把`/usr/local/bin/docker-compose`那个文件删掉就可以了
 
+### 使用
+
+>  这就是基础的使用,如果需要更复杂的,看一下[官网教程文档](https://docs.docker.com/compose/compose-file/compose-file-v3/)
+
+1. 随便找一个文件夹创建一个`docker-compose.yml`文件
+
+   ```yml
+   version: "3"  # Docker Compose文件的版本
+   
+   services:  # 定义服务列表
+     redis:  # 第一个服务名为redis
+       image: redis:6.0.8  # 使用Redis 6.0.8镜像
+       ports:
+         - "6379:6379"  # 将主机的6379端口映射到容器的6379端口
+       volumes:
+         - /home/redis/redis.conf:/etc/redis/redis.conf  # 挂载Redis配置文件
+         - /home/redis/data:/data  # 挂载Redis数据目录
+       networks:
+         - atguigu_net  # 使用名为atguigu_net的自定义网络
+       command: redis-server /etc/redis/redis.conf  # 启动Redis时使用指定配置文件
+   
+     mysql:  # 第二个服务名为mysql
+       image: mysql:5.7.36  # 使用MySQL 5.7.36镜像
+       environment:
+         MYSQL_ROOT_PASSWORD: '123456'  # 设置MySQL的root用户密码
+       ports:
+         - "3306:3306"  # 将主机的3306端口映射到容器的3306端口
+       volumes:
+         - /home/master/data:/var/lib/mysql  # 挂载MySQL数据目录
+         - /home/master/config:/etc/mysql  # 挂载MySQL配置目录
+         - /home/master/log:/var/log/mysql  # 挂载MySQL日志目录
+       networks:
+         - atguigu_net  # 使用名为atguigu_net的自定义网络
+       command: --default-authentication-plugin=mysql_native_password # 解决外部无法访问的认证插件问题
+   
+   networks:
+     atguigu_net:  # 定义名为atguigu_net的自定义网络
+   
+   ```
+
+2. 运行文档
+
+   ```bash
+   docker-compose up
+   ```
+
+   ![image-20231031102227956](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031102227956.png)
+
+   运行完ps检查一下,完美执行成功!!
+
+### 常用指令
+
+当使用Docker Compose时，以下是常用指令的表格形式展示：
+
+| **指令**                                                    | **描述**                                     |
+| ----------------------------------------------------------- | -------------------------------------------- |
+| `docker-compose up`                                         | 启动服务，创建并启动容器。                   |
+| `docker-compose up -d`                                      | 在后台模式启动服务。                         |
+| `docker-compose down`                                       | 停止并移除所有服务容器、网络、图像和存储卷。 |
+| `docker-compose down -v`                                    | 同时移除存储卷。                             |
+| `docker-compose build`                                      | 构建或重新构建服务。                         |
+| `docker-compose build <service-name>`                       | 仅构建特定服务。                             |
+| `docker-compose ps`                                         | 显示服务容器的状态。                         |
+| `docker-compose logs`                                       | 查看服务的日志输出。                         |
+| `docker-compose logs <service-name>`                        | 查看特定服务的日志。                         |
+| `docker-compose exec <service-name> <command>`              | 在特定服务容器内执行命令。                   |
+| `docker-compose stop`                                       | 停止所有服务容器，但不移除它们。             |
+| `docker-compose start`                                      | 启动已经停止的服务容器。                     |
+| `docker-compose restart`                                    | 重启所有或指定的服务容器。                   |
+| `docker-compose restart <service-name>`                     | 重启特定服务。                               |
+| `docker-compose pull`                                       | 从远程仓库拉取服务的最新镜像。               |
+| `docker-compose pause`                                      | 暂停所有服务容器的执行。                     |
+| `docker-compose unpause`                                    | 恢复所有服务容器的执行。                     |
+| `docker-compose top`                                        | 显示所有服务容器中运行的进程。               |
+| `docker-compose config`                                     | 验证并查看`docker-compose.yml`文件的配置。   |
+| `docker-compose scale <service-name>=<number-of-instances>` | 缩放服务的实例数量。                         |
+| `docker-compose version`                                    | 显示Docker Compose的版本信息。               |
+
+请注意，这些指令的使用可能会依赖于您的具体应用和环境，确保在使用时参考官方文档或使用`docker-compose --help`来获取详细的命令说明和参数信息。
+
+
+
+## Docker容器监控-CAdvisor+InfluxDB+Granfana
+
+​	Docker容器监控（Container Monitoring）是一种追踪、测量和分析Docker容器运行时性能和行为的方法。在Docker容器监控中，通常使用一组工具来收集和可视化容器的指标数据，以便及时发现问题、优化性能和规划资源。
+
+1. **CAdvisor（容器监控工具）**
+
+​	CAdvisor是由Google开发的开源容器监控工具，它能够自动收集Docker容器的性能指标数据，如CPU使用率、内存使用量、网络流量等，并将这些数据提供给用户。
+
+2. **InfluxDB（时序数据库）**
+
+​	InfluxDB是一个开源的时序数据库，特别适用于存储时间序列数据。在Docker容器监控中，InfluxDB用于存储CAdvisor收集到的容器指标数据。
+
+3. **Grafana（可视化工具）**
+
+​	Grafana是一个开源的数据可视化和监控平台，它可以连接各种数据源（包括InfluxDB），并将数据以图表、仪表盘的形式展示出来。在Docker容器监控中，Grafana用于可视化InfluxDB中的容器指标数据，提供直观的监控界面。
+
+​	使用docker-compose安装
+
+```bash
+version: '3.1' # Docker Compose文件的版本
+
+volumes:
+  # 定义数据卷
+  grafana_data: {} # Grafana的数据卷
+
+services:
+  # 定义服务列表
+  influxdb:
+    # InfluxDB服务
+    image: tutum/influxdb:0.9 # 使用InfluxDB 0.9镜像
+    restart: always # 容器退出时总是重启
+    environment:
+      # 环境变量配置
+      - PRE_CREATE_DB=cadvisor # 预先创建cadvisor数据库
+    ports:
+      # 端口映射
+      - "8083:8083" # InfluxDB管理界面端口
+      - "8086:8086" # InfluxDB API端口
+    volumes:
+      # 挂载数据卷
+      - ./data/influxdb:/data # 将本地目录映射到InfluxDB容器的/data目录下
+
+  cadvisor:
+    # Cadvisor服务
+    image: google/cadvisor # 使用Google Cadvisor镜像
+    links:
+      # 链接到InfluxDB服务
+      - influxdb:influxsrv # 将influxdb服务命名为influxsrv并链接到cadvisor容器
+    command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxsrv:8086 # 启动参数，使用InfluxDB作为存储驱动
+    restart: always # 容器退出时总是重启
+    ports:
+      # 端口映射
+      - "8085:8080" # Cadvisor Web界面端口
+    volumes:
+      # 挂载文件和目录
+      - /:/rootfs:ro # 挂载根目录为只读
+      - /var/run:/var/run:rw # 挂载/var/run目录为读写
+      - /sys:/sys:ro # 挂载/sys目录为只读
+      - /var/lib/docker/:/var/lib/docker:ro # 挂载/var/lib/docker目录为只读
+
+  grafana:
+    # Grafana服务
+    user: "104" # 指定用户ID
+    image: grafana/grafana # 使用Grafana镜像
+    restart: always # 容器退出时总是重启
+    links:
+      # 链接到InfluxDB服务
+      - influxdb:influxsrv # 将influxdb服务命名为influxsrv并链接到grafana容器
+    ports:
+      # 端口映射
+      - "3000:3000" # Grafana Web界面端口
+    volumes:
+      # 挂载Grafana数据卷
+      - grafana_data:/var/lib/grafana # 将grafana_data数据卷映射到/var/lib/grafana目录下
+    environment:
+      # 环境变量配置
+      - HTTP_USER=admin # Grafana登录用户名
+      - HTTP_PASS=admin # Grafana登录密码
+      - INFLUXDB_HOST=influxsrv # InfluxDB主机名
+      - INFLUXDB_PORT=8086 # InfluxDB端口
+      - INFLUXDB_NAME=cadvisor # InfluxDB数据库名称
+      - INFLUXDB_USER=root # InfluxDB用户名
+      - INFLUXDB_PASS=123456 # InfluxDB密码
+```
+
+1. 创建docker-compose.yml文件执行`docker-compose up -d`
+2. 检查启动状况(账号密码在配置中有写都是`admin`)
+
+![image-20231031135113969](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031135113969.png)
+
+3. 配置`Grafana`数据源
+
+![image-20231031135507957](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031135507957.png)
+
+4. 连接数据库
+
+![image-20231031140157067](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031140157067.png)
+
+5. 创建面板
+
+> 跟着点
+
+![image-20231031141501974](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031141501974.png)
+
+> 选则数据源
+
+![image-20231031141529100](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031141529100.png)
+
+> 配置查询条件`Time series`那个下拉框可以选则不同的图标样式
+
+![image-20231031141921078](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031141921078.png)
+
 ## Docker轻量级可视化工具Portainer
 
-## Docker容器监控
+1. 安装portainer
+
+```bash
+ docker run -d -p 8000:8000 -p 9000:9000 --name portainer --restart=always -v /home/run/docker.sock:/var/run/docker.sock -v /home/data:/data portainer/portainer 
+```
+
+2. 访问地址`IP:9000`结果portainer更新了,老大的local没了,看官网吧[Initial setup - Portainer Documentation](https://docs.portainer.io/start/install-ce/server/setup)
+
+> 登录,设置账号密码然后点点点,第四步复制到服务器执行,第五步起一个名字,然后把刚才安装的`agrent`的服务器和端口填写上去,然后点击连接
+
+![image-20231031130355074](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031130355074.png)
+
+![image-20231031130511507](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031130511507.png)
+
+3. 连接完成,就是这样了
+
+![image-20231031130531370](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20231031130531370.png)
+
+
 
 ## 常用软件安装
 
@@ -1028,7 +1358,7 @@ docker run -d -p 8080:8080 --name mytomcat8 billygoo/tomcat8-jdk8
 1. 在`/home/docker_compose`添加`docker-compose.yml`文件
 
 ```yml
-version: '2'
+version: '3'
 services:
   redis_node_00: 
     image: redis:6.0.8
@@ -1154,3 +1484,7 @@ redis-cli -c -h ip  -p 6380
 
 
 ## Docker总结
+
+
+
+[学习视频笔记地址](blob:https://github.com/7a30ee28-c241-44d3-a53b-15d96e106143)

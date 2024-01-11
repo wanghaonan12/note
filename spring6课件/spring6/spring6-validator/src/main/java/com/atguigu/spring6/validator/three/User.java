@@ -16,7 +16,7 @@ public class User {
     @NotBlank(message = "手机号码不能为空")
     private String phone;
 
-    @CannotBlank
+//    @CannotBlank
     private String message;
 
     public String getMessage() {

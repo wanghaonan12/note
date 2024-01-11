@@ -13,8 +13,8 @@ public class TestBookTx {
 
     @Test
     public void testBuyBook() {
-        //bookController.buyBook(1,1);
-        Integer[] bookIds = {1,2};
-        bookController.checkout(bookIds,1);
+        bookController.buyBook(1,1);
+//        Integer[] bookIds = {1,2};
+//        bookController.checkout(bookIds,1);
     }
 }

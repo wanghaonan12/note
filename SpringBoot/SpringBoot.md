@@ -1,6 +1,6 @@
 # SpringBoot
 
-## 学前准备
+## 一 、学前准备
 
 ### 环境要求
 
@@ -9,7 +9,7 @@
 
 ### 学习资料
 
-- 文档地址： https://www.yuque.com/atguigu/springboot
+- 文档地址： [SpringBoot2核心技术 (yuque.com)](https://www.yuque.com/leifengyang/springboot2)
 
 - 视频地址： http://www.gulixueyuan.com/
 - 源码地址：https://gitee.com/leifengyang/springboot2
@@ -47,7 +47,7 @@ https://spring.io/projects/spring-boot
   </profiles>
 ```
 
-## SpringBoot2入门
+## 二、 SpringBoot2入门
 
 1. 创建项目添加依赖
 
@@ -152,7 +152,7 @@ public class HelloController {
 
 ---
 
-## spring自动配置
+## 三 、spring自动配置
 
 ### 1、SpringBoot特点
 
@@ -378,17 +378,35 @@ public class MainApplication {
 
 ##### 2、@Bean、@Component、@Controller、@Service、@Repository
 
-
+​	这些注解都被用于组件扫描，注解的目标类或方法通常会被Spring容器实例化和管理，以支持依赖注入。这使得这些组件能够在运行时通过Spring容器获取它们所依赖的其他组件。
+ `@Controller`、`@Service`、`@Repository` 这三个注解是 `@Component` 的特化，它们提供了更具体的角色标识，用于更好地组织代码结构。
 
 ##### 3、@ComponentScan、@Import
 
 ` @Import({User.class, DBHelper.class})	`给容器中自动创建出这两个类型的组件、默认组件的名字就是全类名
 
 ```java
-@Import({User.class, DBHelper.class})
-@Configuration(proxyBeanMethods = false) //告诉SpringBoot这是一个配置类 == 配置文件
-public class MyConfig {
+@Configuration
+public class DatabaseConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        // 配置数据源
+        return new DataSource();
+    }
 }
+
+@Configuration(proxyBeanMethods = false) //告诉SpringBoot这是一个配置类 == 配置文件
+@Import(DatabaseConfig.class) // 导入配置DatabaseConfig中的bean对象,无需显示注入DatabaseConfig类中使用的Bean对象
+public class AppConfig {
+
+    @Bean
+    public AppService appService(DataSource dataSource) {
+        // 直接引用导入的 DatabaseConfig 配置类中的 dataSource
+        return new AppService(dataSource);
+    }
+}
+
 ```
 
 @Import 高级用法： https://www.bilibili.com/video/BV1gW411W7wy?p=8
@@ -802,3 +820,143 @@ public class HelloController {
 
 
 ##### 3、自动编写好主配置类
+
+
+
+## 四、yaml配置文件
+
+1. yaml简介
+
+>  YAML 是 "YAML Ain't Markup Language"（YAML 不是一种标记语言）的递归缩写。在开发的这种语言时，YAML 的意思其实是："Yet Another Markup Language"（仍是一种标记语言）。 
+
+2. 语法
+   - key: value；kv之间有空格
+   - 大小写敏感
+   - 使用缩进表示层级关系
+   - 缩进不允许使用tab，只允许空格
+   - 缩进的空格数不重要，只要相同层级的元素左对齐即可
+   - '#'表示注释
+   - 字符串无需加引号，如果要加，''与""表示字符串内容 会被 转义/不转义
+
+3. 数据类型
+
+- 字面量：单个的、不可再分的值。date、boolean、string、number、null
+
+```yml
+k: v
+```
+
+- 对象：键值对的集合。map、hash、set、object 
+
+```yml
+行内写法：  k: {k1:v1,k2:v2,k3:v3}
+#或
+k: 
+  k1: v1
+  k2: v2
+  k3: v3
+```
+
+- 数组：一组按次序排列的值。array、list、queue
+
+```yml
+行内写法：  k: [v1,v2,v3]
+#或者
+k:
+ - v1
+ - v2
+ - v3
+```
+
+4. 示例
+
+实体对象
+
+```java
+@Data
+public class Person {
+	
+	private String userName;
+	private Boolean boss;
+	private Date birth;
+	private Integer age;
+	private Pet pet;
+	private String[] interests;
+	private List<String> animal;
+	private Map<String, Object> score;
+	private Set<Double> salarys;
+	private Map<String, List<Pet>> allPets;
+}
+
+@Data
+public class Pet {
+	private String name;
+	private Double weight;
+}
+```
+
+配置文件
+
+```yml
+# yaml表示以上对象
+person:
+  userName: zhangsan
+  boss: false
+  birth: 2019/12/12 20:12:33
+  age: 18
+  pet: 
+    name: tomcat
+    weight: 23.4
+  interests: [篮球,游泳]
+  animal: 
+    - jerry
+    - mario
+  score:
+    english: 
+      first: 30
+      second: 40
+      third: 50
+    math: [131,140,148]
+    chinese: {first: 128,second: 136}
+  salarys: [3999,4999.98,5999.99]
+  allPets:
+    sick:
+      - {name: tom}
+      - {name: jerry,weight: 47}
+    health: [{name: mario,weight: 47}]
+```
+
+5. 自定义配置显示
+
+> 自定义的类和配置文件绑定一般没有提示。
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+
+ <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+```
+
+配置之后可以使用ctrl键显示出来,并跳转到使用的地方
+
+![image-20231220173528294](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20231220173528294.png)
+
+五、Web开发

@@ -11,7 +11,7 @@ public class TestUser {
         MyService service = context.getBean(MyService.class);
         User user = new User();
         user.setName("lucy");
-        user.setPhone("13566754321");
+        user.setPhone("1");
         user.setMessage("test a t guigu");
         service.testMethod(user);
     }

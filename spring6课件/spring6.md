@@ -1456,19 +1456,35 @@ public void testBeanScope(){
 
 - bean对象创建（调用无参构造器）
 
+  >  Spring容器首先使用默认的无参构造器实例化Bean对象。
+
 - 给bean对象设置属性
+
+  >  Spring容器通过依赖注入或者其他配置方式将Bean的属性设置为指定的值。
 
 - bean的后置处理器（初始化之前）
 
+  >  如果您在配置中指定了BeanPostProcessor（后置处理器），Spring将在Bean初始化之前调用这些后置处理器的方法。这为您提供了在Bean初始化前进行额外处理的机会。
+
 - bean对象初始化（需在配置bean时指定初始化方法）
+
+  > 如果您在配置中指定了初始化方法，Spring将调用该方法来完成Bean的初始化。这个初始化方法可以是您自定义的方法
 
 - bean的后置处理器（初始化之后）
 
+  > 在Bean初始化完成后，如果存在BeanPostProcessor（后置处理器），Spring将再次调用这些后置处理器的方法。这允许您在Bean初始化之后执行一些定制的逻辑。
+
 - bean对象就绪可以使用
+
+  > 此时，Bean已经完全初始化，可以在应用程序中使用了。
 
 - bean对象销毁（需在配置bean时指定销毁方法）
 
+  > 如果您在配置中指定了销毁方法，Spring将在容器关闭时调用该方法。这个方法可以包含一些清理资源的逻辑。
+
 - IOC容器关闭
+
+  > 当应用程序关闭时，Spring容器会关闭。在容器关闭之前，它将调用所有注册的销毁方法，从而完成Bean的销毁过程。
 
 **②修改类User**
 
@@ -4242,12 +4258,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-//两种方式均可
-//方式一
-//@ExtendWith(SpringExtension.class)
-//@ContextConfiguration("classpath:beans.xml")
-//方式二
-@SpringJUnitConfig(locations = "classpath:beans.xml")
+    //两种方式均可
+    //方式一
+    //@ExtendWith(SpringExtension.class)
+    //@ContextConfiguration("classpath:beans.xml")
+    //方式二
+    @SpringJUnitConfig(locations = "classpath:beans.xml")
 public class SpringJUnit5Test {
 
     @Autowired
@@ -4797,21 +4813,17 @@ public class TxByAnnotationTest {
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd">
-```
-
-在Spring的配置文件中添加配置：
-
-```xml
-<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="druidDataSource"></property>
-</bean>
-
-<!--
-    开启事务的注解驱动
-    通过注解@Transactional所标识的方法或标识的类中所有的方法，都会被事务管理器管理事务
--->
-<!-- transaction-manager属性的默认值是transactionManager，如果事务管理器bean的id正好就是这个默认值，则可以省略这个属性 -->
-<tx:annotation-driven transaction-manager="transactionManager" />
+    <!--    在Spring的配置文件中添加配置：-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="druidDataSource"></property>
+    </bean>
+    <!--
+        开启事务的注解驱动
+        通过注解@Transactional所标识的方法或标识的类中所有的方法，都会被事务管理器管理事务
+    -->
+    <!-- transaction-manager属性的默认值是transactionManager，如果事务管理器bean的id正好就是这个默认值，则可以省略这个属性 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
 ```
 
 ##### ②添加事务注解
@@ -5805,7 +5817,7 @@ ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:bean*.xm
 
 ![image-20221207122500801](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221207122500801.png)
 
-**第二步 在resource目录下创建两个配置文件：messages_zh_CN.propertes和messages_en_GB.propertes**
+**第二步 在resource目录下创建两个配置文件：messages_zh_CN.properties和messages_en_GB.properties**
 
 ![image-20221207124839565](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20221207124839565.png)
 

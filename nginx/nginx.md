@@ -136,6 +136,30 @@ firewall-cmd --add-service=http –permanent
 firewall-cmd --add-port=80/tcp --permanent
 ```
 
+## 安装报错
+
+### 报错1
+
+![https://img-blog.csdnimg.cn/2020071712094293.png](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/2020071712094293.png)
+
+注释掉`src/os/unix/ngx_usr.c`文件中的配置大概在35行的样子，如下：
+
+![](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/20200717121206221.png)
+
+### 报错2
+
+```
+src/http/ngx_http_script.c: In function ‘ngx_http_script_add_capture_code’:
+src/http/ngx_http_script.c:1181:18: error: cast between incompatible function types from ‘size_t (*)(ngx_http_script_engine_t *)’ {aka ‘long unsigned int (*)(struct <anonymous> *)’} to ‘void (*)(ngx_http_script_engine_t *)’ {aka ‘void (*)(struct <anonymous> *)’} [-Werror=cast-function-type]
+     code->code = (ngx_http_script_code_pt)
+```
+
+修改`/objs/Makefile`文件
+
+CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter **- Werror** -g 
+将 **- Werror** 去掉
+![image-20240103110902970](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240103110902970.png)
+
 # Nginx常用操作
 
 ## nginx设置环境变量

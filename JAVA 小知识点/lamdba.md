@@ -90,7 +90,7 @@ List<Employee> employees = Arrays.asList(
 );
 ```
 ### 1、原始方法
-然后我们写分别查询出<font color =red>年龄大于`25`岁的员工信息和工资大于`4000`</font>的员工信息，发现`findEmployeesByAge`和`findEmployeesBySalary`两个方法代码非常的相似，<font color =red>只有查询条件不同，所以这个方法是不太可取的。
+然后我们写分别查询出年龄大于`25`岁的员工信息和工资大于`4000` 的员工信息，发现`findEmployeesByAge`和`findEmployeesBySalary`两个方法代码非常的相似，只有查询条件不同，所以这个方法是不太可取的。
 ```java
 public void test3(){
     //年龄
@@ -157,7 +157,7 @@ public class FilterEmployeeBySalary implements MyPredicate<Employee>{
     }
 }
 ```
-<font color = red>这时我们可以只需要创建通用的方法: 具体的调用只需要传入具体的实现类(接口作为参数)</font>
+ 这时我们可以只需要创建通用的方法: 具体的调用只需要传入具体的实现类(接口作为参数) 
 
 ```java
 public List<Employee> filterEmployees(List<Employee>list,MyPredicate<Employee>mp){
@@ -170,7 +170,7 @@ public List<Employee> filterEmployees(List<Employee>list,MyPredicate<Employee>mp
     return emps;
 }
 ```
-<font color =red>测试的时候就传入两个不同的类，来指定查询的行为</font>
+测试的时候就传入两个不同的类，来指定查询的行为 
 
 ```java
 //优化方式一 :  使用策略设计模式进行优化  下面的方法只要写一个
@@ -187,7 +187,7 @@ public void test4(){
 }
 ```
 ### 3、优化方式二-使用匿名内部类优化
-<font color =red>这样的好处在于不需要创建接口的具体的实现类，(但是还是需要`MyPredicate`接口和`filterEmployees()`方法): 
+这样的好处在于不需要创建接口的具体的实现类，(但是还是需要`MyPredicate`接口和`filterEmployees()`方法): 
 ```java
 //优化方式二 ： 使用匿名内部类  这样的好处是不要创建一个额外的 策略类
 public void test5(){
@@ -203,7 +203,7 @@ public void test5(){
 }
 ```
 ### 4、<font color = green>优化方式三-使用Lambda表达式
-<font color = red>省去匿名内部类的没用的代码，增强可读性:(注意还是需要那个`filterEmployees()`方法和`MyPredicate`接口)</font>
+ 省去匿名内部类的没用的代码，增强可读性:(注意还是需要那个`filterEmployees()`方法和`MyPredicate`接口) 
 ```java
 public void test6(){
     List<Employee> list = filterEmployees(this.employees, (e) -> e.getSalary() > 4000);
@@ -211,7 +211,7 @@ public void test6(){
 }
 ```
 ### 5、<font color = green>优化方式四-使用Stream-API
-<font color = red>使用`StreamAPI`完全不需要其他的代码，包括不需要`filterEmployees()`方法，代码很简洁:
+ 使用`StreamAPI`完全不需要其他的代码，包括不需要`filterEmployees()`方法，代码很简洁:
 ```java
 public void test7(){
     employees.stream().filter( (e) -> e.getSalary() < 4000 ).limit(2).forEach(System.out::println);
@@ -224,9 +224,9 @@ public void test7(){
 **关于箭头操作符:** 
 
  - `Java8`中引入了一个新的操作符，`"->"`，该操作符称为箭头操作符或者`Lambda`操作符，箭头操作符将`Lambda`表达式拆分成两部分；
- - 左侧:  `Lambda`表达式的<font color = blue>参数列表</font>，对应的是<font color = red>接口中抽象方法的参数列表</font>；
- - 右侧:  `Lambda`表达式中所需要执行的功能(<font color =blue>`Lambda`体</font>)，对应的是<font color = red>对抽象方法的实现；(函数式接口(只能有一个抽象方法))
- - `Lambda`表达式的实质是　<font color =red>对接口的实现</font>；
+ - 左侧:  `Lambda`表达式的 参数列表 ，对应的是 接口中抽象方法的参数列表 ；
+ - 右侧:  `Lambda`表达式中所需要执行的功能(`Lambda`体 )，对应的是 对抽象方法的实现；(函数式接口(只能有一个抽象方法))
+ - `Lambda`表达式的实质是　对接口的实现 ；
 
 
 **语法格式:**
@@ -254,7 +254,7 @@ public void test1(){
 }
 ```
 
-<font color =red>(二)、接口中的抽象方法 : 一个参数且无返回值；  (若只有一个参数，那么小括号可以省略不写)
+(二)、接口中的抽象方法 : 一个参数且无返回值；  (若只有一个参数，那么小括号可以省略不写)
 
 ```java
 public void test2(){
@@ -264,7 +264,7 @@ public void test2(){
 }
 ```
 
-<font color =red>(三)、两个参数，有返回值，并且有多条语句 ：　**要用大括号括起来，而且要写上`return`**
+(三)、两个参数，有返回值，并且有多条语句 ：　**要用大括号括起来，而且要写上`return`**
 
 ```java
 public void test3(){
@@ -293,7 +293,7 @@ public void test3(){
 [8, 5, 4, 2, 1]
 ```
 
-<font color =red>(四)、两个参数，有返回值，但是只有一条语句:　**大括号省略，`return`省略**
+(四)、两个参数，有返回值，但是只有一条语句:　**大括号省略，`return`省略**
 
  
 
@@ -311,7 +311,7 @@ public void test4(){
 [1, 2, 4, 5, 8]
 ```
 
- <font color =red>(五)、 `Lambda`表达式的参数列表的数据类型 可以省略不写，因为JVM编译器通过上下文推断出数据类型，即"类型推断"， `(Integer x,Integer y ) -> Integer.compare(x,y)`可以简写成`(x,y) -> Integer.compare(x,y)`；
+ (五)、 `Lambda`表达式的参数列表的数据类型 可以省略不写，因为JVM编译器通过上下文推断出数据类型，即"类型推断"， `(Integer x,Integer y ) -> Integer.compare(x,y)`可以简写成`(x,y) -> Integer.compare(x,y)`；
 
 ```java
 上联: 左右遇一括号省
@@ -321,8 +321,8 @@ public void test4(){
 ***
 ## 三、函数式接口
 
- - <font color =red>若接口中只有一个抽象方法的接口称为函数式接口；
- - <font color =red>可以使用注解`@FunctionlInterface`来标识，可以检查是否是函数式接口；
+ - 若接口中只有一个抽象方法的接口称为函数式接口；
+ - 可以使用注解`@FunctionlInterface`来标识，可以检查是否是函数式接口；
 
  例子: 对一个进行`+-*/`的运算：　
 
@@ -535,7 +535,7 @@ public List<String> filterStr(List<String>list, Predicate<String>pre){
 ## 六、方法引用和构造器引用
 ### 1、方法引用
 
-使用前提: **`Lambda`体中调用方法的参数列表和返回值类型，要和函数式接口中抽象方法的参数列表和返回值类型保持一致；**</font>
+使用前提: **`Lambda`体中调用方法的参数列表和返回值类型，要和函数式接口中抽象方法的参数列表和返回值类型保持一致；** 
 
 #### 1)、语法格式(一) 对象::实例方法名
 
@@ -627,7 +627,7 @@ public void test3(){
 
 `Integer`类中的
 
-#### 3)、语法格式(三) 类::实例方法名</font>
+#### 3)、语法格式(三) 类::实例方法名 
 
 使用注意: **若Lambda参数列表中的第一个参数是实例方法的第一个调用者，而第二个参数是实例方法的参数时，可以使用`ClassName :: method`。**
 ```java

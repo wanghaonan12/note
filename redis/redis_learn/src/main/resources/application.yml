@@ -1,0 +1,28 @@
+server:
+  port: 1346
+spring:
+  swagger2:
+    enabled: true
+  application:
+    name: redis_learn
+  redis:
+    cluster:
+      nodes: 43.138.25.182:6379,43.138.25.182:6380,43.138.25.182:6381,43.138.25.182:6382,43.138.25.182:6383,43.138.25.182:6384
+      max-redirects: 3
+    password: 111111
+    lettuce:
+      cluster:
+        refresh:
+          #支持集群拓扑动态感应刷新,自适应拓扑刷新是否使用所有可用的更新，默认false关闭
+          adaptive: true
+          #定时刷新
+          period: 2000
+  #在springboot2.6.X结合swagger2.9.X会提示documentationPluginsBootstrapper空指针异常，
+  #原因是在springboot2.6.X中将SpringMVC默认路径匹配策略从AntPathMatcher更改为PathPatternParser，
+  # 导致出错，解决办法是matching-strategy切换回之前ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+nacos:
+  discovery:
+    server-addr: 43.138.25.182:8848

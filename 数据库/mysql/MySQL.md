@@ -189,7 +189,12 @@ SELECT * FROM `student` ORDER BY age ASC, name ;
 ```sql
  SELECT  DISTINCT age FROM student;
 ```
-![image.png](https://cdn.nlark.com/yuque/0/2023/png/25418009/1677227283647-93274955-c996-4ab6-b414-aa7d2e0f3641.png#averageHue=%23fbfbfa&clientId=u13f03d49-e217-4&from=paste&height=196&id=u386c3924&originHeight=196&originWidth=224&originalType=binary&ratio=1&rotation=0&showTitle=false&size=3574&status=done&style=none&taskId=ueaaeffa0-2989-46ff-b115-e62cdd6c10b&title=&width=224)<br /> 注意 DISTINCT 关键字这只能查询一列重复数据，如果查询多列就失效了
+![image.png](https://cdn.nlark.com/yuque/0/2023/png/25418009/1677227283647-93274955-c996-4ab6-b414-aa7d2e0f3641.png#averageHue=%23fbfbfa&clientId=u13f03d49-e217-4&from=paste&height=196&id=u386c3924&originHeight=196&originWidth=224&originalType=binary&ratio=1&rotation=0&showTitle=false&size=3574&status=done&style=none&taskId=ueaaeffa0-2989-46ff-b115-e62cdd6c10b&title=&width=224)
+
+> 注意 DISTINCT 关键字这只能查询一列重复数据，如果查询多列就失效了
+>
+> DISTINCT 需要放到所有列名的前面，如果写成 SELECT salary, DISTINCT department_id FROM employees 会报错。 2. DISTINCT 其实是对后面所有列名的组合进行去重，你能看到最后的结果是 74 条，因为这 74 个部 门id不同，都有 salary 这个属性值。如果你想要看都有哪些不同的部门（department_id），只需 要写 DISTINCT department_id 即可，后面不需要再加其他的列名了。
+
 ```sql
 -- 	DISTINCT 关键字只能在 SELECT 子句中使用一次
 --  SELECT sex, DISTINCT age FROM student; 无法执行
@@ -243,7 +248,15 @@ SELECT * FROM student WHERE age!='18' AND  clazz IN ( '会计 ','幼师');
 > -- 还有一些特殊的比较运算符 IS NULL(为空，count IS NULL)  IS NOT NULL(不为空 ，count IS NOT NULL) BETWEEN AND(范围 , count BETWEEN  200 AND 300)  LIKE(模糊查询, c_name LIKE "%A%") REGEXP(正则表达式查询 c_name REGEXP "[a-z]{4}")
 
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/25418009/1677228089346-456be741-3415-435e-b66f-71f7bb9ebe6d.png#averageHue=%23dbdbdb&clientId=u13f03d49-e217-4&from=paste&height=521&id=u22d29d48&originHeight=521&originWidth=1496&originalType=binary&ratio=1&rotation=0&showTitle=false&size=180702&status=done&style=none&taskId=uc61e24e0-a902-4681-a9ef-165f306821b&title=&width=1496)
+
+**安全等于运算符 <==>**
+
+> 安全等于运算符（<=>）与等于运算符（=）的作用是相似的， 唯一的区别 是‘<=>’可 以用来对NULL进行判断。在两个操作数均为NULL时，其返回值为1，而不为NULL；当一个操作数为NULL 时，其返回值为0，而不为NULL。
+
+![image-20240117114531221](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117114531221.png)
+
 ### 高级查询
+
 > 聚合函数
 > 聚合函数在数据的查询分析中，应用十分广泛。聚合函数可以对数据求和、求最大值和最小值、求平均值等等
 
@@ -305,7 +318,145 @@ SELECT clazz AS '班级' , COUNT(name) AS '班级人数',GROUP_CONCAT(name) AS '
 SELECT * ,COUNT(*) FROM student  GROUP BY 5 HAVING COUNT(*) > 4;
 ```
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/25418009/1677229057808-38438219-7ca7-4196-b305-fc49dbf1fa58.png#averageHue=%23faf9f8&clientId=u13f03d49-e217-4&from=paste&height=132&id=ub462efe2&originHeight=132&originWidth=814&originalType=binary&ratio=1&rotation=0&showTitle=false&size=9390&status=done&style=none&taskId=u0ef1fd09-af77-4305-a71f-5486b53f045&title=&width=814)
+
+> GROUP BY中使用 WITH ROLLUP
+> 使用 WITH ROLLUP 关键字之后，在所有查询出的分组记录之后增加一条记录，该记录计算查询出的所 有记录的总和，即统计记录数量。
+
+```sql
+SELECT department_id,AVG(salary)
+FROM employees
+WHERE department_id > 80
+GROUP BY department_id WITH ROLLUP;
+```
+
+### 函数
+
+#### 基本函数
+
+![image-20240117131726618](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117131726618.png)
+
+#### 字符串函数
+
+![image-20240117131838056](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117131838056.png)
+
+#### 流程控制函数
+
+
+
+| 函数                                                         | 用法                                             |
+| ------------------------------------------------------------ | ------------------------------------------------ |
+| IF(value,value1,value2)                                      | 如果value的值为TRUE，返回value1， 否则返回value2 |
+| IFNULL(value1, value2)                                       | 如果value1不为NULL，返回value1，否 则返回value2  |
+| CASE WHEN 条件1 THEN 结果1 WHEN 条件2 THEN 结果2 .... [ELSE resultn] END | 相当于Java的if...else if...else...               |
+| CASE expr WHEN 常量值1 THEN 值1 WHEN 常量值1 THEN 值1 .... [ELSE 值n] END | 相当于Java的switch...case...                     |
+
+```sql
+SELECT IF(1 > 0,'正确','错误')
+#->正确
+
+SELECT IFNULL(null,'Hello Word')
+#->Hello Word
+
+SELECT CASE
+WHEN 1 > 0
+THEN '1 > 0'
+WHEN 2 > 0
+THEN '2 > 0'
+ELSE '3 > 0'
+END
+#->1 > 0
+
+SELECT CASE 1
+WHEN 1 THEN '我是1'
+WHEN 2 THEN '我是2'
+ELSE '你是谁'
+#-> 我是1
+
+SELECT employee_id,salary, CASE WHEN salary>=15000 THEN '高薪'
+WHEN salary>=10000 THEN '潜力股'
+WHEN salary>=8000 THEN '屌丝'
+ELSE '草根' END "描述"
+FROM employees;
+
+SELECT oid,`status`, CASE `status` WHEN 1 THEN '未付款'
+WHEN 2 THEN '已付款'
+WHEN 3 THEN '已发货'
+WHEN 4 THEN '确认收货'
+ELSE '无效订单' END
+FROM t_order;
+
+```
+
+#### 窗口函数
+
+> 窗口函数（Window Function）是一种在查询结果的特定窗口（窗口是由 `OVER` 子句定义的一组行）上执行计算的 SQL 函数。它们通常用于执行与整个结果集的聚合不同的计算，同时保留了行级别的细节。窗口函数的使用通常涉及到分析和排名数据。
+
+```sql
+<窗口函数> OVER (
+  [PARTITION BY <分区列> [, ...]]
+  ORDER BY <排序列> [ASC | DESC] [, ...]
+  ROWS <窗口规格>
+)
+
+```
+
+1. `<窗口函数>`：是窗口函数的实际函数，例如 `SUM()`、`AVG()`、`RANK()` 等。
+2. `PARTITION BY` 子句：用于将结果集分成不同的分区，以便在每个分区内执行窗口函数。如果没有指定，函数将在整个结果集上执行。
+3. `ORDER BY` 子句：定义用于排序每个分区内行的顺序。窗口函数通常需要有序的数据来执行排名、累积和其他基于顺序的操作。
+4. `ROWS` 子句（可选）：指定窗口函数应该作用于窗口中的哪些行。例如，`ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` 意味着窗口函数将考虑当前行及其前后相邻的两行。
+
+**常用的窗口函数**
+
+- `SUM()`：计算某个列的总和。
+- `AVG()`：计算某个列的平均值。
+- `COUNT()`：计算某个列的行数。
+- `RANK()`：为每一行分配排名，相同值会得到相同的排名，但不会跳过排名。
+- `DENSE_RANK()`：为每一行分配排名，相同值会得到相同的排名，但会跳过排名。
+- `ROW_NUMBER()`：为每一行分配唯一的整数值。
+
+**案例**
+
+```sql
+SELECT
+  姓名,
+  班级,
+  总分,
+  RANK() OVER (PARTITION BY 班级 ORDER BY 总分 DESC) AS 班级排名,
+  RANK() OVER (ORDER BY 总分 DESC) AS 学校排名
+FROM
+  student_scores;
+
+```
+
+
+
+#### Mysql 信息函数
+
+> MySQL中内置了一些可以查询MySQL信息的函数，这些函数主要用于帮助数据库开发或运维人员更好地 对数据库进行维护工作。
+
+| 函数                                                   | 用法                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------- |
+| VERSION()                                              | 返回当前MySQL的版本号                                     |
+| CONNECTION_ID()                                        | 返回当前MySQL服务器的连接数                               |
+| DATABASE()，SCHEMA()                                   | 返回MySQL命令行当前所在的数据库                           |
+| USER()，CURRENT_USER()、SYSTEM_USER()， SESSION_USER() | 返回当前连接MySQL的用户名，返回结果格式为 “主机名@用户名” |
+| CHARSET(value)                                         | 返回字符串value自变量的字符集                             |
+| COLLATION(value)                                       | 返回字符串value的比较规则                                 |
+
+```sql
+mysql> SELECT USER(), CURRENT_USER(), SYSTEM_USER(),SESSION_USER();
++----------------+----------------+----------------+----------------+
+| USER() | CURRENT_USER() | SYSTEM_USER() | SESSION_USER() |
++----------------+----------------+----------------+----------------+
+| root@localhost | root@localhost | root@localhost | root@localhost |
++----------------+----------------+----------------+----------------+
+
+```
+
+
+
 ### 多表查询
+
 > 多表查询分为: 内连接,外连接(左连接,右连接)
 > 外连接分为:左连接,右连接
 
@@ -341,7 +492,119 @@ SELECT  e.id ,e.emp_name,d.dname FROM t_emp e left JOIN t_dept d ON e.deptno=d.i
 SELECT  e.id ,e.emp_name,d.dname FROM t_emp e RIGHT JOIN t_dept d ON e.deptno=d.id ORDER BY e.id ASC;
 ```
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/25418009/1677232490948-901f9702-b38b-4f2c-ab39-e8de9d475a76.png#averageHue=%23f8f7f6&clientId=u0bb56fb8-3c39-4&from=paste&height=429&id=u3b6c75f5&originHeight=429&originWidth=504&originalType=binary&ratio=1&rotation=0&showTitle=false&size=23750&status=done&style=none&taskId=u9eb7c504-5693-4649-8cb6-a3547610ff5&title=&width=504)
+
+
+
+#### 非等值连接
+
+![image-20240117111311242](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117111311242.png)
+
+```sql
+SELECT e.last_name, e.salary, j.grade_level
+FROM employees e, job_grades j
+WHERE e.salary BETWEEN j.lowest_sal AND j.highest_sal;
+```
+
+#### 自连接
+
+> 数据库中的自连接（self-join）是指在同一表中连接两个不同的行，通常使用相同的表别名。这种连接常常用在需要比较同一表中不同行之间的数据时。自连接在**处理具有层次关系或者父子关系**的数据时非常有用。
+
+**数据结构 及数据**
+
+```sql
+CREATE TABLE employee (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(255),
+    manager_id INT
+);
+
+INSERT INTO employee VALUES (1, 'John', NULL);
+INSERT INTO employee VALUES (2, 'Alice', 1);
+INSERT INTO employee VALUES (3, 'Bob', 1);
+INSERT INTO employee VALUES (4, 'Charlie', 2);
+```
+
+**案例**
+
+在这个例子中，`manager_id` 表示员工的上级领导，如果为 NULL，则表示该员工没有上级领导。
+
+如果想要查询每个员工及其上级领导的信息，可以使用自连接：
+
+```sql
+SELECT e1.emp_name AS employee_name, e2.emp_name AS manager_name
+FROM employee e1
+LEFT JOIN employee e2 ON e1.manager_id = e2.emp_id;
+```
+
+#### 使用（+）创建连接
+
+> 在 SQL92 中采用（+）代表从表所在的位置。即左或右外连接中，(+) 表示哪个是从表。 Oracle 对 SQL92 支持较好，而 MySQL 则不支持 SQL92 的外连接。
+
+```sql
+#左外连接
+SELECT last_name,department_name
+FROM employees ,departments
+WHERE employees.department_id = departments.department_id(+);
+#右外连接
+SELECT last_name,department_name
+FROM employees ,departments
+WHERE employees.department_id(+) = departments.department_id;
+```
+
+#### UNION的使用
+
+> 合并查询结果 利用UNION关键字，可以给出多条SELECT语句，并将它们的结果组合成单个结果集。合并 时，两个表对应的列数和数据类型必须相同，并且相互对应。各个SELECT语句之间使用UNION或UNION ALL关键字分隔。
+
+**语法格式**
+
+```sql
+SELECT column,... FROM table1
+UNION [ALL]
+SELECT column,... FROM table2
+```
+
+UNION 操作符返回两个查询的结果集的并集，去除重复记录。
+![image-20240117112625380](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117112625380.png)
+
+
+UNION ALL操作符返回两个查询的结果集的并集。对于两个结果集的重复部分，不去重。
+
+![image-20240117112649728](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240117112649728.png)
+
+> 注意：执行UNION ALL语句时所需要的资源比UNION语句少。如果明确知道合并数据后的结果数据 不存在重复数据，或者不需要去除重复的数据，则尽量使用UNION ALL语句，以提高数据查询的效 率。
+
+举例：查询部门编号>90或邮箱包含a的员工信息
+
+```sql
+# OR 方式
+SELECT * FROM employees WHERE email LIKE '%a%' OR department_id>90;
+# UNIO 方式
+SELECT * FROM employees WHERE email LIKE '%a%'
+UNION
+SELECT * FROM employees WHERE department_id>90;
+
+```
+
+#### Using连接
+
+> 你能看出与自然连接 NATURAL JOIN 不同的是，USING 指定了具体的相同的字段名称，你需要在 USING 的括号 () 中填入要指定的同名字段。同时使用 JOIN...USING 可以简化 JOIN ON 的等值连接。它与下 面的 SQL 查询结果是相同的：
+
+```sql
+# sql92 标准方式
+SELECT employee_id,last_name,department_name
+FROM employees e JOIN departments d
+ON e.`department_id` = d.`department_id`
+AND e.`manager_id` = d.`manager_id`;
+
+#sql99 using方式
+SELECT employee_id,last_name,department_name
+FROM employees e NATURAL JOIN departments d;
+```
+
+
+
 # DDL
+
 ## 索引
 > 创建索引可以增加数据查询的速度，但是会增加数据插入时的消耗，因为索引时将索引字段创建一个二叉树，然后每次根据次字段查询的时候才会变快。
 
@@ -585,7 +848,7 @@ SELECT  e.id ,e.emp_name,d.dname FROM t_emp e RIGHT JOIN t_dept d ON e.deptno=d.
 
 ```
 # 数据库结构及数据
-```sql
+```窗口sql
 /*
  Navicat Premium Data Transfer
 

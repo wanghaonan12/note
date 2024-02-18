@@ -36,10 +36,12 @@ public class GuavaBloomFilterServiceImpl extends GuavaBloomFilterService {
         bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size, fpp);
     }
 
+    @Override
     public boolean guavaFilter(Integer integer){
         return bloomFilter.mightContain(integer);
     }
 
+    @Override
     public void testFilterData(Integer dataCount){
         int count = 0;
         for (int i = 0; i < dataCount*_1W; i++) {

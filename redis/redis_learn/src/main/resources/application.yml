@@ -1,11 +1,24 @@
 server:
   port: 1346
 spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      test-while-idle: false
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://43.138.25.182:3306/study?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
   swagger2:
     enabled: true
   application:
     name: redis_learn
   redis:
+#    单机连接
+#    host:  43.138.25.182
+#    port: 6379
+#    database: 0
+#    集群连接
     cluster:
       nodes: 43.138.25.182:6379,43.138.25.182:6380,43.138.25.182:6381,43.138.25.182:6382,43.138.25.182:6383,43.138.25.182:6384
       max-redirects: 3
@@ -17,6 +30,7 @@ spring:
           adaptive: true
           #定时刷新
           period: 2000
+
   #在springboot2.6.X结合swagger2.9.X会提示documentationPluginsBootstrapper空指针异常，
   #原因是在springboot2.6.X中将SpringMVC默认路径匹配策略从AntPathMatcher更改为PathPatternParser，
   # 导致出错，解决办法是matching-strategy切换回之前ant_path_matcher
@@ -26,3 +40,4 @@ spring:
 nacos:
   discovery:
     server-addr: 43.138.25.182:8848
+

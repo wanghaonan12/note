@@ -1293,3 +1293,221 @@ Redis集群有16384个哈希槽，每个key通过CRC16校验后对16384取模来
 
 ## SpringBoot 集成 Redis
 
+**添加依赖**
+
+```xml
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.version>4.12</junit.version>
+    <log4j.version>1.2.17</log4j.version>
+    <lombok.version>1.16.18</lombok.version>
+    <nacos.context>2.1.0-RC</nacos.context>
+    <!--        <swagger.ui>2.9.2</swagger.ui>-->
+    <swagger.ui>3.0.0</swagger.ui>
+</properties>
+<dependencies>
+    <!--SpringBoot通用依赖模块-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!--jedis-->
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>4.3.1</version>
+    </dependency>
+    <!--通用基础配置-->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba.nacos</groupId>
+        <artifactId>nacos-spring-context</artifactId>
+        <version>${nacos.context}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba.boot</groupId>
+        <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+        <version>0.2.12</version>
+    </dependency>
+    <!--SpringBoot与Redis整合依赖-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <!--swagger2-->
+    <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-boot-starter</artifactId>
+        <version>${swagger.ui}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.26</version>
+    </dependency>
+</dependencies>
+```
+
+**写配置**
+
+```yml
+server:
+  port: 1346
+spring:
+  swagger2:
+    enabled: true
+  application:
+    name: redis_learn
+  redis:
+#    单机连接
+#    host:  127.0.0.1
+#    port: 6379
+#    database: 0
+#    集群连接
+    cluster:
+      nodes: 127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6382,127.0.0.1:6383,127.0.0.1:6384
+      max-redirects: 3
+    password: 111111
+    lettuce:
+      cluster:
+        refresh:
+          #支持集群拓扑动态感应刷新,自适应拓扑刷新是否使用所有可用的更新，默认false关闭
+          adaptive: true
+          #定时刷新
+          period: 2000
+  #在springboot2.6.X结合swagger2.9.X会提示documentationPluginsBootstrapper空指针异常，
+  #原因是在springboot2.6.X中将SpringMVC默认路径匹配策略从AntPathMatcher更改为PathPatternParser，
+  # 导致出错，解决办法是matching-strategy切换回之前ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+```
+
+添加redis配置
+
+> 设置value的序列化方式json，使用`GenericJackson2JsonRedisSerializer`替换默认序列化
+
+```java
+@Configuration
+public class RedisConfig
+{
+    /**
+     * redis序列化的工具配置类，下面这个请一定开启配置
+     * 127.0.0.1:6379> keys *
+     * 1) "ord:102"  序列化过
+     * 2) "\xac\xed\x00\x05t\x00\aord:102"   野生，没有序列化过
+     * this.redisTemplate.opsForValue(); //提供了操作string类型的所有方法
+     * this.redisTemplate.opsForList(); // 提供了操作list类型的所有方法
+     * this.redisTemplate.opsForSet(); //提供了操作set的所有方法
+     * this.redisTemplate.opsForHash(); //提供了操作hash表的所有方法
+     * this.redisTemplate.opsForZSet(); //提供了操作zset的所有方法
+     * @param lettuceConnectionFactory
+     * @return
+     */
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory)
+    {
+        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
+
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        //设置key序列化方式string
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        //设置value的序列化方式json，使用GenericJackson2JsonRedisSerializer替换默认序列化
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        redisTemplate.afterPropertiesSet();
+
+        return redisTemplate;
+    }
+}
+```
+
+>  如果不设置会导致序列化的时候在程序调用时没有异常 但是在使用redis客户端时产生乱码
+
+![image-20240213104135170](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240213104135170.png)
+
+**编写测试controller**
+
+```java
+--------------------------------------service--------------------------------------
+@Service
+@Slf4j
+public class OrderService
+{
+    public static final String ORDER_KEY = "order:";
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    public String addOrder()
+    {
+        int keyId = ThreadLocalRandom.current().nextInt(1000)+1;
+        String orderNo = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(ORDER_KEY+keyId,"京东订单"+ orderNo);
+        log.info("=====>编号"+keyId+"的订单流水生成:{}",orderNo);
+        return ORDER_KEY + keyId;
+    }
+
+    public String getOrderById(Integer id)
+    {
+        return (String)redisTemplate.opsForValue().get(ORDER_KEY + id);
+    }
+}
+--------------------------------------controller--------------------------------------
+@RestController
+@Slf4j
+@ApiModel(value = "订单接口",description = "订单接口")
+public class OrderController
+{
+    @Resource
+    private OrderService orderService;
+
+    @ApiOperation("新增订单")
+    @GetMapping(value = "/order/add")
+    public String addOrder()
+    {
+      return  orderService.addOrder();
+    }
+
+
+    @ApiOperation("按orderId查订单信息")
+    @GetMapping(value = "/order/{id}")
+    public String findUserById(@PathVariable Integer id)
+    {
+        return orderService.getOrderById(id);
+    }
+}
+```
+
+swagger 测试
+
+![image-20240213104554654](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240213104554654.png)

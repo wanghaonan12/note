@@ -1,4 +1,4 @@
-# Redis 高级
+Redis 高级
 
 ## Redis 单线程 VS 多线程
 
@@ -192,7 +192,7 @@
    >            jedis.del(bigZSetKey);
    >        }
    >    }
-   > ```
+   >    ```
    > 
    >    
    
@@ -685,7 +685,494 @@
 
 ## Redis 与 Mysql 数据双写一致性案例
 
+[canal官网](https://github.com/alibaba/canal/wiki/QuickStart)
 
+### 安装mysql
+
+1. 创建文件`my.cnf`在`/home/master/config`文件夹下
+
+![image-20240219090851618](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219090851618.png)
+
+2. 配置内容
+
+   ```bash
+   [mysqld]
+   log-bin=mysql-bin #开启 binlog
+   binlog-format=ROW #选择 ROW 模式
+   server_id=1    #配置MySQL replaction需要定义，不要和canal的 slaveId重复
+   ```
+
+3. 安装mysql
+
+   ```bash
+   docker run -dp 3306:3306   
+   -v /home/master/data:/var/lib/mysql   
+   -v /home/master/config:/etc/mysql/conf.d   
+   -v /home/master/log:/var/log/mysql   
+   -e MYSQL_ROOT_PASSWORD=123456
+   --name mysql 
+   mysql:5.7.36 
+   ```
+
+4. 使用`SHOW VARIABLES LIKE 'log_bin';`检查 log_bin状态是否开启
+
+   ![image-20240219091309285](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219091309285.png)
+
+5. 创建canal使用的用户并赋予权限
+
+   ```sql
+   DROP USER IF EXISTS 'canal'@'%';
+   CREATE USER 'canal'@'%' IDENTIFIED BY 'canal';  
+   GRANT ALL PRIVILEGES ON *.* TO 'canal'@'%' IDENTIFIED BY 'canal';  
+   FLUSH PRIVILEGES;
+    
+   SELECT * FROM mysql.user;
+   ```
+
+   ![image-20240219091819401](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219091819401.png)
+
+### 安装canal
+
+1. docker 安装canal
+
+   ```bash
+    docker run -p 11111:11111 --name canal -d canal/canal-server:latest
+   ```
+
+2. 复制`instance.properties`
+
+   ```bash
+   docker cp canal:/home/admin/canal-server/conf/example/instance.properties  /home/canal/
+   ```
+
+3. 修改`instance.properties`配置文件
+
+   ```bash
+   canal.instance.master.address=127.0.0.1:3306 #自己 mysql 的 ip:3306
+   canal.instance.dbUsername=canal # 在mysql 中创建的用户
+   canal.instance.dbPassword=canal # 在mysql 中创建的用户的密码
+   ```
+
+   
+
+4. 删除 canal 容器 并重新创建拥有映射的容器
+
+   ```bash
+   docker rm -f canal
+   
+   docker run -dp 11111:11111 
+   -v /home/canal/instance.properties:/home/admin/canal-server/conf/example/instance.properties 
+   -v /home/canal/log:/home/admin/canal-server/logs 
+   --name canal  
+   canal/canal-server:latest
+   ```
+
+5.  查看启动状态
+
+   > 查看canal中映射在宿主机的日志文件
+
+   ![image-20240219095416303](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219095416303.png)
+
+### 编写业务程序
+
+pom
+
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.5.14</version>
+    <relativePath/>
+</parent>
+
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.version>4.12</junit.version>
+    <nacos.context>2.1.0-RC</nacos.context>
+    <!--        <swagger.ui>2.9.2</swagger.ui>-->
+    <swagger.ui>3.0.0</swagger.ui>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <log4j.version>1.2.17</log4j.version>
+    <lombok.version>1.18.26</lombok.version>
+    <mysql.version>5.1.47</mysql.version>
+    <druid.version>1.1.16</druid.version>
+    <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
+    <mapper.version>4.1.5</mapper.version>
+    <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
+    <mysql.connector.version>5.1.47</mysql.connector.version>
+    <hutool.version>5.2.3</hutool.version>
+    <mybatis.plus.boot.starter.version>3.2.0</mybatis.plus.boot.starter.version>
+    <guava.version>23.0</guava.version>
+    <canal.client.version>1.1.0</canal.client.version>
+</properties>
+
+<dependencies>
+    <dependency>
+        <groupId>com.alibaba.otter</groupId>
+        <artifactId>canal.client</artifactId>
+        <version>${canal.client.version}</version>
+    </dependency>
+    <!--guava Google 开源的 Guava 中自带的布隆过滤器-->
+    <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+    </dependency>
+    <!--SpringBoot通用依赖模块-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!--jedis-->
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>4.3.1</version>
+    </dependency>
+    <!--通用基础配置-->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba.nacos</groupId>
+        <artifactId>nacos-spring-context</artifactId>
+        <version>${nacos.context}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba.boot</groupId>
+        <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+        <version>0.2.12</version>
+    </dependency>
+    <!--SpringBoot与Redis整合依赖-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <!--swagger2-->
+    <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-boot-starter</artifactId>
+        <version>${swagger.ui}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+    </dependency>
+
+    <!--Mysql数据库驱动-->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.connector.version}</version>
+    </dependency>
+    <!--SpringBoot集成druid连接池-->
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-starter</artifactId>
+        <version>${druid.spring.boot.starter.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>${druid.version}</version>
+    </dependency>
+    <!--mybatis和springboot整合-->
+    <!--        <dependency>-->
+    <!--            <groupId>org.mybatis.spring.boot</groupId>-->
+    <!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+    <!--            <version>${mybatis.spring.boot.version}</version>-->
+    <!--        </dependency>-->
+    <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>${mybatis.plus.boot.starter.version}</version>
+    </dependency>
+    <!--通用基础配置junit/devtools/test/log4j/lombok/hutool-->
+    <!--hutool-->
+    <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool.version}</version>
+    </dependency>
+</dependencies>
+```
+
+yml
+
+```yml
+server:
+  port: 1346
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      test-while-idle: false
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/study?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+  swagger2:
+    enabled: true
+  application:
+    name: redis_learn
+  redis:
+#    单机连接
+#    host:  43.138.25.182
+#    port: 6379
+#    database: 0
+#    集群连接
+    cluster:
+      nodes: 127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6382,127.0.0.1:6383,127.0.0.1:6384
+      max-redirects: 3
+    password: 111111
+    lettuce:
+      cluster:
+        refresh:
+          #支持集群拓扑动态感应刷新,自适应拓扑刷新是否使用所有可用的更新，默认false关闭
+          adaptive: true
+          #定时刷新
+          period: 2000
+
+  #在springboot2.6.X结合swagger2.9.X会提示documentationPluginsBootstrapper空指针异常，
+  #原因是在springboot2.6.X中将SpringMVC默认路径匹配策略从AntPathMatcher更改为PathPatternParser，
+  # 导致出错，解决办法是matching-strategy切换回之前ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+```
+
+配置类
+
+```java
+@Configuration
+public class RedisConfig
+{
+    /**
+     * redis序列化的工具配置类，下面这个请一定开启配置
+     * 127.0.0.1:6379> keys *
+     * 1) "ord:102"  序列化过
+     * 2) "\xac\xed\x00\x05t\x00\aord:102"   野生，没有序列化过
+     * this.redisTemplate.opsForValue(); //提供了操作string类型的所有方法
+     * this.redisTemplate.opsForList(); // 提供了操作list类型的所有方法
+     * this.redisTemplate.opsForSet(); //提供了操作set的所有方法
+     * this.redisTemplate.opsForHash(); //提供了操作hash表的所有方法
+     * this.redisTemplate.opsForZSet(); //提供了操作zset的所有方法
+     * @param lettuceConnectionFactory
+     * @return
+     */
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory)
+    {
+        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
+
+        redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+        //设置key序列化方式string
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        //设置value的序列化方式json，使用GenericJackson2JsonRedisSerializer替换默认序列化
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        redisTemplate.afterPropertiesSet();
+
+        return redisTemplate;
+    }
+}
+```
+
+业务类
+
+```java
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.client.CanalConnectors;
+import com.alibaba.otter.canal.protocol.CanalEntry.Column;
+import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
+import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
+import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
+import com.alibaba.otter.canal.protocol.CanalEntry.RowChange;
+import com.alibaba.otter.canal.protocol.CanalEntry.RowData;
+import com.alibaba.otter.canal.protocol.Message;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @Author: WangHn
+ * @Date: 2024/2/19 10:00
+ * @Description: 基于canal 的redis数据同步
+ */
+@Component
+public class RedisCanalClientExample {
+    @Resource
+    private RedisTemplate redisTemplate;
+    private static final Integer _60SECONDS = 60;
+
+    private static final String CANAL_IP = "43.138.25.182";
+    private static final String MONITOR_DATABASE = "study.*";
+    private static final int CANAL_PORT = 11111;
+
+
+    private void redisInsert(List<Column> columns) {
+        JSONObject jsonObject = new JSONObject();
+        for (Column column : columns) {
+            System.out.println(column.getName() + " : " + column.getValue() + "    update=" + column.getUpdated());
+            jsonObject.put(column.getName(), column.getValue());
+        }
+        if (columns.size() > 0) {
+            redisTemplate.opsForValue().set(columns.get(0).getValue(), jsonObject.toJSONString());
+        }
+    }
+
+
+    private void redisDelete(List<Column> columns) {
+        JSONObject jsonObject = new JSONObject();
+        for (Column column : columns) {
+            jsonObject.put(column.getName(), column.getValue());
+        }
+        if (columns.size() > 0) {
+            redisTemplate.delete(columns.get(0).getValue());
+        }
+    }
+
+    private  void redisUpdate(List<Column> columns) {
+        JSONObject jsonObject = new JSONObject();
+        for (Column column : columns) {
+            System.out.println(column.getName() + " : " + column.getValue() + "    update=" + column.getUpdated());
+            jsonObject.put(column.getName(), column.getValue());
+        }
+        if (columns.size() > 0) {
+                redisTemplate.opsForValue().set(columns.get(0).getValue(), jsonObject.toJSONString());
+                System.out.println("---------update after: " +  redisTemplate.opsForValue().get(columns.get(0).getValue()));
+        }
+    }
+
+    private void printEntry(List<Entry> entrys) {
+        for (Entry entry : entrys) {
+            if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
+                continue;
+            }
+
+            RowChange rowChage = null;
+            try {
+                //获取变更的row数据
+                rowChage = RowChange.parseFrom(entry.getStoreValue());
+            } catch (Exception e) {
+                throw new RuntimeException("ERROR ## parser of eromanga-event has an error,data:" + entry.toString(), e);
+            }
+            //获取变动类型
+            EventType eventType = rowChage.getEventType();
+            System.out.println(String.format("================&gt; binlog[%s:%s] , name[%s,%s] , eventType : %s",
+                    entry.getHeader().getLogfileName(), entry.getHeader().getLogfileOffset(),
+                    entry.getHeader().getSchemaName(), entry.getHeader().getTableName(), eventType));
+
+            for (RowData rowData : rowChage.getRowDatasList()) {
+                if (eventType == EventType.INSERT) {
+                    redisInsert(rowData.getAfterColumnsList());
+                } else if (eventType == EventType.DELETE) {
+                    redisDelete(rowData.getBeforeColumnsList());
+                } else {//EventType.UPDATE
+                    redisUpdate(rowData.getAfterColumnsList());
+                }
+            }
+        }
+    }
+
+
+    public void canalExecution() {
+        System.out.println("---------O(∩_∩)O哈哈~ initCanal()-----------");
+        // 创建链接canal服务端
+        CanalConnector connector = CanalConnectors.newSingleConnector(new InetSocketAddress(CANAL_IP,
+                CANAL_PORT), "example", "", "");
+        int batchSize = 1000;
+        //空闲空转计数器
+        int emptyCount = 0;
+        System.out.println("---------------------canal init OK，开始监听mysql变化------");
+        try {
+            connector.connect();
+            //connector.subscribe(".*\\..*");
+            connector.subscribe(MONITOR_DATABASE);
+            connector.rollback();
+            int totalEmptyCount = 10 * _60SECONDS;
+            while (emptyCount < totalEmptyCount) {
+                System.out.println("我是canal，每秒一次正在监听:" + UUID.randomUUID().toString());
+                Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
+                long batchId = message.getId();
+                int size = message.getEntries().size();
+                if (batchId == -1 || size == 0) {
+                    emptyCount++;
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //计数器重新置零
+                    emptyCount = 0;
+                    printEntry(message.getEntries());
+                }
+                connector.ack(batchId); // 提交确认
+                // connector.rollback(batchId); // 处理失败, 回滚数据
+            }
+            System.out.println("已经监听了" + totalEmptyCount + "秒，无任何消息，请重启重试......");
+        } finally {
+            connector.disconnect();
+        }
+    }
+}
+
+```
+
+测试类
+
+```java
+@SpringBootTest
+class RedisCanalClientExampleTest {
+
+    @Autowired
+    private RedisCanalClientExample redisCanalClientExample;
+    @Test
+    void canalExecution() {
+        redisCanalClientExample.canalExecution();
+    }
+}
+```
+
+![image-20240219104102447](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219104102447.png)
 
 ## BitMap、Hyperloglog、GEO 实战
 
@@ -1006,11 +1493,1025 @@
    > 1. 差异失效时间，对于访问频繁的热点ky,干脆就不设置过期时间
    > 2. 互斥跟新，采用双检加锁策略
 
+   实体类
    
+   ```java
+   @Data
+   @AllArgsConstructor
+   @NoArgsConstructor
+   @ApiModel(value = "聚划算活动producet信息")
+   public class Product
+   {
+       //产品ID
+       private Long id;
+       //产品名称
+       private String name;
+       //产品价格
+       private Integer price;
+       //产品详情
+       private String detail;
+   }
+   ```
+   
+   service
+   
+   ```java
+   public interface JHSService {
+   
+       List<Product> getProductS(int page, int size);
+   
+       List<Product> getProductSAB(int page, int size);
+   }
+   
+   ```
+   
+   实现类
+   
+   > 虽然 getProductSAB 和 getProductS 在测试的时候结果一样
+   > 但是：在高并发情况下 getProductSAB 方法中更新数据时 可以保证 mysql 数据库不会受到大批量的命令减少缓存击穿的情况发生
+   
+   ```java
+   @Service
+   @Slf4j
+   public class JHSServiceImpl implements JHSService {
+   
+   
+       public  static final String JHS_KEY="jhs";
+       public  static final String JHS_KEY_A="jhs:a";
+       public  static final String JHS_KEY_B="jhs:b";
+   
+       @Autowired
+       private RedisTemplate redisTemplate;
+   
+       /**
+        * 偷个懒不加mybatis了，模拟从数据库读取100件特价商品，用于加载到聚划算的页面中
+        * @return
+        */
+       private List<Product> getProductsFromMysql() {
+           List<Product> list=new ArrayList<>();
+           for (int i = 1; i <=20; i++) {
+               Random rand = new Random();
+               int id= rand.nextInt(10000);
+               Product obj=new Product((long) id,"product"+i,i,"detail");
+               list.add(obj);
+           }
+           return list;
+       }
+   
+       @PostConstruct
+       public void initJHS(){
+           log.info("启动定时器淘宝聚划算功能模拟.........."+ DateUtil.now());
+           new Thread(() -> {
+               //模拟定时器一个后台任务，定时把数据库的特价商品，刷新到redis中
+               while (true){
+                   //模拟从数据库读取100件特价商品，用于加载到聚划算的页面中
+                   List<Product> list=this.getProductsFromMysql();
+                   //采用redis list数据结构的lpush来实现存储
+                   this.redisTemplate.delete(JHS_KEY);
+                   //lpush命令
+                   this.redisTemplate.opsForList().leftPushAll(JHS_KEY,list);
+                   //间隔一分钟 执行一遍，模拟聚划算每3天刷新一批次参加活动
+                   try { TimeUnit.SECONDS.sleep(30); } catch (InterruptedException e) { e.printStackTrace(); }
+   
+                   log.info("runJhs定时刷新..............");
+               }
+           },"t1").start();
+       }
+   
+   
+       @PostConstruct
+       public void initJHSAB(){
+           log.info("启动AB定时器计划任务淘宝聚划算功能模拟.........."+DateUtil.now());
+           new Thread(() -> {
+               //模拟定时器，定时把数据库的特价商品，刷新到redis中
+               while (true){
+                   //模拟从数据库读取100件特价商品，用于加载到聚划算的页面中
+                   List<Product> list=this.getProductsFromMysql();
+                   //先更新B缓存
+                   this.redisTemplate.delete(JHS_KEY_B);
+                   this.redisTemplate.opsForList().leftPushAll(JHS_KEY_B,list);
+                   this.redisTemplate.expire(JHS_KEY_B,20L,TimeUnit.DAYS);
+                   //再更新A缓存
+                   this.redisTemplate.delete(JHS_KEY_A);
+                   this.redisTemplate.opsForList().leftPushAll(JHS_KEY_A,list);
+                   this.redisTemplate.expire(JHS_KEY_A,15L,TimeUnit.DAYS);
+                   //间隔一分钟 执行一遍
+                   try { TimeUnit.MINUTES.sleep(1); } catch (InterruptedException e) { e.printStackTrace(); }
+   
+                   log.info("runJhs定时刷新双缓存AB两层..............");
+               }
+           },"t2").start();
+       }
+       
+       @Override
+       public List<Product> getProductS(int page, int size) {
+           List<Product> list=null;
+           long start = (page - 1) * size;
+           long end = start + size - 1;
+           try {
+               //采用redis list数据结构的lrange命令实现分页查询
+               list = this.redisTemplate.opsForList().range(JHS_KEY, start, end);
+               if (CollectionUtils.isEmpty(list)) {
+                   //TODO 走DB查询
+               }
+               log.info("查询结果：{}", list);
+           } catch (Exception ex) {
+               //这里的异常，一般是redis瘫痪 ，或 redis网络timeout
+               log.error("exception:", ex);
+               //TODO 走DB查询
+           }
+   
+           return list;
+       }
+   
+       @Override
+       public List<Product> getProductSAB(int page, int size) {
+           List<Product> list=null;
+           long start = (page - 1) * size;
+           long end = start + size - 1;
+           try {
+               //采用redis list数据结构的lrange命令实现分页查询
+               list = this.redisTemplate.opsForList().range(JHS_KEY_A, start, end);
+               if (CollectionUtils.isEmpty(list)) {
+                   log.info("=========A缓存已经失效了，记得人工修补，B缓存自动延续5天");
+                   //用户先查询缓存A(上面的代码)，如果缓存A查询不到（例如，更新缓存的时候删除了），再查询缓存B
+                    list = this.redisTemplate.opsForList().range(JHS_KEY_B, start, end);
+                    if(CollectionUtils.isEmpty(list)){
+                       //TODO 走DB查询
+                   }
+               }
+               log.info("查询结果：{}", list);
+           } catch (Exception ex) {
+               //这里的异常，一般是redis瘫痪 ，或 redis网络timeout
+               log.error("exception:", ex);
+               //TODO 走DB查询
+           }
+           return list;
+       }
+   }
+   ```
+   
+   controller
+   
+   ```java
+   @RestController
+   @Slf4j
+   @ApiModel(value = "JHS 互斥更新",description = "JHS 互斥更新")
+   @RequestMapping("/jhs")
+   public class JHSController
+   {
+   
+       @Autowired
+       private JHSServiceImpl jhsServiceImpl;
+   
+       @ApiOperation("getProductS 没有互斥")
+       @PostMapping(value = "/getProductS/{page}/{size}")
+       public List<Product> getProductS(@PathVariable  int page,@PathVariable int size)
+       {
+          return jhsServiceImpl.getProductS(page,size);
+       }
+   
+   
+       @ApiOperation("getProductS 互斥更新")
+       @PostMapping(value = "/getProductSAB/{page}/{size}")
+       public List<Product> getProductSAB(@PathVariable  int page, @PathVariable int size)
+       {
+          return jhsServiceImpl.getProductSAB(page,size);
+       }
+   
+   }
+   ```
 
 ## Redis 分布式锁（手写）
 
+`DistributedLockFactory`工厂类创建锁
+
+```java
+@Component
+public class DistributedLockFactory {
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    private String lockName;
+    private String uuid;
+
+    public DistributedLockFactory() {
+        this.uuid = IdUtil.simpleUUID();
+    }
+
+    public Lock getDistributedLock(LockType lockType) {
+        Assert.notNull(lockType, "锁类型不能为空");
+        if (LockType.REDIS.equals(lockType)) {
+            this.lockName = "RedisLock";
+            return new RedisDistributedLock(stringRedisTemplate, lockName, uuid);
+        } else if (LockType.ZOOKEEPER.equals(lockType)) {
+            this.lockName = "ZookeeperLockNode";
+            //TODO zookeeper版本的分布式锁
+            return null;
+        } else if (LockType.MYSQL.equals(lockType)) {
+            this.lockName = "MysqlLockNode";
+            //TODO MYSQL版本的分布式锁
+            return null;
+        }
+        return null;
+    }
+}
+
+```
+
+`LockType` Lock类型枚举
+
+```java
+public enum LockType {
+    /**
+     * redis
+     */
+    REDIS,
+    /**
+     * zookeeper
+     */
+    ZOOKEEPER,
+    /**
+     * mysql
+     */
+    MYSQL
+}
+
+```
+
+`RedisDistributedLock` 自定义分布式锁
+
+> 独占性:
+>
+> 任何时刻只能有且仅有一个线程持有若redis集群环境下，不能因为某一个节点挂了而出现获取锁和释放锁失败的情况,**使用线程id加锁id拼接作为锁的key，保证所的唯一性**
+> 高可用:
+>
+> 高并发请求下，依旧性能OK好使
+> 防死锁:
+>
+> 杜绝死锁，必须有超时控制机制或者澈销操作，有个兜底终止跳出方案，**设置锁的过期时间，**
+> 不乱抢:
+>
+> 防止张冠李戴，不能私下unlock别人的锁，只能自己加锁自己释放，自己约的锁含着泪也要自己解 ，**根据线程id为名称如果不是自己线程下的锁则无法进行解锁**
+> 重入性:
+>
+> 同一个节点的同一个线程如果获得锁之后，它也可以再次获取这个锁。**使用hash结构存储 ，每次重入都会进行加1操作，解锁则反过来,保证重入性**
+>
+> **使用 lua 语法保证操作的原子性，设置自动续期防止超时**
+
+```java
+public class RedisDistributedLock implements Lock {
+    private final StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 锁名字
+     */
+    private final String lockName;
+    /**
+     * uuid
+     */
+    private final String uuidValue;
+    /**
+     * 有效时常
+     */
+    private final long expireTime;
+
+    public RedisDistributedLock(StringRedisTemplate stringRedisTemplate, String lockName, String uuid) {
+        this.stringRedisTemplate = stringRedisTemplate;
+        this.lockName = lockName;
+        this.uuidValue = uuid + ":" + Thread.currentThread().getId();
+        this.expireTime = 30L;
+    }
+
+    @Override
+    public void lock() {
+        tryLock();
+    }
+
+    @Override
+    public boolean tryLock() {
+        try {
+            tryLock(expireTime, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 加锁
+     * @param time the maximum time to wait for the lock
+     * @param unit the time unit of the {@code time} argument
+     * @return
+     * @throws InterruptedException
+     */
+    @Override
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+        Assert.notNull(time, "time must not be null");
+        Assert.isTrue(time > 0L, "time must not big than 0L");
+        // lua 脚本 当 keys1不存在 或 keys1 的元素 argv1 不存在时，执行 hincrby 命令并设置有效时常  （hincrby 可以替代 hset 命令）
+        // 使用 lua 脚本可以保证原子性
+        // hincrby 命令 返回 1 表示加锁成功 同时可以实现锁的重入性 每次重入便会+1
+        String script =
+                "if redis.call('exists',KEYS[1]) == 0 or redis.call('hexists',KEYS[1],ARGV[1]) == 1 then    " +
+                        "redis.call('hincrby',KEYS[1],ARGV[1],1)    " +
+                        "redis.call('expire',KEYS[1],ARGV[2])    " +
+                        "return 1  " +
+                        "else   " +
+                        "return 0 " +
+                        "end";
+        System.out.println("lockName:" + lockName + "\t" + "uuidValue:" + uuidValue);
+        // 加锁失败 自旋重试加锁
+        while (Boolean.FALSE.equals(stringRedisTemplate.execute(new DefaultRedisScript<>(script, Boolean.class), Collections.singletonList(lockName), uuidValue, String.valueOf(time)))) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(60);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        //新建一个后台扫描程序，来坚持key目前的ttl，是否到我们规定的1/2 1/3来实现续期
+        renewExpire();
+        return true;
+
+    }
 
 
-## Redlock算法
+    /**
+     * 解锁
+     */
+    @Override
+    public void unlock() {
+        System.out.println("unlock(): lockName:" + lockName + "\t" + "uuidValue:" + uuidValue);
+//     lua 脚本   如果 KEYS1 锁不存在返回 null 如果 KEYS[1] 的 ARGV[1] 参数-1 =0 则删除
+        // nil = false 1 = true 0 = false
+        String script =
+                "if redis.call('HEXISTS',KEYS[1],ARGV[1]) == 0 then    " +
+                        "return nil  " +
+                        "elseif redis.call('HINCRBY',KEYS[1],ARGV[1],-1) == 0 then    " +
+                        "return redis.call('del',KEYS[1])  " +
+                        "else    " +
+                        "return 0 " +
+                        "end";
+        Long flag = stringRedisTemplate.execute(new DefaultRedisScript<>(script, Long.class), Arrays.asList(lockName), uuidValue, String.valueOf(expireTime));
 
+        if (null == flag) {
+            throw new RuntimeException("this lock doesn't exists，o(╥﹏╥)o");
+        }
+    }
+
+    /**
+     * 续期方法
+     */
+    private void renewExpire() {
+        //lua 脚本 KEYS[1] 的 ARGV[1] 存在 则设置 KEYS[1] 的有效时间为 ARGV[2]
+        String script =
+                "if redis.call('HEXISTS',KEYS[1],ARGV[1]) == 1 then     " +
+                        "return redis.call('expire',KEYS[1],ARGV[2]) " +
+                        "else     " +
+                        "return 0 " +
+                        "end";
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (stringRedisTemplate.execute(new DefaultRedisScript<>(script, Boolean.class), Arrays.asList(lockName), uuidValue, String.valueOf(expireTime))) {
+                    renewExpire();
+                }
+            }
+            //expireTime 的 1/3 秒执行一次
+        }, (this.expireTime * 1000) / 3);
+    }
+
+
+    //====下面两个暂时用不到，不再重写
+    //====下面两个暂时用不到，不再重写
+    //====下面两个暂时用不到，不再重写
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+
+    }
+
+    @Override
+    public Condition newCondition() {
+        return null;
+    }
+}
+```
+
+
+
+```java
+@Service
+public class InventoryServiceImpl implements InventoryService {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Value("${server.port}")
+    private String port;
+
+    @Autowired
+    private DistributedLockFactory distributedLockFactory;
+
+    @Override
+    public String selfLock() {
+        String retMessage = "";
+        Lock redisLock = distributedLockFactory.getDistributedLock(LockType.REDIS);
+        redisLock.lock();
+        try {
+            //1 查询库存信息
+            String result = stringRedisTemplate.opsForValue().get("inventory001");
+            //2 判断库存是否足够
+            Integer inventoryNumber = result == null ? 0 : Integer.parseInt(result);
+            //3 扣减库存，每次减少一个
+            if (inventoryNumber > 0) {
+                stringRedisTemplate.opsForValue().set("inventory001", String.valueOf(--inventoryNumber));
+                retMessage = "成功卖出一个商品,库存剩余:" + inventoryNumber;
+                System.out.println(retMessage + "\t" + "服务端口号" + port);
+                //暂停120秒钟线程,故意的，演示自动续期的功能。。。。。。
+//                try {
+//                    TimeUnit.SECONDS.sleep(120);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+            } else {
+                retMessage = "商品卖完了,o(╥﹏╥)o";
+            }
+        } finally {
+            redisLock.unlock();
+        }
+        return retMessage + "\t" + "服务端口号" + port;
+    }
+}
+
+```
+
+```java
+@RestController
+@Slf4j
+@ApiModel(value = "redis lock",description = "redis lock")
+@RequestMapping("/redisLock")
+public class RedisLockController
+{
+
+    @Autowired
+    private InventoryServiceImpl inventoryServiceImpl;
+
+    @ApiOperation("自研")
+    @PostMapping(value = "/selfResearch")
+    public String selfResearch()
+    {return inventoryServiceImpl.selfLock();}
+
+}
+```
+
+
+
+Jmeter压测 自定义 redisLock 1000个商品
+
+![image-20240219152241785](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219152241785.png)
+
+## Redission 锁
+
+### 单机案例
+
+依赖
+
+```xml
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.14</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <junit.version>4.12</junit.version>
+        <nacos.context>2.1.0-RC</nacos.context>
+<!--        <swagger.ui>2.9.2</swagger.ui>-->
+        <swagger.ui>3.0.0</swagger.ui>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.18.26</lombok.version>
+        <mysql.version>5.1.47</mysql.version>
+        <druid.version>1.1.16</druid.version>
+        <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
+        <mapper.version>4.1.5</mapper.version>
+        <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
+        <mysql.connector.version>5.1.47</mysql.connector.version>
+        <hutool.version>5.2.3</hutool.version>
+        <mybatis.plus.boot.starter.version>3.2.0</mybatis.plus.boot.starter.version>
+        <guava.version>23.0</guava.version>
+        <canal.client.version>1.1.0</canal.client.version>
+        <redission.version>3.19.1</redission.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redission.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.otter</groupId>
+            <artifactId>canal.client</artifactId>
+            <version>${canal.client.version}</version>
+        </dependency>
+        <!--guava Google 开源的 Guava 中自带的布隆过滤器-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <!--SpringBoot通用依赖模块-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--jedis-->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <!--通用基础配置-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-spring-context</artifactId>
+            <version>${nacos.context}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.boot</groupId>
+            <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+            <version>0.2.12</version>
+        </dependency>
+        <!--SpringBoot与Redis整合依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <!--swagger2-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${swagger.ui}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <!--Mysql数据库驱动-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+        <!--SpringBoot集成druid连接池-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.spring.boot.starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <!--mybatis和springboot整合-->
+<!--        <dependency>-->
+<!--            <groupId>org.mybatis.spring.boot</groupId>-->
+<!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+<!--            <version>${mybatis.spring.boot.version}</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.boot.starter.version}</version>
+        </dependency>
+        <!--通用基础配置junit/devtools/test/log4j/lombok/hutool-->
+        <!--hutool-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+    </dependencies>
+```
+
+`CacheConfiguration`配置类将`Redisson`放到容器中管理
+
+```java
+@Configuration
+public class CacheConfiguration {
+    /**
+     * 单机
+     * @return
+     */
+    @Bean
+    public Redisson redisson()
+    {
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://127.0.0.1:6385").setDatabase(0);
+        return (Redisson) Redisson.create(config);
+    }
+
+}
+```
+
+`InventoryServiceImpl` 实现类
+
+> 使用`Redisson` 比之前自定义的redisLock省去不少事情，只需要配置一下就可以使用了
+
+```java
+@Service
+public class InventoryServiceImpl implements InventoryService {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Value("${server.port}")
+    private String port;
+
+    @Autowired
+    private Redisson redisson;
+
+    @Override
+    public String redLock() {
+        String retMessage = "";
+        RLock redissonLock = redisson.getLock("zzyyRedisLock");
+        redissonLock.lock();
+        try {
+            //1 查询库存信息
+            String result = stringRedisTemplate.opsForValue().get("inventory001");
+            //2 判断库存是否足够
+            Integer inventoryNumber = result == null ? 0 : Integer.parseInt(result);
+            //3 扣减库存，每次减少一个
+            if (inventoryNumber > 0) {
+                stringRedisTemplate.opsForValue().set("inventory001", String.valueOf(--inventoryNumber));
+                retMessage = "成功卖出一个商品,库存剩余:" + inventoryNumber;
+                System.out.println(retMessage + "\t" + "服务端口号" + port);
+            } else {
+                retMessage = "商品卖完了,o(╥﹏╥)o";
+            }
+        } finally {
+            //改进点，只能删除属于自己的key，不能删除别人的
+            if (redissonLock.isLocked() && redissonLock.isHeldByCurrentThread()) {
+                redissonLock.unlock();
+            }
+        }
+        return retMessage + "\t" + "服务端口号" + port;
+    }
+}
+
+```
+
+```java
+@RestController
+@Slf4j
+@ApiModel(value = "redis lock",description = "redis lock")
+@RequestMapping("/redisLock")
+public class RedisLockController
+{
+
+    @Autowired
+    private InventoryServiceImpl inventoryServiceImpl;
+
+    @ApiOperation("自研")
+    @PostMapping(value = "/selfResearch")
+    public String selfResearch()
+    {return inventoryServiceImpl.selfLock();}
+
+    @ApiOperation("redLock")
+    @PostMapping(value = "/redLock")
+    public String redLock()
+    {return inventoryServiceImpl.redLock();}
+
+}
+```
+
+压测redlock没有出现超卖
+
+![image-20240219151844383](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219151844383.png)
+
+### 多机案例
+
+> 经过之前的手写`RedisLock`和使用`Redission`发现使用以上两种方法时当redis宕机时就无法获取锁，使用集群也可能在没有同步之前 master 主机宕掉了 容错率较低，接下来就出现了 redlock ，他有点类似集群不过这些`redis` 机器都作为主机且没有从属关系，且只有所有机器的信息写入的时候才会返回数据加入成功，这样就不用担心redis宕机导致的无法获取锁的情况。
+
+![image-20240219161359313](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219161359313.png)
+
+> 线程 1 首先获取锁成功，将键值对写入 redis 的 master 节点，在 redis 将该键值对同步到 slave 节点之前，master 发生了故障；redis 触发故障转移，其中一个 slave 升级为新的 master，此时新上位的master并不包含线程1写入的键值对，因此线程 2 尝试获取锁也可以成功拿到锁，此时相当于有两个线程获取到了锁，可能会导致各种预期之外的情况发生，例如最常见的脏数据。 我们加的是排它独占锁，同一时间只能有一个建redis锁成功并持有锁，严禁出现2个以上的请求线程拿到锁。危险的
+
+[官网分布式锁介绍](https://redis.io/docs/manual/patterns/distributed-locks/)
+
+该方案也是基于（set 加锁、Lua 脚本解锁）进行改良的，所以redis之父antirez 只描述了差异的地方，大致方案如下。假设我们有N个Redis主节点，例如 N = 5这些节点是完全独立的，我们不使用复制或任何其他隐式协调系统，
+
+为了取到锁客户端执行以下操作：
+
+| 1    | 获取当前时间，以毫秒为单位；                                 |
+| ---- | ------------------------------------------------------------ |
+| 2    | 依次尝试从5个实例，使用相同的 key 和随机值（例如 UUID）获取锁。当向Redis 请求获取锁时，客户端应该设置一个超时时间，这个超时时间应该小于锁的失效时间。例如你的锁自动失效时间为 10 秒，则超时时间应该在 5-50 毫秒之间。这样可以防止客户端在试图与一个宕机的 Redis 节点对话时长时间处于阻塞状态。如果一个实例不可用，客户端应该尽快尝试去另外一个 Redis 实例请求获取锁； |
+| 3    | 客户端通过当前时间减去步骤 1 记录的时间来计算获取锁使用的时间。当且仅当从大多数（N/2+1，这里是 3 个节点）的 Redis 节点都取到锁，并且获取锁使用的时间小于锁失效时间时，锁才算获取成功； |
+| 4    | 如果取到了锁，其真正有效时间等于初始有效时间减去获取锁所使用的时间（步骤 3 计算的结果）。 |
+| 5    | 如果由于某些原因未能获得锁（无法在至少 N/2 + 1 个 Redis 实例获取锁、或获取锁的时间超过了有效时间），客户端应该在所有的 Redis 实例上进行解锁（即便某些Redis实例根本就没有加锁成功，防止某些节点获取到锁但是客户端没有得到响应而导致接下来的一段时间不能被重新获取锁）。 |
+
+该方案为了解决数据不一致的问题，直接舍弃了异步复制只使用 master 节点，同时由于舍弃了 slave，为了保证可用性，引入了 N 个节点，官方建议是 5。阳哥本次教学演示用3台实例来做说明。
+
+客户端只有在满足下面的这两个条件时，才能认为是加锁成功。
+
+条件1：客户端从超过半数（大于等于N/2+1）的Redis实例上成功获取到了锁；
+
+条件2：客户端获取锁的总耗时没有超过锁的有效时间。
+
+**redis 部署的台数计算**
+
+1. 先知道什么是容错
+
+    失败了多少个机器实例后我还是可以容忍的，所谓的容忍就是数据一致性还是可以Ok的，CP数据一致性还是可以满足
+
+    加入在集群环境中，redis失败1台，可接受。2X+1 = 2 * 1+1 =3，部署3台，死了1个剩下2个可以正常工作，那就部署3台。
+
+    加入在集群环境中，redis失败2台，可接受。2X+1 = 2 * 2+1 =5，部署5台，死了2个剩下3个可以正常工作，那就部署5台。
+
+2. 为什么是奇数？
+
+    加入在集群环境中，redis失败1台，可接受。2N+2= 2 * 1+2 =4，部署4台 经过计算4台和3台的效果一样
+
+    从而达到**最少的机器，最多的产出效果**
+
+**实战**
+
+配置 `RedissonClient`
+
+```java
+@Data
+public class RedisSingleProperties {
+    private  String address1;
+    private  String address2;
+    private  String address3;
+}
+```
+
+```java
+@Data
+@ConfigurationProperties(prefix = "spring.redis")
+public class RedisProperties {
+    private int database;
+
+    /**
+     * 等待节点回复命令的时间。该时间从命令发送成功时开始计时
+     */
+    private int timeout;
+
+    private String password;
+
+    private String mode;
+
+    /**
+     * 池配置
+     */
+
+    private RedisPoolProperties pool;
+
+    /**
+     * 单机信息配置
+     */
+    private RedisSingleProperties single;
+
+
+}
+```
+
+```java
+@Data
+public class RedisPoolProperties {
+
+    private int maxIdle;
+
+    private int minIdle;
+
+    private int maxActive;
+
+    private int maxWait;
+
+    private int connTimeout;
+
+    private int soTimeout;
+
+    /**
+     * 池大小
+     */
+    private  int size;
+
+}
+```
+
+```java
+@Configuration
+@EnableConfigurationProperties(RedisProperties.class)
+public class CacheConfiguration {
+
+    private final String PASSWORD = "134679";
+
+    @Resource
+    private RedisProperties redisProperties;
+
+//    @Bean
+    RedissonClient redissonClient1() {
+        Config config = new Config();
+        String node = redisProperties.getSingle().getAddress1();
+        node = node.startsWith("redis://") ? node : "redis://" + node;
+        SingleServerConfig serverConfig = config.useSingleServer()
+                .setAddress(node)
+                .setTimeout(redisProperties.getPool().getConnTimeout())
+                .setConnectionPoolSize(redisProperties.getPool().getSize())
+                .setConnectionMinimumIdleSize(redisProperties.getPool().getMinIdle());
+        serverConfig.setPassword("111111");
+        return Redisson.create(config);
+    }
+
+//    @Bean
+    RedissonClient redissonClient2() {
+        Config config = new Config();
+        String node = redisProperties.getSingle().getAddress2();
+        node = node.startsWith("redis://") ? node : "redis://" + node;
+        SingleServerConfig serverConfig = config.useSingleServer()
+                .setAddress(node)
+                .setTimeout(redisProperties.getPool().getConnTimeout())
+                .setConnectionPoolSize(redisProperties.getPool().getSize())
+                .setConnectionMinimumIdleSize(redisProperties.getPool().getMinIdle());
+        serverConfig.setPassword(PASSWORD);
+        return Redisson.create(config);
+    }
+
+//    @Bean
+    RedissonClient redissonClient3() {
+        Config config = new Config();
+        String node = redisProperties.getSingle().getAddress3();
+        node = node.startsWith("redis://") ? node : "redis://" + node;
+        SingleServerConfig serverConfig = config.useSingleServer()
+                .setAddress(node)
+                .setTimeout(redisProperties.getPool().getConnTimeout())
+                .setConnectionPoolSize(redisProperties.getPool().getSize())
+                .setConnectionMinimumIdleSize(redisProperties.getPool().getMinIdle());
+            serverConfig.setPassword(PASSWORD);
+        return Redisson.create(config);
+    }
+
+
+    /**
+     * 单机
+     * @return
+     */
+    @Bean
+    public Redisson redisson() {
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://43.138.25.182:6385").setDatabase(0);
+        config.useSingleServer().setPassword(PASSWORD);
+        return (Redisson) Redisson.create(config);
+    }
+
+}
+```
+
+yml
+
+```yml
+server:
+  port: 1347
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      test-while-idle: false
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://43.138.25.182:3306/study?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+  swagger2:
+    enabled: true
+  application:
+    name: redis_learn
+  redis:
+#    单机连接
+#    host:  43.138.25.182
+#    port: 6379
+#    database: 0
+#    集群连接
+    cluster:
+      nodes: 43.138.25.182:6379,43.138.25.182:6380,43.138.25.182:6381,43.138.25.182:6382,43.138.25.182:6383,43.138.25.182:6384
+      max-redirects: 3
+    password: 111111
+    lettuce:
+      cluster:
+        refresh:
+          #支持集群拓扑动态感应刷新,自适应拓扑刷新是否使用所有可用的更新，默认false关闭
+          adaptive: true
+          #定时刷新
+          period: 2000
+    pool:
+      connTimeout: 3000
+      size: 10
+      soTimeout: 3000
+    single:
+      address1: 43.138.25.182:6385
+      address2: 43.138.25.182:6386
+      address3: 43.138.25.182:6387
+    mode: single
+    timeout: 3000
+
+  #在springboot2.6.X结合swagger2.9.X会提示documentationPluginsBootstrapper空指针异常，
+  #原因是在springboot2.6.X中将SpringMVC默认路径匹配策略从AntPathMatcher更改为PathPatternParser，
+  # 导致出错，解决办法是matching-strategy切换回之前ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+nacos:
+  discovery:
+    server-addr: 43.138.25.182:8848
+
+```
+
+serviceImpl
+
+```java
+  @Autowired
+    RedissonClient redissonClient1;
+
+    @Autowired
+    RedissonClient redissonClient2;
+
+    @Autowired
+    RedissonClient redissonClient3;
+    @Override
+    public String multiLock() {
+        String retMessage = "";
+        RLock lock1 = redissonClient1.getLock(CACHE_KEY_REDLOCK);
+        RLock lock2 = redissonClient2.getLock(CACHE_KEY_REDLOCK);
+        RLock lock3 = redissonClient3.getLock(CACHE_KEY_REDLOCK);
+        RedissonMultiLock redLock = new RedissonMultiLock(lock1, lock2, lock3);
+        redLock.lock();
+        try {
+            //1 查询库存信息
+            String result = stringRedisTemplate.opsForValue().get("inventory001");
+            //2 判断库存是否足够
+            Integer inventoryNumber = result == null ? 0 : Integer.parseInt(result);
+            //3 扣减库存，每次减少一个
+            if (inventoryNumber > 0) {
+                stringRedisTemplate.opsForValue().set("inventory001", String.valueOf(--inventoryNumber));
+                retMessage = "成功卖出一个商品,库存剩余:" + inventoryNumber;
+                System.out.println(retMessage + "\t" + "服务端口号" + port);
+            } else {
+                retMessage = "商品卖完了,o(╥﹏╥)o";
+            }
+        } finally {
+            //改进点，只能删除属于自己的key，不能删除别人的
+//            if (redLock.isLocked() && redLock.isHeldByCurrentThread()) {
+                redLock.unlock();
+//            }
+        }
+        return retMessage + "\t" + "服务端口号" + port;
+    }
+```
+
+controller
+
+```java
+    @ApiOperation("multiLock")
+    @PostMapping(value = "/multiLock")
+    public String multiLock()
+    {return inventoryServiceImpl.multiLock();}
+
+```
+
+使用jmeter测试
+
+![image-20240220163202633](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240220163202633.png)

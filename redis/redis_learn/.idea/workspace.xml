@@ -5,7 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e330cefd-1520-473f-885a-fafde52695df" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/GuavaBloomFilterServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/GuavaBloomFilterServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/CacheConfiguration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisPoolProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisSingleProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/config/RedisConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/service/InventoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/service/impl/InventoryServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/CacheConfiguration.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisPoolProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisSingleProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/canal/RedisCanalClientExample.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/CanalController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/JHSController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/RedisLockController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/DistributedLockFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/LockType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/RedisDistributedLock.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/po/Product.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/InventoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/JHSService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/InventoryServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/JHSServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/whn/canal/RedisCanalClientExampleTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Redis 高级.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Redis 高级.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +42,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Enum" />
         <option value="Interface" />
         <option value="Class" />
       </list>
@@ -42,33 +71,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "MavenSettings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -76,6 +107,12 @@
     <selection>jr</selection>
   </component>
   <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.whn.canal" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="org.whn.controller" />
     </key>
@@ -91,7 +128,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="RedisCanalClientExampleTest.canalExecution" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="redis_learn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.whn.canal.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.whn.canal" />
+      <option name="MAIN_CLASS_NAME" value="org.whn.canal.RedisCanalClientExampleTest" />
+      <option name="METHOD_NAME" value="canalExecution" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" singleton="false" nameIsGenerated="true">
       <module name="redis_learn" />
       <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.whn.Main" />
@@ -114,9 +167,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="JUnit.MyTest.testGuavaWithBloomFilter" />
+      <item itemvalue="JUnit.RedisCanalClientExampleTest.canalExecution" />
+      <item itemvalue="Spring Boot.Main" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Spring Boot.Main" />
+        <item itemvalue="JUnit.RedisCanalClientExampleTest.canalExecution" />
         <item itemvalue="JUnit.MyTest.testGuavaWithBloomFilter" />
       </list>
     </recent_temporary>
@@ -135,6 +193,11 @@
       <workItem from="1706663500118" duration="114000" />
       <workItem from="1707791050291" duration="2702000" />
       <workItem from="1708228734774" duration="11111000" />
+      <workItem from="1708307816946" duration="106000" />
+      <workItem from="1708307944782" duration="5393000" />
+      <workItem from="1708314101389" duration="19188000" />
+      <workItem from="1708413219482" duration="903000" />
+      <workItem from="1708415153472" duration="1957000" />
     </task>
     <servers />
   </component>

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.whn</groupId>
-    <artifactId>redis_learn</artifactId>
+    <groupId>com.whn</groupId>
+    <artifactId>RedLockDemo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
@@ -21,7 +21,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.12</junit.version>
         <nacos.context>2.1.0-RC</nacos.context>
-<!--        <swagger.ui>2.9.2</swagger.ui>-->
+        <!--        <swagger.ui>2.9.2</swagger.ui>-->
         <swagger.ui>3.0.0</swagger.ui>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -140,11 +140,11 @@
             <version>${druid.version}</version>
         </dependency>
         <!--mybatis和springboot整合-->
-<!--        <dependency>-->
-<!--            <groupId>org.mybatis.spring.boot</groupId>-->
-<!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
-<!--            <version>${mybatis.spring.boot.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.mybatis.spring.boot</groupId>-->
+        <!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+        <!--            <version>${mybatis.spring.boot.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>

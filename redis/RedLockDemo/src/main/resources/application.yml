@@ -14,22 +14,7 @@ spring:
   application:
     name: redis_learn
   redis:
-#    单机连接
-#    host:  43.138.25.182
-#    port: 6379
-#    database: 0
-#    集群连接
-    cluster:
-      nodes: 43.138.25.182:6379,43.138.25.182:6380,43.138.25.182:6381,43.138.25.182:6382,43.138.25.182:6383,43.138.25.182:6384
-      max-redirects: 3
-    password: 111111
-    lettuce:
-      cluster:
-        refresh:
-          #支持集群拓扑动态感应刷新,自适应拓扑刷新是否使用所有可用的更新，默认false关闭
-          adaptive: true
-          #定时刷新
-          period: 2000
+    password: 134679
     pool:
       connTimeout: 3000
       size: 10

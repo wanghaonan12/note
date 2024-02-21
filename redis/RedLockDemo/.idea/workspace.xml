@@ -131,7 +131,7 @@
       <option name="presentableId" value="Default" />
       <updated>1700618808910</updated>
       <workItem from="1708411730589" duration="1447000" />
-      <workItem from="1708414124787" duration="892000" />
+      <workItem from="1708414124787" duration="1991000" />
     </task>
     <servers />
   </component>
@@ -155,11 +155,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/whn/service/impl/InventoryServiceImpl.java</url>
           <line>45</line>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/whn/service/impl/InventoryServiceImpl.java</url>
-          <line>94</line>
-          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

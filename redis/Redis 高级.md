@@ -1174,11 +1174,316 @@ class RedisCanalClientExampleTest {
 
 ![image-20240219104102447](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240219104102447.png)
 
-## BitMap、Hyperloglog、GEO 实战
+## Hyperloglog、GEO 实战
+
+### Hyperloglog
+
+> 实战内容，模拟网站的UV（Unique Visitor，独立访客，一般理解为客户端IP）数据记录，
+>
+> 如果使用，list，map等数据格式当数据达到亿级时则会出现超量的数据。
+>
+> 每个ipv4的地址最多是15个字节(ip = "192.168.111.1"，最多xxx.xxx.xxx.xxx)一天的1.5亿 * 15个字节= 2G，一个月60G，redis死定了。o(╥﹏╥)o
+
+```java
+@Service
+@Slf4j
+public class BHGServiceImpl implements BHGService {
+
+    public static final String HLL = "hll";
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    /**
+     * 模拟后台有用户点击首页，每个用户来自不同ip地址
+     */
+    @PostConstruct
+    public void HyperLogLogServiceInit()
+    {
+        log.info("------模拟后台有用户点击首页，每个用户来自不同ip地址");
+        new Thread(() -> {
+            String ip = null;
+            for (int i = 1; i <=200; i++) {
+                Random r = new Random();
+                ip = r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+
+                Long hll = redisTemplate.opsForHyperLogLog().add(HLL, ip);
+                log.info("ip={},该ip地址访问首页的次数={}",ip,hll);
+                //暂停几秒钟线程
+                try { TimeUnit.SECONDS.sleep(3); } catch (InterruptedException e) { e.printStackTrace(); }
+            }
+        },"t1").start();
+    }
+
+    @Override
+    public Integer getUvCount() {
+        Long size = redisTemplate.opsForHyperLogLog().size(HLL);
+        return Integer.valueOf(size.toString());
+    }
+}
+
+```
+
+![image-20240221160606640](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240221160606640.png)
+
+### GEO
+
+> geo 位置信息就不用多说了吧！附近的人，两地之间的距离等都可以实现
+
+```java
+@Service
+@Slf4j
+public class GeoService
+{
+    public static final String CITY ="city";
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    public String geoAdd()
+    {
+        Map<String, Point> map= new HashMap<>();
+        map.put("天安门",new Point(116.403963,39.915119));
+        map.put("故宫",new Point(116.403414 ,39.924091));
+        map.put("长城" ,new Point(116.024067,40.362639));
+
+        redisTemplate.opsForGeo().add(CITY,map);
+
+        return map.toString();
+    }
+
+    public Point position(String member) {
+        //获取经纬度坐标
+        List<Point> list= this.redisTemplate.opsForGeo().position(CITY,member);
+        return list.get(0);
+    }
 
 
+    public String hash(String member) {
+        //geohash算法生成的base32编码值
+        List<String> list= this.redisTemplate.opsForGeo().hash(CITY,member);
+        return list.get(0);
+    }
 
-## BloomFilter（过滤器）
+
+    public Distance distance(String member1, String member2) {
+        //获取两个给定位置之间的距离
+        Distance distance= this.redisTemplate.opsForGeo().distance(CITY,member1,member2, RedisGeoCommands.DistanceUnit.KILOMETERS);
+        return distance;
+    }
+
+    public GeoResults radiusByxy() {
+        //通过经度，纬度查找附近的,北京王府井位置116.418017,39.914402
+        Circle circle = new Circle(116.418017, 39.914402, Metrics.KILOMETERS.getMultiplier());
+        //返回50条
+        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().includeCoordinates().sortAscending().limit(50);
+        GeoResults<RedisGeoCommands.GeoLocation<String>> geoResults= this.redisTemplate.opsForGeo().radius(CITY,circle, args);
+        return geoResults;
+    }
+
+    public GeoResults radiusByMember() {
+        //通过地方查找附近
+        String member="天安门";
+        //返回50条
+        RedisGeoCommands.GeoRadiusCommandArgs args = RedisGeoCommands.GeoRadiusCommandArgs.newGeoRadiusArgs().includeDistance().includeCoordinates().sortAscending().limit(50);
+        //半径10公里内
+        Distance distance=new Distance(10, Metrics.KILOMETERS);
+        GeoResults<RedisGeoCommands.GeoLocation<String>> geoResults= this.redisTemplate.opsForGeo().radius(CITY,member, distance,args);
+        return geoResults;
+    }
+}
+```
+
+```java
+@Api(tags = "美团地图位置附近的酒店推送GEO")
+@RestController
+@Slf4j
+public class GeoController
+{
+    @Resource
+    private GeoService geoService;
+
+    @ApiOperation("添加坐标geoadd")
+    @RequestMapping(value = "/geoadd",method = RequestMethod.GET)
+    public String geoAdd()
+    {
+        return geoService.geoAdd();
+    }
+
+    @ApiOperation("获取经纬度坐标geopos")
+    @RequestMapping(value = "/geopos",method = RequestMethod.GET)
+    public Point position(String member)
+    {
+        return geoService.position(member);
+    }
+
+    @ApiOperation("获取经纬度生成的base32编码值geohash")
+    @RequestMapping(value = "/geohash",method = RequestMethod.GET)
+    public String hash(String member)
+    {
+        return geoService.hash(member);
+    }
+
+    @ApiOperation("获取两个给定位置之间的距离")
+    @RequestMapping(value = "/geodist",method = RequestMethod.GET)
+    public Distance distance(String member1, String member2)
+    {
+        return geoService.distance(member1,member2);
+    }
+
+    @ApiOperation("通过经度纬度查找北京王府井附近的")
+    @RequestMapping(value = "/georadius",method = RequestMethod.GET)
+    public GeoResults radiusByxy()
+    {
+        return geoService.radiusByxy();
+    }
+
+    @ApiOperation("通过地方查找附近,本例写死天安门作为地址")
+    @RequestMapping(value = "/georadiusByMember",method = RequestMethod.GET)
+    public GeoResults radiusByMember()
+    {
+        return geoService.radiusByMember();
+    }
+
+}
+```
+
+## BitMap之BloomFilter（过滤器）
+
+> 当然BitMap 除了可以做布隆过滤器，在用户签到信息记录上也很方便。如某用户按照一年365天，哪几天登陆过？哪几天没有登陆？全年中登录的天数共计多少？1 为登录 0为未登录这都是很方便，数据也不大。
+
+> 当遇到黑客攻击造成缓存穿透的问题时，可以使用缺省值代替，但是如果使用不同的请求参数时，使用缺省值的方法也会失效，这个时候就可以使用redis的布隆过滤器挡在前面进行判断请求是否有效。
+
+```java
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Customer implements Serializable
+{
+    private Integer id;
+
+    private String cname;
+
+    private Integer age;
+
+    private String phone;
+
+    private Byte sex;
+
+    private Date birth;
+
+}
+```
+
+```java
+@Service
+@Slf4j
+public class BHGServiceImpl implements BHGService {
+
+    public static final String CACHE_KEY_CUSTOMER = "customer:";
+    public static final String HLL = "hll";
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private CheckUtils checkUtils;
+
+    private final String WHITELIST = "whitelistCustomer";
+    @Override
+    public Customer findCustomerByIdWithBloomFilter (Integer customerId)
+    {
+        Customer customer = null;
+
+        //缓存key的名称
+        String key = CACHE_KEY_CUSTOMER + customerId;
+
+        //布隆过滤器check，无是绝对无，有是可能有
+        //===============================================
+        if(!checkUtils.checkWithBloomFilter(WHITELIST,key))
+        {
+            log.info("白名单无此顾客信息:{}",key);
+            return null;
+        }
+        //===============================================
+
+        //1 查询redis
+        customer = (Customer) redisTemplate.opsForValue().get(key);
+        //redis无，进一步查询mysql
+        if (customer == null) {
+            //2 从mysql查出来customer
+            //模拟从数据库获取数据
+            customer = Customer.builder().age(18).id(customerId).cname(customerId+"_whn").build();
+            // mysql有，redis无
+            if (customer != null) {
+                //3 把mysql捞到的数据写入redis，方便下次查询能redis命中。
+                redisTemplate.opsForValue().set(key, customer);
+            }
+        }
+        return customer;
+    }
+
+    @Override
+    public boolean addWhiteList(Integer customerId) {
+        //缓存key的名称
+        String key = CACHE_KEY_CUSTOMER + customerId;
+        //1 计算hashcode，由于可能有负数，直接取绝对值
+        int hashValue = Math.abs(key.hashCode());
+        //2 通过hashValue和2的32次方取余后，获得对应的下标坑位
+        long index = (long) (hashValue % Math.pow(2, 32));
+        log.info(customerId+" 对应------坑位index:{}",index);
+        //3 设置redis里面bitmap对应坑位，该有值设置为1
+        return Boolean.TRUE.equals(redisTemplate.opsForValue().setBit(WHITELIST, index, true));
+    }
+}
+
+```
+
+```java
+@Component
+@Slf4j
+public class CheckUtils
+{
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    public boolean checkWithBloomFilter(String checkItem,String key)
+    {
+        int hashValue = Math.abs(key.hashCode());
+        long index = (long) (hashValue % Math.pow(2, 32));
+        boolean existOK = redisTemplate.opsForValue().getBit(checkItem, index);
+        log.info("----->key:"+key+"\t对应坑位index:"+index+"\t是否存在:"+existOK);
+        return existOK;
+    }
+}
+```
+
+```java
+@RestController
+@Slf4j
+@ApiModel(value = "bhg Controller",description = "bhg Controller")
+@RequestMapping("/bhg")
+public class BHGController
+{
+
+    @Autowired
+    private BHGServiceImpl bhgService;
+
+    @ApiOperation("通过布隆过滤器查询 Customer")
+    @RequestMapping(value = "/findCustomerByIdWithBloomFilter/{customerId}",method = RequestMethod.GET)
+    public Customer findCustomerByIdWithBloomFilter(@PathVariable  Integer customerId)
+    {
+        return bhgService.findCustomerByIdWithBloomFilter(customerId);
+    }
+
+    @ApiOperation("添加布隆过滤器白名单")
+    @RequestMapping(value = "/addWhiteList/{customerId}",method = RequestMethod.GET)
+    public boolean addWhiteList(@PathVariable  Integer customerId)
+    {
+        return bhgService.addWhiteList(customerId);
+    }
+
+}
+```
 
 
 
@@ -1225,6 +1530,8 @@ class RedisCanalClientExampleTest {
    > 2. 使用Google布隆过滤器Guava解决缓存穿透（不符合过滤器条件的请求会直接返回 不会经过redis）
 
    **案例：**
+
+   **此案例使用Google布隆过滤器Guava解决缓存穿透**
 
    依赖
 

@@ -5,34 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e330cefd-1520-473f-885a-fafde52695df" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/CacheConfiguration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisPoolProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/cache/RedisSingleProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/config/RedisConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/service/InventoryService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/java/com/whn/service/impl/InventoryServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../RedLockDemo/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/CacheConfiguration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisPoolProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/cache/RedisSingleProperties.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/canal/RedisCanalClientExample.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/CanalController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/JHSController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/RedisLockController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/DistributedLockFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/LockType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/lock/RedisDistributedLock.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/po/Product.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/InventoryService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/JHSService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/InventoryServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/JHSServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/whn/canal/RedisCanalClientExampleTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Redis 高级.md" beforeDir="false" afterPath="$PROJECT_DIR$/../Redis 高级.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/BHGController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/po/Customer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/BHGService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/service/impl/BHGServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/util/CheckUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +121,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" singleton="false" nameIsGenerated="true">
+    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" singleton="true" nameIsGenerated="true">
       <module name="redis_learn" />
       <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.whn.Main" />
@@ -198,6 +175,7 @@
       <workItem from="1708314101389" duration="19188000" />
       <workItem from="1708413219482" duration="903000" />
       <workItem from="1708415153472" duration="1957000" />
+      <workItem from="1708496009904" duration="4553000" />
     </task>
     <servers />
   </component>
@@ -229,5 +207,16 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/whn/service/impl/BHGServiceImpl.java</url>
+          <line>151</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

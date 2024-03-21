@@ -5,40 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47501957-d0f3-49c4-aebe-88eade4e7c06" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/MyThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/MyThread2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/MyThread3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/One.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/Three.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/Two.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/multiThread/MultiThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/multiThread/Phone.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/Factory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/Lock/LockFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/Lock/LockNotifyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/customizationNotify/CustomizationNotifyFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/customizationNotify/CustomizationNotifyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/falseAwakening/FalseAwakeningFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/falseAwakening/FalseAwakeningNotifyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/sy/SyFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/notify/sy/SyNotifyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/reentrantLock/ReentrantLockTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/reentrantReadWriteLock/ReentrantReadWriteLockTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/reentrantReadWriteLock/ReentrantResource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/safety/ThreadSafety.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/Future/Future.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/blockingQueue/ShoppingCart.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/CountDownLatch/CountDownLatchTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/CyclicBarrirt/CyclicBarrierTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/Semaphore/SemaphoreTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../JUC初级.md" beforeDir="false" afterPath="$PROJECT_DIR$/../JUC初级.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/MyThread.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/MyThread2.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/MyThread3.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/One.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/Three.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../redis/juc_study/src/main/java/com/whn/Two.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../数据库/mysql/数据库迁移.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../数据库/mysql/数据库迁移.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,13 +75,13 @@
       <recent name="com.whn" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ReentrantReadWriteLockTest">
-    <configuration name="CustomizationNotifyTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.notify.customizationNotify.CustomizationNotifyTest" />
+  <component name="RunManager" selected="Application.ShoppingCart">
+    <configuration name="CountDownLatchTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.CountDownLatch.CountDownLatchTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.notify.customizationNotify.*" />
+          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.CountDownLatch.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -115,12 +89,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MultiThread" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.safety.multiThread.MultiThread" />
+    <configuration name="CyclicBarrierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.CyclicBarrierTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.safety.multiThread.*" />
+          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -128,12 +102,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ReentrantLockTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.reentrantLock.ReentrantLockTest" />
+    <configuration name="Future" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.Future.Future" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.reentrantLock.*" />
+          <option name="PATTERN" value="com.whn.Future.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -141,12 +115,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ReentrantReadWriteLockTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.reentrantReadWriteLock.ReentrantReadWriteLockTest" />
+    <configuration name="SemaphoreTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.Semaphore.SemaphoreTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.reentrantReadWriteLock.*" />
+          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.Semaphore.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -154,12 +128,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThreadSafety" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.safety.ThreadSafety" />
+    <configuration name="ShoppingCart" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.blockingQueue.ShoppingCart" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.safety.*" />
+          <option name="PATTERN" value="com.whn.blockingQueue.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -177,11 +151,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ReentrantReadWriteLockTest" />
-        <item itemvalue="Application.ReentrantLockTest" />
-        <item itemvalue="Application.MultiThread" />
-        <item itemvalue="Application.ThreadSafety" />
-        <item itemvalue="Application.CustomizationNotifyTest" />
+        <item itemvalue="Application.ShoppingCart" />
+        <item itemvalue="Application.Future" />
+        <item itemvalue="Application.SemaphoreTest" />
+        <item itemvalue="Application.CyclicBarrierTest" />
+        <item itemvalue="Application.CountDownLatchTest" />
       </list>
     </recent_temporary>
   </component>
@@ -203,10 +177,28 @@
       <workItem from="1710479178681" duration="5394000" />
       <workItem from="1710555263501" duration="14090000" />
       <workItem from="1710818243737" duration="1469000" />
+      <workItem from="1710903127640" duration="8536000" />
+      <workItem from="1710933737193" duration="3618000" />
+      <workItem from="1710983390262" duration="3487000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/CyclicBarrirt/CyclicBarrierTest.java</url>
+          <line>13</line>
+          <properties class="com.whn.jucAuxiliaryClass.CyclicBarrirt.CyclicBarrierTest" method="main">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

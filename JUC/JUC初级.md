@@ -158,13 +158,94 @@ try {
 }
 ```
 
+# Future
+
+[Java中「Future」接口详解 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/622375761)
+
+Future表示异步计算的结果，提供了用于检查计算是否完成、等待计算完成、以及检索计算结果的方法。
+
+案例
+
+```java
+public class Future {
+    public static void main(String[] args) throws Exception {
+        FutureTask<String> futureTask = new FutureTask<>( new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return Integer.valueOf((int) (Math.random() * 10 + 1)).toString();
+            }
+        });
+        new Thread(futureTask).start();
+        System.out.println(futureTask.get()+"new Thread");
+        //---------------------------------------------------------------------------------------------
+        ExecutorService executorService = Executors.newScheduledThreadPool(10);
+        List<Callable<String>> tasks = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            tasks.add(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    Thread.sleep(2000);
+                    return Integer.valueOf((int) (Math.random() * 10 + 1)).toString();
+                }
+            });
+        }
+
+        List<java.util.concurrent.Future<String>> futures = executorService.invokeAll(tasks);
+        futures.forEach(
+                stringFuture -> {
+                    try {
+                        System.out.println(stringFuture.get()+"线程池");
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        executorService.shutdown();
+    }
+}
+```
+
+**核心方法**
+
+- `get()`：等待任务完成，获取执行结果，如果任务取消会抛出异常；
+- `get(long timeout, TimeUnit unit)`：指定等待任务完成的时间，等待超时会抛出异常；
+- `isDone()`：判断任务是否完成；
+- `isCancelled()`：判断任务是否被取消；
+- `cancel(boolean mayInterruptIfRunning)`：尝试取消此任务的执行，如果任务已经完成、已经取消或由于其他原因无法取消，则此尝试将失败；`mayInterruptIfRunning` : 如果在执行的时候是否停止该线程的执行。
+
+```java
+        new Thread(new FutureTask<>( new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return Integer.valueOf((int) (Math.random() * 10 + 1)).toString();
+            }
+        })).start();
+        System.out.println("指定时间内获取值，获取不到报异常："+futureTask.get(10,TimeUnit.MILLISECONDS));
+        System.out.println("获取值："+futureTask.get());
+        System.out.println("任务是否完成:"+futureTask.isDone());
+        System.out.println("尝试取消此任务的执行，如果任务已经完成、已经取消或由于其他原因无法取消，则此尝试将失败:"+futureTask.cancel(false));
+        System.out.println("任务是否被取消："+futureTask.isCancelled());
+
+		//--------------------------执行结果-------------------------
+        //指定时间内获取值，获取不到报异常：4
+        //获取值：4
+        //任务是否完成:true
+        //尝试取消此任务的执行，如果任务已经完成、已经取消或由于其他原因无法取消，则此尝试将失败:false
+        //任务是否被取消：false
+```
+
+
+
 # 线程通信
 
 ## synchronized 和Lock 的线程通信
 
 1. 关键字 `synchronized` 与` wait()`/`notify()`这两个方法一起使用可以实现等待/通 知模式
 
-   用 notify()通知时，JVM 会随机唤醒某个等待的线程。**注意：如果有多个线程，并且设置了状态锁的时候使用`notify()`时会造成死锁问题，此时应使用`notifyAll()`**
+   用 `notify()`通知时，`JVM` 会随机唤醒某个等待的线程。**注意：如果有多个线程，并且设置了状态锁的时候使用`notify()`时会造成死锁问题，此时应使用`notifyAll()`**
 
    ```bash
    - wait()会使当前线程等待,同时会释放锁，直到被唤醒，便从当前位置继续执行。
@@ -903,6 +984,10 @@ public class ReentrantLockTest {
 
 ## 读写锁ReadWriteLock 
 
+现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写的操作了。
+
+针对这种场景，JAVA的并发包提供了读写锁 `ReentrantReadWriteLock`，它表示两个锁，一个是读操作相关的锁，称为共享锁；一个是写相关的锁，称为排他锁  
+
 `ReentrantLock` 实现了 `Lock `接口，`ReentrantReadWriteLock `实现了 `ReadWriteLock `接口。对于`ReentrantLock` 它的 **读读也是一个线程**访问，浪费资源。`ReentrantReadWriteLock` 可以**实现读读共享**！
 
 ```java
@@ -1023,6 +1108,12 @@ public class ReentrantReadWriteLockTest {
 }
 ```
 
+**总结**
+
+> 1. 在线程持有读锁的情况下，该线程不能取得写锁(因为获取写锁的时候，如果发现当前的读锁被占用，就马上获取失败，不管读锁是不是被当前线程持有)。 
+> 2. 在线程持有写锁的情况下，该线程可以继续获取读锁（获取读锁时如果发现写锁被占用，只有写锁没有被当前线程占用的情况才会获取失败）。
+>    - 原因: 当线程获取读锁的时候，可能有其他线程同时也在持有读锁，因此不能把获取读锁的线程“升级”为写锁；而对于获得写锁的线程，它一定独占了读写锁，因此可以继续让它获取读锁，当它同时获取了写锁和读锁后，还可以先释放写锁继续持有读锁，这样一个写锁就“降级”为了读锁。  
+
 # JUC 三大辅助类
 
 ## 1. 减少计数 CountDownLatch
@@ -1030,11 +1121,335 @@ public class ReentrantReadWriteLockTest {
 CountDownLatch 类可以设置一个计数器，然后通过 countDown 方法来进行 减 1 的操作，使用 await 方法等待计数器不大于 0，然后继续执行 await 方法 之后的语句。
 
 - CountDownLatch 主要有两个方法，当一个或多个线程调用 await 方法时，这 些线程会阻塞
-- 其它线程调用 countDown 方法会将计数器减 1(调用 countDown 方法的线程 不会阻塞) 
+- 其它线程调用 `countDown` 方法会将计数器减 1(调用 `countDown` 方法的线程 不会阻塞) 
 - 当计数器的值变为 0 时，因 await 方法阻塞的线程会被唤醒，继续执行
 
+---
 
+>  案例学生全出门关闭教室门
+
+```java
+public class CountDownLatchTest {
+    public static void main(String[] args) throws InterruptedException {
+        // 创建CountDown对象并设置初始值
+        //CountDownLatch countDownLatch = new CountDownLatch(6);
+        // 创建六个线程，模拟六个学生
+        for (int i = 1; i <= 6; i++) {
+            new Thread(()->{
+                System.out.println(Thread.currentThread().getName()+"离开教室");
+                // 计数 -1
+                //countDownLatch.countDown();
+            },String.valueOf(i)).start();
+        }
+        // 等待，直到达到零
+        //countDownLatch.await();
+        System.out.println(Thread.currentThread().getName()+"锁门");
+    }
+}
+```
+
+![image-20240320105600010](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240320105600010.png)
+
+> 当没有启用计数器的时候主线程的关门没有等待学生全部出去，便把门关上了，这不符合业务需求
+> 启用计数器之后便会通过`countDown` 方法计算，当(学生)计数器归零便放开主线程的`awaiat`方法。
+> 解决了线程混乱的问题。
 
 ## 2. 循环栅栏 CyclicBarrier
 
+`CyclicBarrier` 看英文单词可以看出大概就是循环阻塞的意思，在使用中 `CyclicBarrier` 的构造方法第一个参数是目标障碍数，每次执行 `CyclicBarrier` 一 次障碍数会加一，如果达到了目标障碍数，才会执行 `cyclicBarrier.await()`之后 的语句。可以将 `CyclicBarrier` 理解为加 1 操作 
+
+该类是 **允许一组线程** 互相 等待，直到到达某个公共屏障点，在设计一组固定大小的线程的程序中，这些线程必须互相等待，因为barrier在释放等待线程后可以重用，所以称为循环barrier
+
+---
+
+> 集齐七龙珠召唤神龙
+
+```java
+public class CyclicBarrierTest {
+    // 创建固定值
+    private static final int NUMBER  = 7;
+    public static void main(String[] args) {
+        // 每次执行 CyclicBarrier 一次障碍数会加一，如果达到了目标障碍数，才会执行 cyclicBarrier.await()之后的语句。
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(NUMBER, () -> {
+            System.out.println("****集齐7颗龙珠就可以召唤神龙");
+        });
+        // 创建六个线程，模拟六个学生
+        for (int i = 1; i <= 7; i++) {
+            new Thread(()->{
+                System.out.println(Thread.currentThread().getName()+" 星龙被收集到了");
+                try {
+                    // 计数 +1
+                    cyclicBarrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+
+            },String.valueOf(i)).start();
+        }
+    }
+}
+```
+
+| 特性/工具类    | CountDownLatch                                          | CyclicBarrier                                                |
+| -------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| 定义           | 用于一次性等待多个线程完成任务的同步工具                | 用于多线程互相等待至某一状态再共同执行的可循环使用的同步工具 |
+| 计数器用途     | 计数值递减至0时释放所有等待线程，递减后不可复原         | 标记参与线程数量，所有线程调用await后计数复位                |
+| 使用场景       | 适用于一次性启动多个线程并等待它们全部完成后执行下一步  | 适用于多阶段任务，每个阶段都需要所有线程完成后再进入下一阶段 |
+| 计数器可重置性 | 不可重置，一次性的计数行为                              | 可重置，达成一致后可再次进行新一轮的等待                     |
+| 执行回调任务   | 不支持在所有线程完成时自动执行回调函数                  | 支持在所有线程到达屏障点时执行自定义的Runnable任务           |
+| 使用方法       | 调用`countDown()`方法减少计数，`await()`方法等待计数为0 | 调用`await()`方法使当前线程等待所有线程到达屏障点            |
+
 ## 3. 信号灯 Semaphore
+
+​	一个计数信号量，从概念上将，信号量维护了一个许可集，如有必要，在许可可用前会阻塞每一个`acquire()`，然后在获取该许可。每个`release()`释放一个许可，从而可能释放一个正在阻塞的获取者。但是，不使用实际的许可对象，`Semaphore`只对可用许可的号码进行计数，并采取相应的行动
+​	`Semaphore`的构造方法中传入的第一个参数是最大信号量（可以看成最大线程池），每个信号量初始化为一个最多只能分发一个许可证。使用 `acquire`方法获得许可证，`release`方法释放许可 
+
+---
+
+> 场景: 抢车位, 6部汽车 3个停车位 
+
+```java
+public class SemaphoreTest {
+    public static void main(String[] args) {
+        //创建Semaphore，设置许可数量
+        Semaphore semaphore = new Semaphore(3);
+        for (int i = 1; i <= 6; i++) {
+            new Thread(()->{
+                try {
+                    // 抢占
+                    semaphore.acquire();
+                    System.out.println(Thread.currentThread().getName()+"抢到了车位");
+                    // 设置停车时间
+                    TimeUnit.SECONDS.sleep(new Random().nextInt(5));
+                    // 离开车位
+                    System.out.println(Thread.currentThread().getName()+"------离开了车位");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    //释放
+                    semaphore.release();
+                }
+            },String.valueOf(i)).start();
+        }
+    }
+}
+```
+
+# 阻塞队列
+
+## 简介
+
+`Concurrent`包中，`BlockingQueue`很好的解决了多线程中，如何高效安全**传输**数据的问题。通过这些高效并且线程安全的队列类，为我们快速搭建高质量的多线程程序带来极大的便利。
+
+阻塞队列，顾名思义，首先它**是一个队列**, 通过一个**共享的队列**，可以使得数据由队列的**一端输入**，从另外**一端输出**；
+
+ <img src="https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240320150648870.png" width="" height="">
+
+> 试图从空的队列中获取元素的线程将会被阻塞，直到其他线程往空的队列插入新的元素 
+>
+> 试图向已满的队列中添加新元素的线程将会被阻塞，直到其他线程从队列中移除一个或多个元素或者完全清空，使队列变得空闲起来并后续新增 
+>
+> 常用的队列主要有以下两种：
+>
+> - 先进先出（FIFO）：先插入的队列的元素也最先出队列，类似于排队的功能。从某种程度上来说这种队列也体现了一种公平性 
+> - 后进先出（LIFO）：后插入队列的元素最先出队列，这种队列优先处理最近发生的事件(栈) 
+
+## 为什么需要 BlockingQueue 
+
+> 好处是我们不需要关心什么时候需要阻塞线程，什么时候需要唤醒线程，因为这一切`BlockingQueue`都给你一手包办了。在`concurrent`包发布以前，在多线程环境下，我们每个程序员都必须去自己控制这些细节，尤其还要兼顾效率和线程安全，而这会给我们的程序带来不小的复杂度。 
+
+**场景**
+
+> 多线程环境中，通过队列可以很容易实现数据共享，比如经典的“生产者”和“消费者”模型中，通过队列可以很便利地实现两者之间的数据共享。假设我们有若干生产者线程，另外又有若干个消费者线程。如果生产者线程需要把准备好的数据共享给消费者线程，利用队列的方式来传递数据，就可以很方便地解决他们之间的数据共享问题。但如果生产者和消费者在某个时间段内，万一发生数据处理速度不匹配的情况呢？理想情况下，如果生产者产出数据的速度大于消费者消费的速度，并且当生产出来的数据累积到一定程度的时候，那么生产者必须暂停等待一下（阻塞生产者线程），以便等待消费者线程把累积的数据处理完毕，反之亦然
+
+## BlockingQueue 核心方法
+
+![image-20240320152204206](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240320152204206.png)
+
+![image-20240320152212921](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240320152212921.png)
+
+| 操作                                    | 描述                                                 | 备注                                                         |
+| --------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| 添加数据                                |                                                      |                                                              |
+| add(E e)                                | 将元素添加到队列尾部，如果队列已满则抛出异常         | 异常：IllegalStateException（队列已满）、InterruptedException（队列被中断） |
+| offer(anObject)                         | 将对象添加到队列，若队列已满则返回false              |                                                              |
+| offer(E o, long timeout, TimeUnit unit) | 尝试在指定时间内添加元素到队列                       | 如果超时仍未成功加入队列，则返回失败                         |
+| put(anObject)                           | 将对象添加到队列，若队列已满则阻塞直到队列有空间可用 | 当前线程被阻塞直到队列有空间可用                             |
+| 获取数据                                |                                                      |                                                              |
+| poll(time)                              | 取出队首对象，若无立即取出则等待指定时间             | 超时返回null                                                 |
+| poll(long timeout, TimeUnit unit)       | 从队列取出队首对象                                   | 等待指定时间，超时返回失败                                   |
+| take()                                  | 取出队首对象，若队列为空则阻塞直到队列有数据可取     | 当前线程被阻塞直到队列有数据可取                             |
+| drainTo()                               | 一次性获取所有可用数据对象，提升获取数据效率         | 可指定获取数据个数，减少加锁释放锁的开销                     |
+
+## 阻塞队列分类
+
+| 并发队列                | 介绍                                                         | 使用场景                                                     |
+| ----------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `ArrayBlockingQueue`    | 基于数组实现的有界阻塞队列。按照先进先出（FIFO）顺序排序。   | 适用于需要有限容量且按照FIFO顺序操作的场景，如线程池任务队列。 |
+| `LinkedBlockingQueue`   | 基于链表实现的可选有界或无界阻塞队列。按照FIFO顺序排序。     | 适用于需要无限容量或大容量的场景，如生产者-消费者模型。      |
+| `DelayQueue`            | 无界阻塞队列，存放实现了Delayed接口的对象，按照延迟时间排序。 | 适用于需要按照延迟时间执行任务的场景，如定时任务调度。       |
+| `PriorityBlockingQueue` | 基于优先级堆的无界阻塞队列。元素按照自然顺序或比较器排序。   | 适用于需要按照优先级顺序操作的场景，如任务调度中的优先级队列。 |
+| `SynchronousQueue`      | 没有存储元素的阻塞队列。每个插入操作必须等待对应的移除操作。 | 适用于直接传递数据的场景，如线程间数据传输。                 |
+| `LinkedTransferQueue`   | 无界队列，支持非阻塞和阻塞式传输。基于链表实现。             | 适用于需要灵活的数据传输场景，如异步任务执行。               |
+| `LinkedBlockingDeque`   | 双向阻塞队列，由链表实现。支持队列和栈操作。                 | 适用于需要在队列两端插入和移除元素的场景，如工作流管理。     |
+
+**ArrayBlockingQueue(常用)** 
+
+> ​	基于数组的阻塞队列实现，在 `ArrayBlockingQueue` 内部，维护了一个定长数组，以便缓存队列中的数据对象，这是一个常用的阻塞队列，除了一个定长数 组外，`ArrayBlockingQueue` 内部还保存着两个整形变量，分别标识着队列的头部和尾部在数组中的位置。  ``ArrayBlockingQueue` 在生产者放入数据和消费者获取数据，都是共用同一个锁对象，由此也意味着两者无法真正并行运行，这点尤其不同于 `LinkedBlockingQueue`；
+>
+> ​	按照实现原理来分析，`ArrayBlockingQueue` 完全可以采用分离锁，从而实现生产者和消费者操作的完全并行运行。`Doug Lea `之 所以没这样去做，也许是因为 `ArrayBlockingQueue` 的数据写入和获取操作已经足够轻巧，以至于引入独立的锁机制，除了给代码带来额外的复杂性外，其 在性能上完全占不到任何便宜。 `ArrayBlockingQueue` 和 `LinkedBlockingQueue` 间还有一个明显的不同之处在于，前者在插入或删除 元素时不会产生或销毁任何额外的对象实例，而后者则会生成一个额外的` Node` 对象。这在长时间内需要高效并发地处理大批量数据的系统中，其对于 `GC `的影响还是存在一定的区别。而在创建 `ArrayBlockingQueue` 时，我们还可以控制对象的内部锁是否采用公平锁，默认采用非公平锁。
+>
+> 一句话总结: 由数组结构组成的有界阻塞队列。
+
+ **LinkedBlockingQueue(常用)** 
+
+> 基于链表的阻塞队列，同 `ArrayListBlockingQueue` 类似，其内部也维持着一 个数据缓冲队列（该队列由一个链表构成），当生产者往队列中放入一个数据 时，队列会从生产者手中获取数据，并缓存在队列内部，而生产者立即返回； 只有当队列缓冲区达到最大值缓存容量时（`LinkedBlockingQueue` 可以通过 构造函数指定该值），才会阻塞生产者队列，直到消费者从队列中消费掉一份数据，生产者线程会被唤醒，反之对于消费者这端的处理也基于同样的原理。 而` LinkedBlockingQueue `之所以能够高效的处理并发数据，还因为其对于生 产者端和消费者端分别采用了独立的锁来控制数据同步，这也意味着在高并发 的情况下生产者和消费者可以并行地操作队列中的数据，以此来提高整个队列 的并发性能。`  ArrayBlockingQueue` 和 `LinkedBlockingQueue` 是两个最普通也是最常用 的阻塞队列，一般情况下，在处理多线程间的生产者消费者问题，使用这两个 类足以。  
+>
+> 一句话总结: 由链表结构组成的有界（但大小默认值为 integer.MAX_VALUE）阻塞队列。
+
+**DelayQueue** 
+
+> `DelayQueue` 中的元素只有当其指定的延迟时间到了，才能够从队列中获取到 该元素。`DelayQueue` 是一个没有大小限制的队列，因此往队列中插入数据的 操作（生产者）永远不会被阻塞，而只有获取数据的操作（消费者）才会被阻 塞。
+>
+>   一句话总结: 使用优先级队列实现的延迟无界阻塞队列。
+
+**PriorityBlockingQueue**
+
+> `PriorityBlockingQueue`  基于优先级的阻塞队列（优先级的判断通过构造函数传入的` Compator `对象来 决定），但需要注意的是 `PriorityBlockingQueue` 并不会阻塞数据生产者，而 只会在没有可消费的数据时，阻塞数据的消费者。因此使用的时候要特别注意，生产者生产数据的速度绝对不能快于消费者消费 数据的速度，否则时间一长，会最终耗尽所有的可用堆内存空间。  在实现 `PriorityBlockingQueue`时，内部控制线程同步的锁采用的是公平锁。
+>
+> 一句话总结: 支持优先级排序的无界阻塞队列。
+
+**SynchronousQueue**
+
+> `SynchronousQueue`    一种无缓冲的等待队列，类似于无中介的直接交易，有点像原始社会中的生产 者和消费者，生产者拿着产品去集市销售给产品的最终消费者，而消费者必须 亲自去集市找到所要商品的直接生产者，如果一方没有找到合适的目标，那么 对不起，大家都在集市等待。相对于有缓冲的 `BlockingQueue` 来说，少了一 个中间经销商的环节（缓冲区），如果有经销商，生产者直接把产品批发给经 销商，而无需在意经销商最终会将这些产品卖给那些消费者，由于经销商可以 库存一部分商品，因此相对于直接交易模式，总体来说采用中间经销商的模式 会吞吐量高一些（可以批量买卖）；但另一方面，又因为经销商的引入，使得 产品从生产者到消费者中间增加了额外的交易环节，单个产品的及时响应性能 可能会降低。  声明一个 `SynchronousQueue` 有两种不同的方式，它们之间有着不太一样的 行为。  公平模式和非公平模式的区别:  • 公平模式：`SynchronousQueue` 会采用公平锁，并配合一个 `FIFO` 队列来阻塞 多余的生产者和消费者，从而体系整体的公平策略；  • 非公平模式（`SynchronousQueue` 默认）：`SynchronousQueue` 采用非公平 锁，同时配合一个 `LIFO` 队列来管理多余的生产者和消费者，而后一种模式， 如果生产者和消费者的处理速度有差距，则很容易出现饥渴的情况，即可能有 某些生产者或者是消费者的数据永远都得不到处理。
+>
+>   一句话总结: 不存储元素的阻塞队列，也即单个元素的队列。
+
+**LinkedTransferQueue**  
+
+> `LinkedTransferQueue` 是一个由链表结构组成的无界阻塞 `TransferQueue` 队 列。相对于其他阻塞队列，`LinkedTransferQueue` 多了 `tryTransfer` 和 `transfer` 方法。  `LinkedTransferQueue` 采用一种预占模式。意思就是消费者线程取元素时，如 果队列不为空，则直接取走数据，若队列为空，那就生成一个节点（节点元素 为 `null`）入队，然后消费者线程被等待在这个节点上，后面生产者线程入队时 发现有一个元素为 `null` 的节点，生产者线程就不入队了，直接就将元素填充到   该节点，并唤醒该节点等待的线程，被唤醒的消费者线程取走元素，从调用的 方法返回。
+>
+>   一句话总结: 由链表组成的无界阻塞队列。
+
+**LinkedBlockingDeque  **
+
+> ` LinkedBlockingDeque` 是一个由链表结构组成的双向阻塞队列，即可以从队 列的两端插入和移除元素。  对于一些指定的操作，在插入或者获取队列元素时如果队列状态不允许该操作 可能会阻塞住该线程直到队列状态变更为允许操作，这里的阻塞一般有两种情 况  • 插入元素时: 如果当前队列已满将会进入阻塞状态，一直等到队列有空的位置时 再讲该元素插入，该操作可以通过设置超时参数，超时后返回 `false` 表示操作 失败，也可以不设置超时参数一直阻塞，中断后抛出 `InterruptedException` 异 常  • 读取元素时: 如果当前队列为空会阻塞住直到队列不为空然后返回元素，同样可 以通过设置超时参数
+>
+>  一句话总结: 由链表组成的双向阻塞队列
+
+**小结** 
+
+> 1. 在多线程领域：所谓阻塞，在某些情况下会挂起线程（即阻塞），一旦条件 满足，被挂起的线程又会自动被唤起  
+>
+> 2. 为什么需要 `BlockingQueue`?
+>
+>     在 `concurrent` 包发布以前，在多线程环境下， 我们每个程序员都必须去自己控制这些细节，尤其还要兼顾效率和线程安全， 而这会给我们的程序带来不小的复杂度。使用后我们不需要关心什么时候需要 阻塞线程，什么时候需要唤醒线程，因为这一切 `BlockingQueue` 都给你一手 包办了
+
+## 案例
+
+> 一个线程用来创建订单信息，另一个线程用消费。每个线程都有随机的延时，模拟业务操作耗时，队列会根据订单情况进行消费。
+
+```java
+// 订单类
+class Order {
+    private String orderId;
+    private String userId;
+
+    public Order(String orderId, String userId) {
+        this.orderId = orderId;
+        this.userId = userId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+}
+
+// 订单生成者
+class OrderProducer implements Runnable {
+    private ArrayBlockingQueue<Order> orderQueue;
+
+    public OrderProducer(ArrayBlockingQueue<Order> orderQueue) {
+        this.orderQueue = orderQueue;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            Order order = new Order("Order" + i, "User" + i);
+            try {
+                // 将订单放入订单队列中
+                orderQueue.put(order);
+                int sleepTime = (new Random().nextInt(5) + 1);
+                System.out.println("创建订单消耗：" + sleepTime + "秒++++++++++++++");
+                Thread.sleep(sleepTime * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+// 订单处理任务
+class OrderTask implements Runnable {
+    private Order order;
+
+    public OrderTask(Order order) {
+        this.order = order;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Processing order " + order.getOrderId() + " for user " + order.getUserId());
+        // 在这里添加订单处理逻辑
+        try {
+            // 模拟订单处理时间
+            int sleepTime = (new Random().nextInt(5) + 1);
+            System.out.println("处理订单消耗：" + sleepTime + "秒-----------------------");
+            Thread.sleep(sleepTime * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Order " + order.getOrderId() + " processed successfully.");
+    }
+}
+
+public class ShoppingCart {
+    public static void main(String[] args) {
+        // 创建一个有界阻塞队列，用于存放订单任务
+        ArrayBlockingQueue<Order> orderQueue = new ArrayBlockingQueue<>(10);
+
+        // 创建一个固定大小的线程池来处理订单
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        // 创建订单生产者线程
+        OrderProducer orderProducer = new OrderProducer(orderQueue);
+        Thread producerThread = new Thread(orderProducer);
+        producerThread.start();
+        // 处理订单任务
+        //while (orderQueue.size()>0) {
+        // 恒为真 因为订单创建也做了延迟模拟 如果没有检索到集合中存在值的时候便会跳过关闭线程池
+        while (true) {
+            Order order = null;
+            try {
+                // 从订单队列中取出订单任务并提交给线程池处理
+                order = orderQueue.take();
+                executor.submit(new OrderTask(order));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 关闭线程池
+        //executor.shutdown();
+    }
+}
+```
+
+![image-20240321092618388](C:/Users/wangRich/AppData/Roaming/Typora/typora-user-images/image-20240321092618388.png)

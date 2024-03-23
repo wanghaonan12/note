@@ -1323,9 +1323,14 @@ public class SemaphoreTest {
 
 **SynchronousQueue**
 
-> `SynchronousQueue`    一种无缓冲的等待队列，类似于无中介的直接交易，有点像原始社会中的生产 者和消费者，生产者拿着产品去集市销售给产品的最终消费者，而消费者必须 亲自去集市找到所要商品的直接生产者，如果一方没有找到合适的目标，那么 对不起，大家都在集市等待。相对于有缓冲的 `BlockingQueue` 来说，少了一 个中间经销商的环节（缓冲区），如果有经销商，生产者直接把产品批发给经 销商，而无需在意经销商最终会将这些产品卖给那些消费者，由于经销商可以 库存一部分商品，因此相对于直接交易模式，总体来说采用中间经销商的模式 会吞吐量高一些（可以批量买卖）；但另一方面，又因为经销商的引入，使得 产品从生产者到消费者中间增加了额外的交易环节，单个产品的及时响应性能 可能会降低。  声明一个 `SynchronousQueue` 有两种不同的方式，它们之间有着不太一样的 行为。  公平模式和非公平模式的区别:  • 公平模式：`SynchronousQueue` 会采用公平锁，并配合一个 `FIFO` 队列来阻塞 多余的生产者和消费者，从而体系整体的公平策略；  • 非公平模式（`SynchronousQueue` 默认）：`SynchronousQueue` 采用非公平 锁，同时配合一个 `LIFO` 队列来管理多余的生产者和消费者，而后一种模式， 如果生产者和消费者的处理速度有差距，则很容易出现饥渴的情况，即可能有 某些生产者或者是消费者的数据永远都得不到处理。
+> `SynchronousQueue`    一种无缓冲的等待队列，类似于无中介的直接交易，有点像原始社会中的生产 者和消费者，生产者拿着产品去集市销售给产品的最终消费者，而消费者必须 亲自去集市找到所要商品的直接生产者，如果一方没有找到合适的目标，那么 对不起，大家都在集市等待。相对于有缓冲的 `BlockingQueue` 来说，少了一 个中间经销商的环节（缓冲区），如果有经销商，生产者直接把产品批发给经 销商，而无需在意经销商最终会将这些产品卖给那些消费者，由于经销商可以 库存一部分商品，因此相对于直接交易模式，总体来说采用中间经销商的模式 会吞吐量高一些（可以批量买卖）；但另一方面，又因为经销商的引入，使得 产品从生产者到消费者中间增加了额外的交易环节，单个产品的及时响应性能 可能会降低。  声明一个 `SynchronousQueue` 有两种不同的方式，它们之间有着不太一样的行为。 
 >
->   一句话总结: 不存储元素的阻塞队列，也即单个元素的队列。
+>  公平模式和非公平模式的区别:  
+>
+> - 公平模式：`SynchronousQueue` 会采用公平锁，并配合一个 `FIFO（先入先出）` 队列来阻塞 多余的生产者和消费者，从而体系整体的公平策略； 
+> - 非公平模式（`SynchronousQueue` 默认）：`SynchronousQueue` 采用非公平 锁，同时配合一个 `LIFO（先进后出）` 队列来管理多余的生产者和消费者，而后一种模式， 如果生产者和消费者的处理速度有差距，则很容易出现饥渴的情况，即可能有 某些生产者或者是消费者的数据永远都得不到处理。
+>
+> 一句话总结: 不存储元素的阻塞队列，也即单个元素的队列。
 
 **LinkedTransferQueue**  
 
@@ -1335,9 +1340,12 @@ public class SemaphoreTest {
 
 **LinkedBlockingDeque  **
 
-> ` LinkedBlockingDeque` 是一个由链表结构组成的双向阻塞队列，即可以从队 列的两端插入和移除元素。  对于一些指定的操作，在插入或者获取队列元素时如果队列状态不允许该操作 可能会阻塞住该线程直到队列状态变更为允许操作，这里的阻塞一般有两种情 况  • 插入元素时: 如果当前队列已满将会进入阻塞状态，一直等到队列有空的位置时 再讲该元素插入，该操作可以通过设置超时参数，超时后返回 `false` 表示操作 失败，也可以不设置超时参数一直阻塞，中断后抛出 `InterruptedException` 异 常  • 读取元素时: 如果当前队列为空会阻塞住直到队列不为空然后返回元素，同样可 以通过设置超时参数
+> ` LinkedBlockingDeque` 是一个由链表结构组成的双向阻塞队列，即可以从队 列的两端插入和移除元素。  对于一些指定的操作，在插入或者获取队列元素时如果队列状态不允许该操作 可能会阻塞住该线程直到队列状态变更为允许操作，这里的阻塞一般有两种情况：
 >
->  一句话总结: 由链表组成的双向阻塞队列
+> - 插入元素时: 如果当前队列已满将会进入阻塞状态，一直等到队列有空的位置时 再讲该元素插入，该操作可以通过设置超时参数，超时后返回 `false` 表示操作 失败，也可以不设置超时参数一直阻塞，中断后抛出 `InterruptedException` 异常
+> - 读取元素时: 如果当前队列为空会阻塞住直到队列不为空然后返回元素，同样可 以通过设置超时参数
+>
+> 一句话总结: 由链表组成的双向阻塞队列
 
 **小结** 
 
@@ -1453,3 +1461,548 @@ public class ShoppingCart {
 ```
 
 ![image-20240321092618388](C:/Users/wangRich/AppData/Roaming/Typora/typora-user-images/image-20240321092618388.png)
+
+# **ThreadPool 线程池** 
+
+> **线程池（英语：thread pool）：**一种线程使用模式。线程过多会带来调度开销， 进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理 者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代 价。线程池不仅能够保证内核的充分利用，还能防止过分调度。 
+>
+>  **例子：** 10 年前单核 CPU 电脑，假的多线程，像马戏团小丑玩多个球，CPU 需 要来回切换。 现在是多核电脑，多个线程各自跑在独立的 CPU 上，不用切换 效率高。  
+>
+> **线程池的优势：** 线程池做的工作只要是控制运行的线程数量，处理过程中将任 务放入队列，然后在线程创建后启动这些任务，如果线程数量超过了最大数量， 超出数量的线程排队等候，等其他线程执行完毕，再从队列中取出任务来执行。  它的主要特点为： 
+>
+> - `降低资源消耗`: 通过重复利用已创建的线程降低线程创建和销毁造成的销耗。 
+> -  `提高响应速度`: 当任务到达时，任务可以不需要等待线程创建就能立即执行。 
+> -  `提高线程的可管理性`: 线程是稀缺资源，如果无限制的创建，不仅会销耗系统资 源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。
+> -  Java 中的线程池是通过 `Executor` 框架实现的，该框架中用到了 `Executor`，`Executors`， `ExecutorService`，`ThreadPoolExecutor` 这几个类 
+>
+> ![ScheduledThreadPoolExecutor](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/ScheduledThreadPoolExecutor.png)
+
+## Executors 使用（不推荐）
+
+**阿里巴巴的Java开发手册**
+
+> 8. 【强制】线程池不允许使用Executors去创建，而是通过ThreadPoolExecutor的方式，这样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。
+>
+>    说明：Executors各个方法的弊端：
+>
+>    1）newFixedThreadPool和newSingleThreadExecutor:  主要问题是堆积的请求处理队列可能会耗费非常大的内存，甚至OOM。
+>
+>    2）newCachedThreadPool和newScheduledThreadPool:  主要问题是线程数最大数是Integer.MAX_VALUE，可能会创建数量非常多的线程，甚至OOM。
+>
+> 9. 【强制】创建线程或线程池时请指定有意义的线程名称，方便出错时回溯。
+>
+
+`Executors.newFixedThreadPool(int)`：一池N线程
+
+```java
+ExecutorService executor = Executors.newFixedThreadPool(5); //5个线程
+```
+
+`Executors.newSingleThreadExecutor()`：一池一线程
+
+```java
+ExecutorService executor = Executors.newSingleThreadExecutor(); //一个线程
+```
+
+`Executors.newCachedThreadPool()`：一池可扩容根据需求创建线程
+
+```java
+ ExecutorService executor = Executors.newCachedThreadPool();
+```
+
+```java
+executor.execute()//执行线程：
+executor.shutdown()//关闭线程：
+```
+
+**小试牛刀**
+
+```java
+public class ThreadPoolTest {
+    public static void main(String[] args) {
+        ExecutorService threadPool1 = Executors.newFixedThreadPool(5);
+        ExecutorService threadPool2 = Executors.newSingleThreadExecutor();
+        ExecutorService threadPool3 = Executors.newCachedThreadPool();
+
+        // 是个顾客请求
+        try {
+            for (int i = 1; i <= 10; i++) {
+                // 到此时执行execute()方法才创建线程
+                threadPool2.execute(() -> {
+                    System.out.println(Thread.currentThread().getName() + " 办理业务");
+                });
+            }
+        } finally {
+            // 关闭线程
+            threadPool1.shutdown();
+            threadPool2.shutdown();
+        }
+    }
+}
+
+```
+
+## ThreadPoolExecutor (推荐) 
+
+**核心参数**
+
+- `corePoolSize` 线程池的核心线程数  
+- `maximumPoolSize` 能容纳的最大线程数  
+- `keepAliveTime` 空闲线程存活时间  
+- `unit` 存活的时间单位  
+- `workQueue` 存放提交但未执行任务的队列  
+- `threadFactory` 创建线程的工厂类  
+- `handler` 等待队列满后的拒绝策略 
+
+```java
+public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {
+    if (corePoolSize < 0 ||
+        maximumPoolSize <= 0 ||
+        maximumPoolSize < corePoolSize ||
+        keepAliveTime < 0)
+        throw new IllegalArgumentException();
+    if (workQueue == null || threadFactory == null || handler == null)
+        throw new NullPointerException();
+    this.corePoolSize = corePoolSize;
+    this.maximumPoolSize = maximumPoolSize;
+    this.workQueue = workQueue;
+    this.keepAliveTime = unit.toNanos(keepAliveTime);
+    this.threadFactory = threadFactory;
+    this.handler = handler;
+}
+```
+
+​	线程池中，有三个重要的参数，决定影响了拒绝策略：`corePoolSize` - 核心线 程数，也即最小的线程数。`workQueue` - 阻塞队列 。 `maximumPoolSize` -  最大线程数 。 
+
+**执行步骤**
+
+1. 在创建了线程池后，线程池中的线程数为零  
+2. 当调用` execute()`方法添加一个请求任务时，线程池会做出如下判断： 
+   - 如 果正在运行的线程数量小于 `corePoolSize`，那么马上创建线程运行这个任务； 
+   - 如果正在运行的线程数量大于或等于 `corePoolSize`，那么将这个任务放入 队列；、
+   - 如果这个时候队列满了且正在运行的线程数量还小于 `maximumPoolSize`，那么还是要创建非核心线程立刻运行这个任务；
+   - 如 果队列满了且正在运行的线程数量大于或等于 `maximumPoolSize`，那么线程 池会启动饱和拒绝策略来执行。
+3. 当一个线程完成任务时，它会从队列中取下一个任务来执行 
+4. 当一个线程无事可做超过一定的时间`（keepAliveTime）`时，线程会判断：
+   - 如果当前运行的线程数大于 `corePoolSize`，那么这个线程就被停掉。
+   - 所以线程池的所有任务完成后，它最终会收缩到 `corePoolSize` 的大小。
+
+![10-线程池底层工作流程](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/10-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%BA%95%E5%B1%82%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png)
+
+如图：阻塞队列为3，常驻线程数2，最大线程数5。
+
+第1-2个线程进入线程池创建
+
+第3-5个线程进入阻塞队列
+
+第6-8个线程会为他们创建新线程执行（直接运行线程6而非线程3）
+
+第9个线程会被拒绝
+
+**决绝策略**
+
+![image-20240322161619406](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240322161619406.png)
+
+`AbortPolicy(默认)`：直接抛出`RejectedExecutionException`异常阻止系统正常运行
+`CallerRunsPolicy`：“调用者运行”一种调节机制，该策略既不会抛弃任务，也不会抛出异常，而是将某些任务回退到调用者，从而降低新任务的流量
+`DiscardOldestPolicy`：抛弃队列中等待最久的任务，然后把当前任务加入队列中，尝试再次提交当前任务
+`Policydiscard`：该策略默默地丢弃无法处理的任务，不予任何处理也不抱出异常。如果允许任务丢失，这是最好的一种策略
+
+**小试牛刀**
+
+```java
+public class ThreadPoolDemo1 {
+
+    /**
+     * 火车站 3 个售票口, 10 个用户买票
+     * @param args
+     */
+    public static void main(String[] args) {
+        //定时线程次:线程数量为 3---窗口数为 3
+        ExecutorService threadService = new ThreadPoolExecutor(3,
+                5,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                Executors.defaultThreadFactory(),
+
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        try {
+            //10 个人买票
+            for (int i = 1; i <= 10; i++) {
+                threadService.execute(()->{
+                    try {
+                        System.out.println(Thread.currentThread().getName() + "窗口,开始卖票");
+                                Thread.sleep(5000);
+                        System.out.println(Thread.currentThread().getName() + "窗口买票结束");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            //完成后结束
+            threadService.shutdown();
+        }
+    }
+}
+```
+
+# Fork/Join
+
+> Fork/Join它可以将一个大的任务拆分成多个子任务进行并行处理，最后将子任务结果合并成最后的计算结果，并进行输出。Fork/Join框架要完成两件事情：
+>
+> - **(Fork)把一个复杂任务进行分拆，大事化小**首先 Fork/Join框架需要把大的任务分割成足够小的子任务，如果子任务比较大的话还要对子任务进行继续分割 
+> -  **(Join)把分拆任务的结果进行合并** 分割的子任务分别放到双端队列里，然后几个启动线程分别从双端队列里获取任务执行。子任务执行完的结果都放在另外一个队列里，启动一个线程从队列里取数据，然后合并这些数据。
+
+![image-20240322165751523](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240322165751523.png)
+
+ `ForkJoinTask`:我们要使用` Fork/Join`框架，首先需要创建一个 `ForkJoin`任务。该类提供了在任务中执行 `fork`和 `join`的机制。通常情况下我们不需要直接集成 `ForkJoinTask`类，只需要继承它的子类，`Fork/Join`框架提供了两个子类： 
+
+- `RecursiveAction`：用于没有返回结果的任务     
+- `RecursiveTask`:用于有返回结果的任务 
+
+**`ForkJoinTask`需要通过 `ForkJoinPool`来执行**
+
+```java
+public class SumCalculator extends RecursiveTask<Long> {
+    /**
+     * 阈值，用于决定何时进行任务拆分
+     */
+    private static final int THRESHOLD = 1000;
+    /**
+     * 数据数组
+     */
+    private int[] array;
+    /**
+     * 开始位置
+     */
+    private int start;
+    /**
+     * 结束位置
+     */
+    private int end;
+
+    public SumCalculator(int[] array, int start, int end) {
+        this.array = array;
+        this.start = start;
+        this.end = end;
+    }
+
+    @Override
+    protected Long compute() {
+        if (end - start <= THRESHOLD) {
+            long sum = 0;
+            for (int i = start; i < end; i++) {
+                sum += array[i];
+            }
+            return sum;
+        } else {
+            int mid = (start + end) / 2;
+            SumCalculator leftTask = new SumCalculator(array, start, mid);
+            SumCalculator rightTask = new SumCalculator(array, mid, end);
+
+            leftTask.fork(); // 异步执行左半部分的任务
+            long rightResult = rightTask.compute(); // 同步执行右半部分的任务
+            long leftResult = leftTask.join(); // 获取左半部分任务的结果
+
+            return leftResult + rightResult;
+        }
+    }
+
+    public static void main(String[] args) {
+        // 创建一个ForkJoinPool
+        ForkJoinPool pool = new ForkJoinPool();
+
+        // 创建一个大数组
+        int[] array = IntStream.rangeClosed(1, 100000).toArray();
+
+        // 创建一个任务
+        SumCalculator task = new SumCalculator(array, 0, array.length);
+
+        // 提交任务并获取结果
+        long result = pool.invoke(task);
+
+        // 输出结果
+        System.out.println("Sum: " + result);
+    }
+}
+```
+
+**Fork方法的实现原理：**
+
+1. 当我们调用 `ForkJoinTask`的 `fork`方法时，程序会把任务放在` ForkJoinWorkerThread`的 `pushTask`的`workQueue`中，异步地执行这个任务，然后立即返回结果 。
+2. `Join`方法的主要作用是阻塞当前线程并等待获取结果。
+
+# CompletableFuture
+
+**CompletableFuture 简介**
+
+> `CompletableFuture` 在 `Java` 里面被用于异步编程，异步通常意味着非阻塞， 可以使得我们的任务单独运行在与主线程分离的其他线程中，并且通过回调可 以在主线程中得到异步任务的执行状态，是否完成，和是否异常等信息。  `CompletableFuture` 实现了 `Future`, `CompletionStage `接口，实现了 `Future` 接口就可以兼容现在有线程池框架，而 `CompletionStage `接口才是异步编程 的接口抽象，里面定义多种异步方法，通过这两者集合，从而打造出了强大的` CompletableFuture` 类。
+
+**CompletableFuture  与 Futrue**
+
+> `Futrue` 在 `Java` 里面，通常用来表示一个异步任务的引用，比如我们将任务提 交到线程池里面，然后我们会得到一个` Futrue`，在 `Future `里面有` isDone` 方 法来 判断任务是否处理结束，还有` get` 方法可以一直阻塞直到任务结束然后获 取结果，但整体来说这种方式，还是同步的，因为需要客户端不断阻塞等待或 者不断轮询才能知道任务是否完成。 
+>
+> **Futrue 不足**
+>
+> 1. **不支持手动完成**
+>
+>      我提交了一个任务，但是执行太慢了，我通过其他路径已经获取到了任务结果， 现在没法把这个任务结果通知到正在执行的线程，所以必须主动取消或者一直 等待它执行完成  
+>
+> 2. **不支持进一步的非阻塞调用**
+>
+>    通过 `Future` 的 `get` 方法会一直阻塞到任务完成，但是想在获取任务之后执行 额外的任务，因为 `Future `不支持回调函数，所以无法实现这个功能  
+>
+> 3. **不支持链式调用**
+>
+>    对于 `Future` 的执行结果，我们想继续传到下一个 `Future` 处理使用，从而形成 一个链式的 `pipline` 调用，这在 `Future` 中是没法实现的。 
+>
+> 4. **不支持多个 Future 合并**
+>
+>    比如我们有 10 个 `Future` 并行执行，我们想在所有的 `Future` 运行完毕之后， 执行某些函数，是没法通过 `Future` 实现的。
+>
+> 5. **不支持异常处理**
+>
+>      `Future` 的 `API` 没有任何的异常处理的 `api`，所以在异步运行时，如果出了问题 是不好定位的。 
+
+**CompletableFuture  手动完成案例**
+
+使用 `complete()` 方法手动完成 `CompletableFuture`。
+
+```java
+public class CompleteTest {
+    public static void main(String[] args) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                // 模拟耗时操作
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // 返回任务结果
+            return "Thread Task Result";
+        });
+
+        // 通过其他路径获取任务结果后，手动完成 CompletableFuture
+        String result = "Task Result";
+        future.complete(result);
+
+        // 获取任务结果
+        future.thenAccept(System.out::println);//打印结果 Task Result
+    }
+}
+```
+
+**CompletableFuture  非阻塞调用案例**
+
+使用 `thenApply()` 或 `thenAccept()` 等方法在获取任务结果后执行额外的任务。
+
+```java
+public class ThenApplyTest {
+
+    public static void main(String[] args) {
+        long start = System.nanoTime();
+
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                // 使用更合适的方式模拟延迟，替代Thread.sleep
+                TimeUnit.MILLISECONDS.sleep(2000);
+            } catch (InterruptedException e) {
+                // 恢复中断状态
+                Thread.currentThread().interrupt();
+                // 通过CompletableFuture传播异常
+                throw new CompletionException(e);
+            }
+            return "Task Result";
+        });
+
+        // 在获取任务结果后执行额外的任务
+        future.thenApply(result -> {
+            try {
+                // 使用更合适的延迟方式
+                TimeUnit.MILLISECONDS.sleep(2000);
+            } catch (InterruptedException e) {
+                // 恢复中断状态
+                Thread.currentThread().interrupt();
+                // 通过CompletableFuture传播异常
+                throw new CompletionException(e);
+            }
+            return result + " with additional information";
+        }).thenAccept(System.out::println).exceptionally(ex -> {
+            // 处理异常，输出错误信息
+            System.err.println("Error processing task: " + ex.getMessage());
+            return null;
+        });
+        // 等待异步任务完成，以准确测量时间
+        try {
+            future.join();
+        } catch (CompletionException e) {
+            e.printStackTrace();
+        }
+        long end = System.nanoTime();
+        System.out.println("Time taken: " + (end - start) / 1_000_000 + " milliseconds");
+    }
+}
+```
+
+**CompletableFuture  链式调用案例**
+
+使用 `thenCompose()` 方法将多个 `CompletableFuture` 连接成一个链式调用。
+
+```java
+public class ThenComposeTest {
+    public static void main(String[] args) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.MILLISECONDS.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "123456789";
+        });
+        // 链式调用
+        CompletableFuture<Integer> chainedFuture = future.thenCompose(result ->
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return result.length();
+                }));
+
+        chainedFuture.join();
+        chainedFuture.thenAccept(System.out::println);//9
+    }
+}
+```
+
+**CompletableFuture  多个 Future 合并案例**
+
+使用 `allOf()` 方法等待多个 CompletableFuture 完成后执行某些函数。
+
+```java
+public class AllOfTest {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+        CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "Result 1";
+        });
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return "Result 2";
+        });
+        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(future1, future2);
+        combinedFuture.thenRun(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+
+                // 在所有 CompletableFuture 完成后执行某些函数
+                String result1 = future1.get();
+                String result2 = future2.get();
+                System.out.println("Combined Results: " + result1 + " and " + result2);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        // 等待所有 CompletableFuture 完成
+        combinedFuture.join();
+    }
+}
+```
+
+**CompletableFuture  异常处理案例**
+
+使用 `exceptionally()` 方法处理异常。
+
+```java
+public class ExceptionallyTest {
+    public static void main(String[] args) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            // 模拟任务抛出异常
+            System.out.println("Task is running");
+            return "Result"+(1 / 0);
+        });
+
+        // 异常处理
+        future.exceptionally(ex -> {
+            System.out.println("Exception occurred: " + ex.getMessage());
+            return "default result"; // 返回默认值或者执行其他处理
+        });
+
+        future.join(); // 等待任务完成
+        future.thenAccept(System.out::println); // 输出结果是默认值，而不是异常结果
+    }
+}
+```
+
+![image-20240323115210914](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240323115210914.png)
+
+# volatile
+
+[Java并发编程](https://www.cnblogs.com/dolphin0520/p/3920373.html)
+
+>  `volatile`是一个关键字，用于声明变量。它的主要作用是告诉编译器，这个变量可能会被多个线程同时访问，因此不应该进行某些优化，而应该确保对这个变量的读写操作在多线程环境下是正确的。`volatile`关键字的主要作用包括两点：
+>
+> 1. **禁止指令重排序**：`volatile`关键字保证了变量的读写操作不会被重排序，这对于某些需要依赖于操作顺序的场景是非常重要的。
+> 2. **保证可见性**：当一个线程修改了一个`volatile`变量的值时，这个新值会立即对其他线程可见，确保了多线程之间对变量的可见性。
+
+**原理：**
+
+`Java`虚拟机`(JVM)`中，每个线程都有自己的工作内存，工作内存中保存了变量的副本。当一个线程修改了变量的值时，首先会在自己的工作内存中进行修改，然后将修改后的值刷新到主内存中。而其他线程在读取这个变量的值时，会首先从主内存中读取最新的值到自己的工作内存中，然后再进行操作。
+
+`volatile`关键字的作用就是当一个线程修改了`volatile`变量的值时，会立即将修改后的值刷新到主内存中，而当其他线程读取这个变量的值时，会直接从主内存中获取最新的值，而不是从自己的工作内存中获取。这就保证了对`volatile`变量的读写操作在多线程环境下是正确的。
+
+**小试牛刀**
+
+```java
+public class VolatileTest {
+    //public volatile int inc = 0;
+    public int inc = 0;
+
+    public void increase() {
+        inc++;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        final VolatileTest test = new VolatileTest();
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10,
+                10,
+                1000,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+        for (int i = 0; i < 10; i++) {
+            threadPoolExecutor.execute(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    test.increase();
+                }
+            });
+        }
+        threadPoolExecutor.shutdown();
+        System.out.println(test.inc); //每次结果都不一样
+    }
+}
+```
+
+> 结果小于10000
+> volatile关键字能保证可见性没有错，但是上面的程序错在没能保证原子性。可见性只能保证每次读取的是最新的值，但是volatile没办法保证对变量的操作的原子性。

@@ -5,14 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="47501957-d0f3-49c4-aebe-88eade4e7c06" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/Future/Future.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/blockingQueue/ShoppingCart.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/CountDownLatch/CountDownLatchTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/CyclicBarrirt/CyclicBarrierTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/Semaphore/SemaphoreTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/AllOfTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/CompleteTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ExceptionallyTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ThenApplyTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ThenComposeTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/forkJoin/SumCalculator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/threadPool/ThreadPoolDemo1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/threadPool/ThreadPoolTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/volatile1/VolatileTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../JUC初级.md" beforeDir="false" afterPath="$PROJECT_DIR$/../JUC初级.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../数据库/mysql/数据库迁移.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../数据库/mysql/数据库迁移.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +61,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.uml&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -75,13 +77,13 @@
       <recent name="com.whn" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.ShoppingCart">
-    <configuration name="CountDownLatchTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.CountDownLatch.CountDownLatchTest" />
+  <component name="RunManager" selected="Application.VolatileTest">
+    <configuration name="AllOfTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.AllOfTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.CountDownLatch.*" />
+          <option name="PATTERN" value="com.whn.completableFuture.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -89,12 +91,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CyclicBarrierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.CyclicBarrierTest" />
+    <configuration name="ExceptionallyTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ExceptionallyTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.*" />
+          <option name="PATTERN" value="com.whn.completableFuture.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -102,12 +104,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Future" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.Future.Future" />
+    <configuration name="ThenApplyTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ThenApplyTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.Future.*" />
+          <option name="PATTERN" value="com.whn.completableFuture.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -115,12 +117,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SemaphoreTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.Semaphore.SemaphoreTest" />
+    <configuration name="ThenComposeTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ThenComposeTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.Semaphore.*" />
+          <option name="PATTERN" value="com.whn.completableFuture.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -128,12 +130,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ShoppingCart" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.blockingQueue.ShoppingCart" />
+    <configuration name="VolatileTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.volatile1.VolatileTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.blockingQueue.*" />
+          <option name="PATTERN" value="com.whn.volatile1.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -151,11 +153,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ShoppingCart" />
-        <item itemvalue="Application.Future" />
-        <item itemvalue="Application.SemaphoreTest" />
-        <item itemvalue="Application.CyclicBarrierTest" />
-        <item itemvalue="Application.CountDownLatchTest" />
+        <item itemvalue="Application.VolatileTest" />
+        <item itemvalue="Application.ExceptionallyTest" />
+        <item itemvalue="Application.AllOfTest" />
+        <item itemvalue="Application.ThenComposeTest" />
+        <item itemvalue="Application.ThenApplyTest" />
       </list>
     </recent_temporary>
   </component>
@@ -180,6 +182,10 @@
       <workItem from="1710903127640" duration="8536000" />
       <workItem from="1710933737193" duration="3618000" />
       <workItem from="1710983390262" duration="3487000" />
+      <workItem from="1711009953138" duration="2102000" />
+      <workItem from="1711084423483" duration="8973000" />
+      <workItem from="1711159103796" duration="6998000" />
+      <workItem from="1711174061761" duration="927000" />
     </task>
     <servers />
   </component>
@@ -200,5 +206,9 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

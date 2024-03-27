@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e330cefd-1520-473f-885a-fafde52695df" name="Changes" comment="" />
+    <list default="true" id="e330cefd-1520-473f-885a-fafde52695df" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../RabbitMQ/RabbitMQ/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../RabbitMQ/RabbitMQ/src/main/java/org/whn/Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../RabbitMQ/RabbitMQ/src/main/java/org/whn/config/SwaggerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../RabbitMQ/RabbitMQ/src/main/java/org/whn/controller/TestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../RabbitMQ/RabbitMQ/src/main/resources/application.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -170,6 +176,7 @@
       <workItem from="1708413219482" duration="903000" />
       <workItem from="1708415153472" duration="1957000" />
       <workItem from="1708496009904" duration="8859000" />
+      <workItem from="1711356213833" duration="750000" />
     </task>
     <servers />
   </component>

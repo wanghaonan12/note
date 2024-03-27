@@ -1,0 +1,18 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: rabbit-mq-learn
+  swagger2:
+    enabled: true
+  rabbitmq:
+    port: 5672
+    host: 43.138.25.182
+    username: admin
+    password: 123456
+    virtual-host: rabbitmq
+    listener:
+      simple:
+        prefetch: 1  #配置每个消费者领取的消息数量，处理完了才能领取下一条
+#    publisher-returns: true #启用
+#    publisher-confirm-type: simple #确认方式  SIMPLE CORRELATED NONE

@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91718eea-4ce7-4626-b794-14654a6e4dca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/config/RabbitMqConfirm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/config/SwaggerConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/constant/RabbitMqConstant.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/AmqpSendController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/controller/TestController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/simpleUse/Consumer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/simpleUse/Producter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/tabbitMqListener/RabbitMQListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/whn/utils/ConnectionUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ElasticSearch/ElasticSearch.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../ElasticSearch/ElasticSearch.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,6 +157,7 @@
       <workItem from="1711417444053" duration="13291000" />
       <workItem from="1711443098394" duration="7899000" />
       <workItem from="1711501640293" duration="22058000" />
+      <workItem from="1711588184087" duration="2114000" />
     </task>
     <servers />
   </component>

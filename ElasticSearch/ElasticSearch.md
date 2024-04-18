@@ -1,6 +1,4 @@
-# ElasticSearch笔记
-
-## 开篇引导
+# ElasticSearch开篇引导
 
 [Elasticsearch](https://blog.csdn.net/u011863024/article/details/115721328)
 
@@ -52,15 +50,65 @@ The Elastic Stack, 包括 Elasticsearch、 Kibana、 Beats 和 Logstash（也称
 
 总之，Elasticsearch 是一个功能强大、高度可定制且可扩展的搜索和分析引擎，被广泛用于处理大规模数据、构建实时应用和生成数据洞察。它在各个行业和领域中都有广泛的应用，帮助组织更好地理解和利用其数据资源。
 
-## ElasticSearch入门
+## ES 名词核心理念解释
 
-### 1. elasticSearch安装
+### 索引(Index)
 
-#### docker安装部署
+​	索引就是一个拥有几分**相似特征的文档的集合**(**类似关系数据库的表**)。比如说，你可以有一个客户数据的 索引，另一个产品目录的索引，还有一个订单数据的索引。一个索引由一个名字来标识（必须全部是小写字母），并且当我们要对这个索引中的文档进行索引、搜索、更新和删除的时候，都要使用到这个名字。在一个集群中，可以定义任意多的索引。  能搜索的数据必须索引，这样的好处是可以提高查询速度，比如：新华字典前面的目录 就是索引的意思，目录可以提高查询速度。  
+
+ **Elasticsearch索引的精髓：一切设计都是为了提高搜索的性能。** 
+
+### 类型(Type)
+
+​	在一个索引中，你可以定义一种或多种类型。  一个类型是你的索引的一个逻辑上的分类/分区，其语义完全由你来定。通常，会为具 有一组共同字段的文档定义一个类型。不同的版本，类型发生了不同的变化 （在5.x之后就不再支持了，有带你像是2级分类）
+
+| 版本 | Type                                           |
+| ---- | ---------------------------------------------- |
+| 5.x  | 支持多种 type                                  |
+| 6.x  | 只能有一种 type                                |
+| 7.x  | 默认不再支持自定义索引类型（默认类型为：_doc） |
+
+### 文档(Document)
+
+​	一个文档是一个可被索引的基础信息单元（**关系型数据库的条目**），也就是一条数据  比如：你可以拥有某一个客户的文档，某一个产品的一个文档，当然，也可以拥有某个 订单的一个文档。文档以 JSON（Javascript Object Notation）格式来表示，而 JSON 是一个 到处存在的互联网数据交互格式。  在一个 index/type 里面，你可以存储任意多的文档。 
+
+### 字段(Field)
+
+​	相当于是数据表的字段，对文档数据根据不同属性进行的分类标识。
+
+### 映射(Mapping)
+
+​	mapping 是处理数据的方式和规则方面做一些限制（**设置字段属性等约束**），如：某个字段的数据类型、默认值、 分析器、是否被索引等等。这些都是映射里面可以设置的，其它就是处理 ES 里面数据的一 些使用规则设置也叫做映射，按着最优规则处理数据对性能提高很大，因此才需要建立映射， 并且需要思考如何建立映射才能对性能更好。 
+
+### 分片(Shards)
+
+​	一个索引可以存储超出单个节点硬件限制的大量数据。比如，一个具有 10 亿文档数据 的索引占据 1TB 的磁盘空间，而任一节点都可能没有这样大的磁盘空间。或者单个节点处 理搜索请求，响应太慢。为了解决这个问题，Elasticsearch 提供了将索引划分成多份的能力， 每一份就称之为分片。当你创建一个索引的时候，你可以指定你想要的分片的数量。每个**分片本身也是一个功能完善并且独立的“索引”**，这个“索引”可以被放置到集群中的任何节点 上。  分片很重要，主要有两方面的原因：
+
+1. 允许你水平分割 / 扩展你的内容容量。
+2. 允许你在分片之上进行分布式的、并行的操作，进而提高性能/吞吐量。  
+
+​	至于一个分片怎样分布，它的文档怎样聚合和搜索请求，是完全由 Elasticsearch 管理的， 对于作为用户的你来说，这些都是透明的，无需过分关心。  被混淆的概念是，一个 Lucene **索引**我们在 Elasticsearch 称作**分片** 。 一个  Elasticsearch **索引是分片的集合。** 当 Elasticsearch 在索引中搜索的时候， 他发送**查询到每一个属于索引的分片**(Lucene 索引)，**然后合并**每个分片的结果到一个全局的结果集。
+
+### 副本(Replicas)
+
+​	在一个网络 / 云的环境里，失败随时都可能发生，在某个分片/节点不知怎么的就处于 离线状态，或者由于任何原因消失了，这种情况下，有一个故障转移机制是非常有用并且是强烈推荐的。为此目的，Elasticsearch 允许你**创建分片的一份或多份拷贝，这些拷贝叫做复 制分片(副本)。**  复制分片之所以重要，有两个主要原因：
+
+- 在分片/节点失败的情况下，提供了高可用性。因为这个原因，注意到复制分片从不与 原/主要（original/primary）分片置于同一节点上是非常重要的。 
+- 扩展你的搜索量/吞吐量，因为搜索可以在所有的副本上并行运行。 
+
+​	总之，每个索引可以被分成多个分片。一个索引也可以被复制 0 次（意思是没有复制） 或多次。一旦复制了，每个索引就有了主分片（作为复制源）和复制分片（拷贝的）之别。分片和复制的数量可以在索引创建的时候指定。在索引创建之后，**你可以在任何时候动态地改变复制的数量，但是你事后不能改变分片的数量。**默认情况下， Elasticsearch 中的每个索引被分片 1 个主分片和 1 个复制，这意味着，如果你的集群中至少 有两个节点，你的索引将会有 1 个主分片和另外 1 个复制分片（1 个完全拷贝），这样的话 每个索引总共就有 2 个分片，需要根据索引需要确定分片个数。
+
+### 分配(Allocation)
+
+将分片分配给某个节点的过程，包括分配主分片或者副本。如果是副本，还包含从主分 片复制数据的过程。这个过程是由 master 节点完成的。 
+
+# ElasticSearch入门
+
+## 1. elasticSearch安装
+
+### docker安装部署
 
 > 一直在尝试添加数据卷,但是每次只要添加就会报错,这里就为了能够继续下去没有添加,会在后面补充
-
-##### 普通安装
 
 ```bash
 docker run -d \
@@ -81,7 +129,7 @@ docker run -d \
 
 ![image-20230920102008514](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230920102008514.png)
 
-#####  添加容器数据卷
+> 添加容器数据卷
 
 ```bash
  docker run -it \
@@ -118,7 +166,7 @@ docker run -d \
 
 ![image-20230921102612716](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921102612716.png)
 
-##### 添加分词器
+> 添加分词器
 
 1. 官网下载所需分词器,我这里使用ik分词器
    [ik分词下载地址](https://github.com/medcl/elasticsearch-analysis-ik/releases?page=2)
@@ -154,41 +202,7 @@ ik**分分词器与默认分词器区别**
 
 ![image-20230921111600801](https://raw.githubusercontent.com/wanghaonan12/picgo/main/img/image-20230921111600801.png)
 
-#### kibana安装
-
-```bash
- docker run \
-     -dp 5601:5601 \
-     --name kibana \
-     --privileged=true \
-     -v /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml \
-     kibana:7.17.5
-```
-
-```yml
-server.host: "0.0.0.0"
-server.shutdownTimeout: "5s"
-elasticsearch.hosts: ["http://127.0.0.0:9200"]  # es地址
-monitoring.ui.container.elasticsearch.enabled: true
-```
-
-
-
-![image-20230921184405693](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184405693.png)
-
-![image-20230921184421661](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184421661.png)
-
-#### cerebro安装
-
-```bash
-docker run -dp 9000:9000  --network es_network --name cerebro lmenezes/cerebro:0.8.4
-```
-
-![image-20230922172328669](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172328669.png)
-
-![image-20230922172422029](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172422029.png)
-
-#### docker集群部署
+### docker集群部署
 
 [docker-compose部署](https://blog.csdn.net/iampatrick_star/article/details/127263346)
 
@@ -349,7 +363,41 @@ http.cors.allow-origin: "*"
 #xpack.security.transport.ssl.enabled: false
 ```
 
-### 2. RestFul风格
+## 2. es可视化工具之kibana安装
+
+```bash
+ docker run \
+     -dp 5601:5601 \
+     --name kibana \
+     --privileged=true \
+     -v /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml \
+     kibana:7.17.5
+```
+
+```yml
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: ["http://127.0.0.0:9200"]  # es地址
+monitoring.ui.container.elasticsearch.enabled: true
+```
+
+
+
+![image-20230921184405693](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184405693.png)
+
+![image-20230921184421661](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230921184421661.png)
+
+## 3. es可视化工具之cerebro安装
+
+```bash
+docker run -dp 9000:9000  --network es_network --name cerebro lmenezes/cerebro:0.8.4
+```
+
+![image-20230922172328669](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172328669.png)
+
+![image-20230922172422029](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/md/image-20230922172422029.png)
+
+## 4. RestFul风格
 
 RESTful风格是一种设计和构建网络应用程序的软件架构风格。它基于Representational State Transfer（资源表现层状态转化）的概念，通过使用HTTP协议中的几个关键操作（GET、POST、PUT、DELETE等）来对资源进行管理和操作。
 在RESTful风格中，资源被视为应用程序中的一部分，每个资源都可以通过唯一的URL进行访问。资源的状态通过HTTP动词和数据表达，并使用HTTP状态码进行响应。
@@ -362,7 +410,7 @@ RESTful风格是一种设计和构建网络应用程序的软件架构风格。�
 5. 完全分布式：RESTful架构支持分布式计算环境，因为资源可以在不同的系统之间传递和访问。
    总之，RESTful风格是一种基于HTTP协议的简洁、可扩展和可维护的软件架构风格，适用于构建各种类型的网络应用程序。它提供了一种简单的方式来设计和实现可靠的和可伸缩的分布式系统。
 
-### 3. 倒排索引
+## 5. 倒排索引
 
 > 传统的索引模式是就是
 > 正排索引:正排索引是根据文档的顺序来建立索引的。
@@ -385,7 +433,11 @@ RESTful风格是一种设计和构建网络应用程序的软件架构风格。�
 | name    | 1001, 1002 |
 | zhang   | 1001       |
 
-## 4. 使用http进行增删改查操作
+# 高级使用
+
+# ES使用操作
+
+## 索引操作
 
 ### 1. 创建索引
 
@@ -465,7 +517,11 @@ DELETE http://{{ServiceIP}}/index_name
 
 ![image-20230920221707813](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920221707813.png)
 
-### 5. 文档创建
+## 文档操作
+
+### 1. 文档创建
+
+> 索引已经创建好了，接下来我们来创建文档，并添加数据。这里的文档可以类比为关系型数 据库中的表数据，添加的数据格式为 JSON 格式
 
 #### 添加随机id文档
 
@@ -477,6 +533,25 @@ POST http://{{ServiceIP}}/index_name/_doc
 
 ![image-20230920222940800](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920222940800.png)
 
+```json
+{
+    "_index": "user",// 索引信息
+    "_type": "_doc", // 文档类型
+    "_id": "_sXs5I4BawIgNvjwO-SQ", //id
+    "_version": 1, // 版本号，每一次对文档进行修改都会增加版本号
+    "result": "created", //结果 这里的 created 表示创建成功
+    "_shards": { //分片信息
+        "total": 2, //分片总数2
+        "successful": 1, //分片成功1
+        "failed": 0 // 分片失败0
+    },
+    "_seq_no": 0, 
+    "_primary_term": 1
+}
+```
+
+
+
 #### 指定id添加文档
 
 ```json
@@ -487,7 +562,28 @@ POST http://{{ServiceIP}}/index_name/_doc/id
 
 ![image-20230920224134825](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920224134825.png)
 
-### 6. 文档查询
+#### 批量添加文档	
+
+[批量 API |Elasticsearch 指南 [8.13\] |弹性的](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/docs-bulk.html)
+
+```bash
+http://{{ServiceIP}}/_bulk
+```
+
+```json
+{"index":{"_index":"books"}} // 这里指定添加文档的索引等信息
+{"name":"Revelation Space","author":"Alastair Reynolds","release_date":"2000-03-15","page_count":585} // 这里时文档的json格式 内容
+{"index":{"_index":"books"}}
+{"name":"1984","author":"George Orwell","release_date":"1985-06-01","page_count":328}
+{"index":{"_index":"books"}}
+{"name":"Fahrenheit 451","author":"Ray Bradbury","release_date":"1953-10-15","page_count":227}
+{"index":{"_index":"books"}}
+{"name":"Brave New World","author":"Aldous Huxley","release_date":"1932-06-01","page_count":268}
+{"index":{"_index":"books"}}
+{"name":"The Handmaids Tale","author":"Margaret Atwood","release_date":"1985-06-01","page_count":311}
+```
+
+### 2. 文档查询
 
 #### match检索
 
@@ -757,9 +853,51 @@ GET http://{{ServiceIP}}/index_name/_search
 
 ![image-20230920233405916](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920233405916.png)
 
-### 7. 文档修改
+### 3. 文档修改
 
-### 8. 分词器
+#### 根据id修改
+
+> 整体替换 相同id的文档 如果有个字段为空 也会被赋值为空
+
+```json
+// POST  :http://{{ServiceIP}}/{{Index_name}}/_doc/user20230920
+{
+    "name":"wanghaonan  update",
+    "address":"南京",
+    "age":18,
+    "email":"123456789@qq.com",
+    "tel":"123456"
+}
+```
+
+#### 修改指定字段
+
+```json
+// POST : http://{{ServiceIP}}/{{Index_name}}/_update/user20230920
+{
+    "doc": {
+        "name": "wanghaonan  update",
+        "address": "南京11"
+    }
+}
+```
+
+#### 使用Script 脚本批量修改
+
+```json
+// POST : http://{{ServiceIP}}/{{Index_name}}/_update_by_query
+{
+  "script": {
+    "lang": "painless",
+      // 修改文档中name属性的值为zhangsan的为 whnn
+    "source": "if (ctx._source.name == 'zhangsan'){ctx._source.name='whnn'}"
+  }
+}
+```
+
+
+
+### 4. 分词器
 
 ```json
 POST http://{{ServiceIP}}/_analyze
@@ -769,10 +907,638 @@ POST http://{{ServiceIP}}/_analyze
 
 ![image-20230920225056686](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230920225056686.png)
 
-### 
+# Spring Boot 整合 ES
 
-ElasticSearch
+## 前期准备
 
-ElasticSearch
+1. 依赖文件
 
-ElasticSearch
+```xml
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <junit.version>4.12</junit.version>
+        <nacos.context>2.1.0-RC</nacos.context>
+        <!--         <swagger.ui>2.9.2</swagger.ui> -->
+        <swagger.ui>3.0.0</swagger.ui>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <log4j.version>1.2.17</log4j.version>
+        <lombok.version>1.18.26</lombok.version>
+        <mysql.version>5.1.47</mysql.version>
+        <druid.version>1.1.16</druid.version>
+        <druid.spring.boot.starter.version>1.1.10</druid.spring.boot.starter.version>
+        <mapper.version>4.1.5</mapper.version>
+        <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
+        <mysql.connector.version>5.1.47</mysql.connector.version>
+        <hutool.version>5.2.3</hutool.version>
+        <mybatis.plus.boot.starter.version>3.2.0</mybatis.plus.boot.starter.version>
+        <guava.version>23.0</guava.version>
+        <canal.client.version>1.1.0</canal.client.version>
+        <redission.version>3.19.1</redission.version>
+        <elasticsearch.version>7.8.0</elasticsearch.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2-extension</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch</groupId>-->
+<!--            <artifactId>elasticsearch</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--        </dependency>-->
+<!--        &lt;!&ndash; elasticsearch 的客户端 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch.client</groupId>-->
+<!--            <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--        </dependency>-->
+        <!--基于AMQP协议的消息中间件框架-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- SpringBoot通用依赖模块 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 通用基础配置 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- swagger2 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${swagger.ui}</version>
+        </dependency>
+        <!-- lombok   -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <!-- 通用基础配置junit/devtools/test/log4j/lombok/hutool -->
+        <!-- hutool -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+            <version>0.0.20131108.vaadin1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+```
+
+2. 配置文件
+
+```yml
+server:
+  port: 8080
+spring:
+  application:
+    name: rabbit-mq-learn
+  swagger2:
+    enabled: true
+  elasticsearch:
+    rest:
+      uris:  http://43.138.25.182:9200
+      connection-timeout:  5s
+```
+
+3. PO
+
+> 这里`@Document`注解设置`class`在 `ES` 中的索引和分片等信息
+> ` @Field`设置字段的类型信息，索引状态等，用来创建映射使用的的信息
+
+```java
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Document(indexName = "user", shards = 3, replicas = 1)
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    /**
+     * 使用@Id注解声明该字段为文档的唯一标识，使用@Field注解声明该字段为关键字字段，并指定字段不可分词
+     */
+    @Id
+    @Field(type = FieldType.Keyword,fielddata = true)
+    private String id;
+    /**
+     * 姓名可以进行分册查询
+     */
+    @Field(type = FieldType.Text)
+    private String name;
+    /**
+     * 性别： 1，男 2，女
+     */
+    @Field(type = FieldType.Integer)
+    private Integer age;
+    /**
+     * 住址可进行分词查询
+     */
+    @Field(type = FieldType.Text)
+    private String address;
+    /**
+     * 电子邮箱地址不可分词
+     */
+    @Field(type = FieldType.Keyword)
+    private String email;
+    /**
+     * 电话不可分词
+     */
+    @Field(type = FieldType.Keyword)
+    private String tel;
+    /**
+     * 日期类型
+     */
+    @Field(type = FieldType.Date)
+    private Date birthday;
+}
+```
+
+4. DAO
+
+> 这里我们就可以和使用`mybatis`一样去操作`es`了
+
+```java
+@Repository
+public interface UserDao extends ElasticsearchRepository<User,String> {
+}
+```
+
+## 索引操作
+
+> 索引的创建，删除， 查询所有索引
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class ESIndexOpreationTest {
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
+
+    /**
+     * 判断是否存在索引 存在删除再次创建，不存在直接创建
+     */
+    @Test
+    void indexOperation() {
+        // 获取索引操作对象
+        IndexOperations indexOperations = elasticsearchRestTemplate.indexOps(User.class);
+        // 判断索引是否存在
+        boolean exists = indexOperations.exists();
+        if (exists){
+            System.out.println("exists:"+exists);
+            //删除索引
+            System.out.println("delete："+indexOperations.delete());
+        }
+        //创建索引
+        System.out.println("create:"+indexOperations.create());
+        Document mapping = indexOperations.createMapping();
+        System.out.println(mapping);
+    }
+
+    /**
+     * 获取所有 index
+     * @throws IOException
+     */
+
+    @Test
+    void getAllIndex() throws IOException {
+        GetIndexRequest request = new GetIndexRequest();
+        // 设置匹配所有索引的模式（默认也是匹配所有，这里为了明确指出）
+        request.indices("*");
+        GetIndexResponse getIndexResponse = restHighLevelClient.indices().get(request, RequestOptions.DEFAULT);
+        String[] indices = getIndexResponse.getIndices();
+        for (int i = 0; i < indices.length; i++) {
+            System.out.println(indices[i]);
+        }
+    }
+}
+```
+
+## 文档操作
+
+### 文档添加
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    /**
+     * 测试添加文档
+     */
+    @Test
+    void addDocument() {
+        String name = "whn";
+        //String id = UUID.nameUUIDFromBytes(name.getBytes()).toString();
+        String id = "whn123456";
+        User user = User.builder()
+                .id(id).address("南京鼓楼")
+                .age(18).email("147258369@qq.com")
+                .tel("1234567890")
+                .birthday(new Date())
+                .name(name).build();
+        User save = userDao.save(user);
+        System.out.println(save);
+    }
+}
+```
+
+### 批量添加文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void batchAddDocument() {
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            String name = "whn" + i;
+            String id = UUID.nameUUIDFromBytes(name.getBytes()).toString().replace("-", "");
+            User user = User.builder()
+                    .id(id).address("南京鼓楼")
+                    .age(18).email("147258369@qq.com")
+                    .tel("1234567890")
+                    .birthday(new Date())
+                    .name(name).build();
+            list.add(user);
+        }
+        Iterable<User> users = userDao.saveAll(list);
+        users.forEach(System.out::println);
+    }
+    
+}
+```
+
+### 根据ID文档更新
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void updateDocument() {
+        String name = "whn1";
+        String id = "whn123456879";
+        User user = User.builder()
+                .id(id).address("徐州鼓楼")
+                .age(188).email("147258369@qq.com")
+                .tel("1234567890")
+                .birthday(new Date())
+                .name(name).build();
+        User save = userDao.save(user);
+        System.out.println(save);
+    }
+    
+}
+```
+
+### 条件更新文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+    @Test
+    void updateQueryDocument() {
+        String name = "whn";
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.matchQuery("name", name)).build();
+        UpdateQuery updateQuery = UpdateQuery.builder(searchQuery).withScript("ctx._source.name = '13546'").withScriptName("123456").withScriptType(ScriptType.STORED).build();
+        ByQueryResponse byQueryResponse = elasticsearchRestTemplate.updateByQuery(updateQuery, IndexCoordinates.of(User.class.getDeclaredAnnotation(Document.class).indexName()));
+        System.out.println(byQueryResponse.getTotal());
+        AllSearchDocument();
+    }
+
+
+    
+}
+```
+
+### 删除全部文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void DeleteAll() {
+        userDao.deleteAll();
+    }
+    
+}
+```
+
+### 根据id删除文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void DeleteDocumentById() {
+        String id = "whn12345116";
+        List<String> list = Arrays.asList(id);
+        userDao.deleteAllById(list);
+    }
+
+    
+}
+```
+
+### 条件删除文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void ConditionsDeleteDocument() {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.matchQuery("name", "whn"));
+        RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("age");
+        rangeQueryBuilder.lte(20);
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
+                .withQuery(boolQueryBuilder).withQuery(rangeQueryBuilder);
+        NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
+        ByQueryResponse delete = elasticsearchRestTemplate.delete(nativeSearchQuery, User.class);
+        System.out.println(delete.getTotal());
+    }
+
+    
+}
+```
+
+### 检索全部文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void AllSearchDocument() {
+        Iterable<User> all = userDao.findAll();
+        all.forEach(System.out::println);
+    }
+
+    
+}
+```
+
+### 条件检索文档
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void advancedSearchDocument() {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.matchQuery("name", "whn"));
+        RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("age");
+        rangeQueryBuilder.lte(20);
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
+                .withQuery(boolQueryBuilder).withQuery(rangeQueryBuilder);
+        NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
+        SearchHits<User> searchHits = elasticsearchRestTemplate.search(nativeSearchQuery, User.class);
+        searchHits.forEach(personSearchHit -> {
+            System.out.println(personSearchHit.getContent());
+        });
+    }
+    
+}
+```
+
+### 高亮检索
+
+```java
+@SpringBootTest
+@RunWith(SpringRunner.class)
+class DocumentTest {
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void highLightSearchDocument() {
+        //高亮字段设置
+        HighlightBuilder.Field field = new HighlightBuilder
+                //高连字段名
+                .Field("name")
+                //高亮标签设置
+                .preTags("<span class=\"highlight\">")
+                .postTags("</span>");
+        // 匹配查询
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.matchQuery("name", "whn"));
+        RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("age");
+        rangeQueryBuilder.lte(20);
+        // 构建查询对象
+        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder()
+                .withQuery(boolQueryBuilder).withQuery(rangeQueryBuilder).withHighlightFields(field);
+        NativeSearchQuery nativeSearchQuery = nativeSearchQueryBuilder.build();
+        //检索
+        SearchHits<User> searchHits = elasticsearchRestTemplate.search(nativeSearchQuery, User.class);
+        List<User> userList = new ArrayList<>();
+        // 遍历检索对象处理高亮内容
+        searchHits.forEach(personSearchHit -> {
+            User content = personSearchHit.getContent();
+            // 处理高亮
+            Map<String, List<String>> highlightFields = personSearchHit.getHighlightFields();
+            for (Map.Entry<String, List<String>> stringHighlightFieldEntry : highlightFields.entrySet()) {
+                String key = stringHighlightFieldEntry.getKey();
+                if (StringUtils.equals(key, "name")) {
+                    List<String> fragments = stringHighlightFieldEntry.getValue();
+                    StringBuilder sb = new StringBuilder();
+                    for (String fragment : fragments) {
+                        sb.append(fragment);
+                    }
+                    content.setName(sb.toString());
+                }
+                if (StringUtils.equals(key, "email")) {
+                    List<String> fragments = stringHighlightFieldEntry.getValue();
+                    StringBuilder sb = new StringBuilder();
+                    for (String fragment : fragments) {
+                        sb.append(fragment);
+                    }
+                    content.setEmail(sb.toString());
+                }
+            }
+            userList.add(content);
+        });
+        System.out.println(userList);
+    }
+    
+}
+```
+
+## ES 使用sql进行查询
+
+以下是一个使用 Elasticsearch SQL 查询的简单示例，假设我们有一个名为 `employee` 的索引，其中包含如下结构的数据：
+
+```json
+{
+  "id": "1",
+  "first_name": "John",
+  "last_name": "Doe",
+  "age": 30,
+  "department": "Sales",
+  "salary": 50000
+}
+```
+
+现在，我们可以使用 SQL 查询语句来检索和分析这些数据：
+
+```sql
+-- 基本查询
+SELECT first_name, last_name, age FROM employee WHERE department = 'Sales';
+-- 排序查询
+SELECT * FROM employee ORDER BY salary DESC LIMIT 10;
+-- 聚合查询
+SELECT department, AVG(salary) as avg_salary FROM employee GROUP BY department;
+```
+
+要实际执行这些查询，你可以通过 Elasticsearch 的 REST API 或者使用支持 JDBC 的工具（如 SQL 客户端、BI 工具等）连接到 Elasticsearch。以下是如何通过 REST API 执行查询的一个示例：
+
+```bash
+curl -X POST -H 'Content-Type: application/json' -d '
+{
+  "query": "SELECT first_name, last_name, age FROM employee WHERE department = 'Sales'"
+}' 'http://localhost:9200/_sql'
+```
+
+请注意，上述示例中的 URL http://localhost:9200 应替换为你实际的 Elasticsearch 服务器地址。响应将是一个 JSON 对象，包含查询结果。
+以上就是使用 Elasticsearch SQL 进行查询的简单示例。根据你的具体需求，可以编写更复杂的 SQL 查询来利用 Elasticsearch 的强大搜索和分析能力。
+
+```java
+    public static void translateConditions(String sql, RestHighLevelClient client) throws IOException {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("query", sql);
+        Request request = new Request("POST", "/_sql");
+        Gson gson = new Gson();
+        String jsonEntity = gson.toJson(map);
+        LOGGER.info("jsonEntity：" + jsonEntity);
+        request.setJsonEntity(gson.toJson(map));
+        Response response = client.getLowLevelClient().performRequest(request);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new RuntimeException("组合查询sql解析异常！");
+        }
+      //  ...response 响应结果处理
+    }
+```
+
+## SQL 转 DSL
+
+```java
+    public static QueryBuilder translateConditions(String sql, RestHighLevelClient client) throws IOException {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("query", sql);
+        Request request = new Request("POST", "/_sql/translate");
+        Gson gson = new Gson();
+        String jsonEntity = gson.toJson(map);
+        LOGGER.info("jsonEntity：" + jsonEntity);
+        request.setJsonEntity(gson.toJson(map));
+        Response response = client.getLowLevelClient().performRequest(request);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new RuntimeException("组合查询sql解析异常！");
+        }
+        JsonObject jsonObject = gson.fromJson(EntityUtils.toString(response.getEntity()), JsonObject.class);
+        String queryJson = jsonObject.get("query").toString();
+        LOGGER.info("translated DSL is：" + queryJson);
+        return QueryBuilders.wrapperQuery(queryJson);
+    }
+```
+

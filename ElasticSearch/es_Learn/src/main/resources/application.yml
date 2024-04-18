@@ -1,0 +1,11 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: rabbit-mq-learn
+  swagger2:
+    enabled: true
+  elasticsearch:
+    rest:
+      uris:  http://43.138.25.182:9200
+      connection-timeout:  5s

@@ -1,0 +1,23 @@
+
+a
+java:S1192"FDefine a constant instead of duplicating this literal "admin" 4 times.(â©ÿÛıÿÿÿÿ
+\
+java:S1192"FDefine a constant instead of duplicating this literal "guest" 3 times.(¾¦ÛÇ
+x
+java:S1192+"]Define a constant instead of duplicating this literal "adminåŠ å¯†ä¹‹åæ•°æ®ï¼š\t" 3 times.(¨ËôÓûÿÿÿÿ
+G
+java:S3599",Use another way to initialize this instance.(ÈšÔ•şÿÿÿÿ
+t
+java:S1171"YMove the contents of this initializer to a standard constructor or to field initializers.(ÒÌâ–øÿÿÿÿ
+T
+java:S1854)"9Remove this useless assignment to local variable "guest".(ÒŠ¥ûÿÿÿÿ
+S
+java:S1854("8Remove this useless assignment to local variable "user".(‡Î˜òûÿÿÿÿ
+D
+java:S1481(")Remove this unused "user" local variable.(‡Î˜òûÿÿÿÿ
+E
+java:S1481)"*Remove this unused "guest" local variable.(ÒŠ¥ûÿÿÿÿ
+E	java:S106+"+Replace this use of System.out by a logger.(¨ËôÓûÿÿÿÿ
+E	java:S106,"+Replace this use of System.out by a logger.(¨ËôÓûÿÿÿÿ
+E	java:S106-"+Replace this use of System.out by a logger.(¨ËôÓûÿÿÿÿ
+V	java:S1250"<This block of commented-out lines of code should be removed.(‚ü½øüÿÿÿÿ

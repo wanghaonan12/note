@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d78f0d90-035b-4b7b-900e-94bca5a1381d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/App.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/NvWaOne.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/enums/HumanEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/factory/BaseHumanFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/factory/HumanFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/factory/HumanManFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/factory/HumanWomanFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/BaseMen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/BaseWoMen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/Human.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/BlackHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/BlackWomanHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/WhiteHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/WhiteWomanHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/YellowHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/abstract_factory/service/impl/YellowWomanHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/dto/OuterUserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/service/App.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/service/IOuterUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/service/IUserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/service/impl/OuterUser.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/adapter/service/impl/UserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/facade/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/facade/service/LetterProcess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/facade/service/impl/LetterProcessImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/NvWaOne.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/NvWaTwo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/factory/HumanFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/service/Human.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/service/impl/BlackHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/service/impl/WhiteHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/service/impl/YellowHuman.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/factory_method/utils/ClassUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/multition/Emperor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/multition/Minister.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/XiMenQing.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/service/KindWomen.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/service/impl/JiaShi.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/service/impl/PanJinLian.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/proxy/service/impl/WangPo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/singleton/Emperor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/singleton/Emperor2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/singleton/Minister.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/singleton/Minister2.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/singleton/readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/Context.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/ZhaoYun.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/service/IStrategy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/service/impl/BackDoor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/service/impl/BlockEnemy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/strategy/service/impl/GivenGreenLight.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/template_method/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/template_method/HummerModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/template_method/impl/HummerH1Model.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/template_method/impl/HummerH2Model.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/java/com/whn/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/java/com/whn/constant/FileNameConstant.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/java/com/whn/enums/FileEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/java/com/whn/utils/XMLUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/category_code.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/department.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/fonds_identifier.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/keep.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/medium_type.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/security_classification.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/title.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../taster_create_Entity/src/main/resources/year.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/security/LoginService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docker/Docker保姆及教程.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../docker/Docker保姆及教程.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../jmeter/jmeter压测报告生成.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../jmeter/jmeter压测报告生成.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../security/security_learn/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../security/security_learn/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/config/SwaggerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/config/SwaggerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/controller/TestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/java/com/whn/controller/TestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../security/security_learn/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../security/security_learn/src/main/resources/application.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$PROJECT_DIR$/../../../../../Tools/apache-maven-3.8.6" />
+        <option name="userSettingsFile" value="D:\Tools\apache-maven-3.8.6\conf\settings_pde.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="disabledProfiles">
+      <list>
+        <option value="pdemaven" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2h2Yc8pWF9t0IkpKZIOnFd50lMh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/DeskTop/document/note/DesignPattern/design_pattern_earn/src/main/java/com/whn/abstract_factory/service/impl&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\DeskTop\document\note\DesignPattern\design_pattern_earn\src\main\java\com\whn\abstract_factory\service\impl" />
+      <recent name="D:\DeskTop\document\note\DesignPattern\design_pattern_earn\src\main\java\com\whn\abstract_factory" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.whn.abstract_factory.factory" />
+      <recent name="com.whn.abstract_factory.service.impl" />
+      <recent name="com.whn.abstract_factory.service" />
+      <recent name="com.whn.factory_method.service.impl" />
+      <recent name="com.whn.factory_method" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.com.whn.template_method.Client">
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.adapter.service.App" />
+      <module name="design_pattern_earn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.adapter.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.facade.Client" />
+      <module name="design_pattern_earn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.facade.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NvWaTwo" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.factory_method.NvWaTwo" />
+      <module name="design_pattern_earn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.factory_method.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.whn.abstract_factory.NvWaOne" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.abstract_factory.NvWaOne" />
+      <module name="design_pattern_earn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.abstract_factory.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.whn.template_method.Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.template_method.Client" />
+      <module name="design_pattern_earn" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.template_method.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
+      <option name="SPRING_BOOT_MAIN_CLASS" />
+      <option name="VM_PARAMETERS" value="-Dspring.output.ansi.enabled=ALWAYS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.com.whn.template_method.Client" />
+        <item itemvalue="Application.App" />
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Application.com.whn.abstract_factory.NvWaOne" />
+        <item itemvalue="Application.NvWaTwo" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d78f0d90-035b-4b7b-900e-94bca5a1381d" name="Changes" comment="" />
+      <created>1700618808910</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1700618808910</updated>
+      <workItem from="1716793719407" duration="10574000" />
+      <workItem from="1716883315998" duration="7438000" />
+      <workItem from="1716946572883" duration="13670000" />
+      <workItem from="1717030925127" duration="10130000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/whn/factory_method/factory/HumanFactory.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/whn/factory_method/utils/ClassUtils.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

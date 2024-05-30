@@ -2,6 +2,9 @@ package com.whn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.Arrays;
 
 /**
  * @Author: WangHn
@@ -11,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(App.class, args);
+        String[] beanDefinitionNames = run.getBeanDefinitionNames();
+        Arrays.stream(beanDefinitionNames).filter(s->s.contains("org.springframework.security")).forEach(System.out::println);
     }
 }

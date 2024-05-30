@@ -1,10 +1,23 @@
 server:
-  port: 8080
+  port: 8989
 spring:
   application:
     name: security_learn
+  arthas:
+    enabled: true
   security:
 #    暂时指定用户账号和密码
     user:
       name: user
       password: user
+arthas:
+  agent-id: ${AGENT_ID:test}
+  username: ${AGENT_USERNAME:pde}
+  password: ${AGENT_PASSWORD:pde88888Pde}
+  tunnel-server: ${TUNNEL_SERVER:ws://localhost:7777/ws}
+  #  处理 arthas 组件使用时一台机器启动多个服务 8563，3658 端口占用问题
+  telnetPort: -1
+  httpPort: -1
+  app-name:  ${spring.application.name}
+  enable-detail-pages: true
+  ip: ${HOST:自己IP地址}

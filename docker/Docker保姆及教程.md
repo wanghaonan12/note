@@ -1378,7 +1378,7 @@ services:
 1. 安装portainer
 
 ```bash
- docker run -d -p 8000:8000 -p 9000:9000 --name portainer --restart=always -v /home/run/docker.sock:/var/run/docker.sock -v /home/data:/data portainer/portainer 
+ docker run -d -p 7000:8000 -p 9000:9000 --name portainer --restart=always -v /home/run/docker.sock:/var/run/docker.sock -v /home/data:/data portainer/portainer 
 ```
 
 2. 访问地址`IP:9000`结果portainer更新了,老大的local没了,看官网吧[Initial setup - Portainer Documentation](https://docs.portainer.io/start/install-ce/server/setup)

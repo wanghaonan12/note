@@ -5,11 +5,11 @@
 1. 启动容器挂载数据卷
 
 ```bash
-docker run -dp 3307:3306 \
+docker run -dp 3306:3306 \
   -v /home/master/data:/var/lib/mysql \
   -v /home/master/config:/etc/mysql \
   -v /home/master/log:/var/log/mysql \
-  -e MYSQL_ROOT_PASSWORD=123456 \
+  -e MYSQL_ROOT_PASSWORD=pde#123456789 \
   --name mysql_master mysql:5.7.36
 ```
 
@@ -104,6 +104,14 @@ relay_log=mall-mysql-relay-bin
 log_slave_updates=1  
 ## slave设置为只读（具有super权限的用户除外）
 read_only=1
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+max_connections=1000
+
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
 ```
 
 ![image-20230917222031520](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222031520.png)

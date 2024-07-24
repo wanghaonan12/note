@@ -840,7 +840,7 @@ GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'slave'@'%';
 ```bash
 docker run -dp 3308:3306 \
   -v /home/slave/data:/var/lib/mysql \
-  -v /home/slave/config:/etc/mysql \
+  -v /home/slave/config://etc/mysql/conf.d \
   -v /home/slave/log:/var/log/mysql \
   -e MYSQL_ROOT_PASSWORD=123456 \
   --name mysql_slave mysql:5.7.36
@@ -852,6 +852,8 @@ docker run -dp 3308:3306 \
 
 ```bash
 [mysqld]
+innodb_force_recovery=0
+character-set-server=utf8
 ## 设置server_id，同一局域网中需要唯一
 server_id=102
 ## 指定不需要同步的数据库名称
@@ -873,6 +875,14 @@ relay_log=mall-mysql-relay-bin
 log_slave_updates=1  
 ## slave设置为只读（具有super权限的用户除外）
 read_only=1
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+max_connections=1000
+lower_case_table_names=1
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
 ```
 
 ![image-20230917222031520](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20230917222031520.png)
@@ -1378,7 +1388,7 @@ services:
 1. 安装portainer
 
 ```bash
- docker run -d -p 7000:8000 -p 9000:9000 --name portainer --restart=always -v /home/run/docker.sock:/var/run/docker.sock -v /home/data:/data portainer/portainer 
+ docker run -d -p 9000:9000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /home/data:/data portainer/portainer 
 ```
 
 2. 访问地址`IP:9000`结果portainer更新了,老大的local没了,看官网吧[Initial setup - Portainer Documentation](https://docs.portainer.io/start/install-ce/server/setup)

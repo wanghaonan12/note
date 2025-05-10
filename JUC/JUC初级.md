@@ -982,6 +982,12 @@ public class ReentrantLockTest {
     }
 ```
 
+## 死锁验证方法
+
+![image-20250508153219683](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20250508153219683.png)
+
+![image-20250508153343878](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20250508153343878.png)
+
 ## 读写锁ReadWriteLock 
 
 现实中有这样一种场景：对共享资源有读和写的操作，且写操作没有读操作那么频繁。在没有写操作的时候，多个线程同时读一个资源没有任何问题，所以应该允许多个线程同时读取共享资源；但是如果一个线程想去写这些共享资源，就不应该允许其他线程对该资源进行读和写的操作了。

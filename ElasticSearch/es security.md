@@ -51,3 +51,47 @@ curl -H "Content-Type:application/json" -XPOST -u elastic 'http://127.0.0.1:9200
 ![image-20240709100037526](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20240709100037526.png)
 
 接下来就可以使用新设置的密码登陆了！！！！！！！！！！！
+
+# 服务配置
+
+> `nacos`服务配置中修改 `elasticsearch-dev.yml`
+
+```yml
+es-config:
+  address: 10.20.40.104:7004
+  enable: true
+  password: pde88888 #es 密码
+  userName: pde88888 #es 账号
+  connection-timeout: 3s
+  read-timeout: 10s
+  enableOpenSearch: false
+  connectionRequestTimeout: 20000
+  maxConnectNum: 1000
+  maxConnectPerRoute: 1000
+  trustStorePath: "/usr/local/sourcecode/java-opensearch23-client/src/main/resources/wjunshenStore"
+  trustStorePwd: "wjunshen"
+```
+
+> Log stash  连接账号密码文件默认位置`/home/pde/logstash/config`
+
+```json
+input {
+  tcp {
+    host => "0.0.0.0"
+    port => 5044
+    mode => "server"
+    codec => json_lines
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["http://10.20.40.104:7004"]
+    index => "pdes-syslog-%{+YYYY.MM}"
+    action => "index"
+    codec  => "json"
+    user => "pde88888"
+    password => "pde88888"
+  }
+}
+```
+

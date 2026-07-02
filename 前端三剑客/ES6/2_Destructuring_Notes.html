@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 数组解构 获取指定位置的元素
+    const [a, b] = [1, 2];
+    console.log("\n 数组解构 获取指定位置的元素\n")
+    console.log(a);  // 1
+    console.log(b);  // 2
+
+    // 跳过指定位置的元素
+    const [c, , d] = [1, 2, 3];
+    console.log("\n 跳过指定位置的元素\n")
+    console.log(c);  // 1
+    console.log(d);  // 3
+
+    // 获取数组剩余元素
+    const [e, ...f] = [1, 2, 3, 4];
+    console.log("\n 获取数组剩余元素\n")
+    console.log(e);    // 1
+    console.log(f); // [2, 3, 4]
+
+    // 嵌套解构
+    const [g, [h, i]] = [1, [2, 3]];
+    console.log("\n 嵌套解构\n")
+    console.log(g); // 1
+    console.log(h); // 2
+    console.log(i); // 3
+
+    // 对象解构
+    const j = { name: 'Alice', age: 25 };
+    const { name: k, age: l } = j;
+    console.log("\n 对象解构\n")
+    console.log(k); // Alice
+    console.log(l);  // 25
+
+    // 对象属性解构重命名
+    const { name: m, age: n } = j;
+    console.log("\n 对象属性解构重命名\n")
+    console.log(m); // Alice
+    console.log(n);  // 25
+
+    // 对象解构获取属性 并设置默认值
+    const { name: o, gender = 'female' } = { name: 'Alice' };
+    console.log("\n 对象解构获取属性 并设置默认值\n")
+    console.log(o);   // Alice
+    console.log(gender); // female
+
+    // 对象解构获取嵌套对象属性
+    const p = {
+        name: 'Alice',
+        address: {
+            city: 'Wonderland',
+            zip: 12345
+        }
+    };
+    const { address: { city: q, zip: r } } = p;
+    console.log("\n 对象解构获取嵌套对象属性\n")
+    console.log(q); // Wonderland
+    console.log(r);  // 12345
+
+    // 函数参数解构
+    function sum([s, t]) {
+        return s + t;
+    }
+    console.log("\n 函数参数解构\n")
+    console.log(sum([1, 2])); // 3
+
+    // 临时变量交换
+    let u = 1, v = 2;
+    [u, v] = [v, u];
+    console.log("\n解构用途 临时变量交换\n")
+    console.log(u); // 2
+    console.log(v); // 1
+
+    // 函数返回值解构
+    function getCoordinates() {
+        return [10, 20];
+    }
+    console.log("\n解构用途 函数返回值解构\n")
+    const [w, x] = getCoordinates();
+    console.log(`x=${w}, y=${x}`); // 10 20
+
+    // 对象解构
+    function getPerson() {
+        return { name: 'Alice', age: 25 };
+    }
+    const { name: y, age: z } = getPerson();
+    console.log("\n解构用途 对象解\n")
+    console.log(y, z); // Alice 25
+
+    // 嵌套对象解构
+    const a1 = {
+        name: 'Alice',
+        address: {
+            city: 'Wonderland',
+            zip: 12345
+        }
+    };
+    const { address: { city: b1 } } = a1;
+    console.log("\n解构用途 嵌套对象解\n")
+    console.log(b1); // Wonderland
+
+    // 解构默认值 防止报错
+    const [c1 = 1] = [];
+    console.log(c1); // 1
+    const { name: d1 = 'Unknown' } = {};
+    console.log(d1); // Unknown
+</script>
+</body>
+</html>

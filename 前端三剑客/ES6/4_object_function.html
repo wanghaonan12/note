@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+
+    const person = {
+        name: 'Alice',
+        age: 25,
+        languages: ['English', 'Spanish']
+    }
+
+    // 对象操作方法
+    console.log(Object.keys(person))// [ 'name', 'age', 'languages' ]
+    console.log(Object.values(person))// [ 'Alice', 25, [ 'English', 'Spanish' ] ]
+    console.log(Object.entries(person))// [ [ 'name', 'Alice' ], [ 'age', 25 ], [ 'languages', [ 'English', 'Spanish' ] ] ]
+
+    const target = {a: 1}
+    const source_b = {b: 2}
+    const source_c = {c: 3}
+    console.log("合并对象!")
+    Object.assign(target, source_b, source_c)
+    console.log(target)// { a: 1, b: 2, c: 3 }
+
+    const father = {
+        name: 'father',
+        age: 80,
+        languages: ['English', 'Spanish'],
+        info: person
+    };
+    // 浅拷贝
+    const shallowCopy = Object.assign({}, father);
+    console.log("浅拷贝");
+    console.log(shallowCopy);
+    console.log(shallowCopy.info);
+
+    // 深拷贝
+    const deepCopy = JSON.parse(JSON.stringify(father));
+    console.log("深拷贝");
+    console.log(deepCopy);
+    console.log(deepCopy.info);
+    console.log("属性修改----");
+    person.name = "富贵";
+
+    console.log("浅拷贝");
+    console.log(shallowCopy);
+    console.log(shallowCopy.info);
+
+    // 深拷贝
+    console.log("深拷贝");
+    console.log(deepCopy.info);// { name: 'Alice', age: 25, languages: [ 'English', 'Spanish' ] }
+    console.log("浅拷贝");
+    console.log(shallowCopy.info);// { name: '富贵', age: 25, languages: [ 'English', 'Spanish' ] }
+
+    // 对象声明
+    const name = 'rich';
+    const age = 18;
+    const fugui = {name, age};
+    console.log(fugui)
+
+    // 对象方法声明
+    const person_method = {
+        name: 'Alice',
+        age: 25,
+        // 常规方法定义
+        sayNameAndAge: function () {
+            console.log(`My name is ${this.name}, and I am ${this.age} years old.`);
+        },
+        // 简写方法定义
+        eat(food) {
+            console.log(`Hello, my name is ${this.name}. I like eat ${food} `);
+        },
+        // 箭头函数方法定义 注意这里的 person_method.age 是当前对象
+        sayAge: (realAge) => {
+            console.log(`I am not ${this.age} years old , is ${realAge} years old`);
+        }
+    };
+    console.log('方法声明!!!!')
+    person_method.sayNameAndAge();
+    person_method.eat('apple');
+    person_method.sayAge(18);
+
+
+    // 对象扩展运算符
+    const person_extend = {
+        name: 'Alice',
+        languages: ['English', 'Spanish']
+    };
+    const person_extend_2 = {
+        name: 'Bob',
+        age: 30,
+        ...person_extend, //如果存在相同的属性后面的会覆盖掉前面的属性和值 ,这个操作是深度copy
+    };
+    console.log(person_extend_2)
+    // 对象合并
+    const name_age = {name: 'Alice', age: 25};
+    const languages = {languages:['English', 'Spanish']};
+    const person_merge = {...name_age,...languages};
+    console.log(person_merge)
+
+    console.log('数组方法 -----------------')
+    // 数组方法 map 和 reduce
+    const numbers = [1, 2, 3, 4, 5];
+    // map 方法 如同 java stream 中的 map 一样
+    const squaredNumbers = numbers.map(number => number * 2);
+    console.log(squaredNumbers);
+    // reduce 方法 accumulator 上一个处理的结果或是默认值 currentValue 当前结果, 0 默认值设置为0
+    const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    console.log(sum);
+
+</script>
+</body>
+</html>

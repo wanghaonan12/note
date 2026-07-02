@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ac0e4bcf-5f7a-4273-b62b-3bcd17aa8a2f" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="customMavenHome" value="$USER_HOME$/Documents/Tools/apache-maven-3.9.8" />
+        <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
+        <option name="userSettingsFile" value="$USER_HOME$/Documents/Tools/apache-maven-3.9.8/conf/settings_pde.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2zf8vDtxM7KFKLrRucGaL89xNVH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.App (1).executor": "Debug",
+    "Application.App.executor": "Debug",
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "Maven.abstractprocessor-demo [clean].executor": "Run",
+    "Maven.abstractprocessor-demo [compile].executor": "Run",
+    "Maven.abstractprocessor-demo [install].executor": "Run",
+    "Maven.auto-to-string-processor [clean,install].executor": "Run",
+    "Maven.example-app [clean,install].executor": "Run",
+    "Maven.example-app [install].executor": "Run",
+    "Remote JVM Debug.ReomoteProcessor.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/richwang/Desktop/cluster/my_object/abstractprocessor-demo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gant",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/auto-to-string-processor/src/main/java/com/whn" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Remote JVM Debug.ReomoteProcessor">
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <envs>
+        <env name="HOST" value="10.20.1.213" />
+        <env name="LB-TAG" value="WHN" />
+        <env name="nacos.server.grpc.port.offset" value="100" />
+        <env name="NACOS_PASSWORD" value="nacos" />
+        <env name="NACOS_URL" value="http://10.20.20.251:8849/nacos" />
+        <env name="NACOS_USERNAME" value="nacos" />
+        <env name="NAMESPACE" value="dev" />
+      </envs>
+      <option name="MAIN_CLASS_NAME" value="com.whn.App" />
+      <module name="example-app" />
+      <shortenClasspath name="MANIFEST" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.whn.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <envs>
+        <env name="HOST" value="10.20.1.213" />
+        <env name="LB-TAG" value="WHN" />
+        <env name="nacos.server.grpc.port.offset" value="100" />
+        <env name="NACOS_PASSWORD" value="nacos" />
+        <env name="NACOS_URL" value="http://10.20.20.251:8849/nacos" />
+        <env name="NACOS_USERNAME" value="nacos" />
+        <env name="NAMESPACE" value="dev" />
+      </envs>
+      <shortenClasspath name="MANIFEST" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ReomoteProcessor" type="Remote">
+      <module name="example-app" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5006" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="5006" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <envs>
+        <env name="HOST" value="10.20.1.213" />
+        <env name="JOD_WORKDIR" value="$PROJECT_DIR$/../../job-workspaces" />
+        <env name="LB-TAG" value="WHN" />
+        <env name="NACOS_URL" value="http://10.20.40.105:8848" />
+        <env name="NAMESPACE" value="dev" />
+      </envs>
+      <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
+      <option name="SPRING_BOOT_MAIN_CLASS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.App" />
+      <item itemvalue="Remote JVM Debug.ReomoteProcessor" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.App" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.19416.15" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.19416.15" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ac0e4bcf-5f7a-4273-b62b-3bcd17aa8a2f" name="Changes" comment="" />
+      <created>1752110996080</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1752110996080</updated>
+      <workItem from="1752110997565" duration="1982000" />
+      <workItem from="1752113451707" duration="336000" />
+      <workItem from="1752113797792" duration="37000" />
+      <workItem from="1752113855028" duration="3675000" />
+      <workItem from="1752118286891" duration="737000" />
+      <workItem from="1752125806626" duration="4426000" />
+      <workItem from="1752135520153" duration="181000" />
+      <workItem from="1752135779231" duration="5185000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/auto-to-string-processor/src/main/java/com/whn/processor/ToStringProcessor.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/auto-to-string-processor/src/main/java/com/whn/processor/ToStringProcessor.java</url>
+          <line>70</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/auto-to-string-processor/src/main/java/com/whn/processor/ToStringProcessor.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

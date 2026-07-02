@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 普通构造函数
+    function Person(name, age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // 使用箭头函数和解构
+    const createPerson = ({ name, age = 18}) => ({ name, age });
+
+    // 使用箭头函数打印对象
+    const logPerson = person => console.log(
+        `person.name=${person.name}
+person.age=${person.age}`
+    );
+
+
+    // 解构参数打印对象 name 属性
+    function logPersonName(persion) {
+        console.log(`name=${persion.name}`);
+    }
+    const logPersonName=({name})=>console.log(`name=${name}`);
+    // 构建对象
+    const alice = new Person('Alice', 25);
+    logPerson(alice);
+
+    const alice_25 = createPerson({ name: 'Alice', age: 25 });
+    logPerson(alice_25);
+
+    const bob = createPerson({ name: 'Bob' });
+    logPersonName(bob);
+    logPerson(bob);
+</script>
+</body>
+</html>

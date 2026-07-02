@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>使用 Axios 和 Promise 请求本地 JSON 文件</h1>
+<!-- 编写 JavaScript 代码 -->
+<script>
+    // 一、基本创建和使用
+    console.log("基本创建和使用------------------------")
+    const myPromise = new Promise((resolve, reject) => {
+        let success = true; // 假设的异步操作状态
+
+        if (success) {
+            resolve('操作成功'); // 当异步操作成功时，调用 resolve
+        } else {
+            reject('操作失败'); // 当异步操作失败时，调用 reject
+        }
+    });
+
+    myPromise
+        .then(result => {
+            // 处理成功结果
+            console.log('成功结果:', result);
+        })
+        .catch(error => {
+            // 处理失败结果
+            console.error('失败结果:', error);
+        });
+
+
+    //二、链式调用
+    console.log("链式调用------------------------")
+    new Promise((resolve, reject) => {
+        resolve(10); // 第一个 Promise 成功，传递值 10
+    }).then(value => {
+        console.log(value);  // 输出: 10
+        return value * 2;    // 返回 20，传递给下一个 then
+    }).then(value => {
+        console.log(value);  // 输出: 20
+        return value * 3;    // 返回 60，传递给下一个 then
+    }).then(value => {
+        console.log(value);  // 输出: 60
+        return value;
+    }).then(value => {
+        return new Promise((resolve,reject)=>{
+            reject(value+1)
+        })
+    }).then((value)=>{
+        console.log("这不是一个错误"); // 如果没有返回resolve，则不执行
+    }).catch(error => {
+        console.log("这是个错误"+error);  // 如果任意 then 出错，则 catch 捕获
+    });
+
+
+    // 三、Promise.all()
+    const p1 = Promise.resolve(3);
+    const p2 = Promise.resolve(5);
+    const p3 = Promise.reject("返回一个错误");
+    const p4 = Promise.resolve(8);
+
+    console.log("Promise.all 开始------------------------")
+    console.log("有错误")
+    Promise.all([p1, p2, p3, p4])
+        .then(results => {
+            console.log(results);
+        })
+        .catch(error => {
+            console.log(error);  // 返回一个错误
+        });
+    console.log("没有错误")
+    Promise.all([p1, p2, p4])
+        .then(results => {
+            console.log(results);  // 输出: [3, 5, 8]
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+    // 四、Promise.race()
+    const p5 = new Promise((resolve) => setTimeout(resolve, 500, 'one'));
+    const p6 = new Promise((resolve) => setTimeout(resolve, 100, 'two'));
+    Promise.race([p5, p6])
+        .then(value => {
+            console.log(value);  // 输出: two，因为 p2 先完成
+        });
+
+    // 五、Promise 内置 setTimeout() 定时相应 等待
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    wait(1000).then(() => console.log('1 秒后执行的代码'));
+
+    // 六、 使用 Promise 读取本地 JSON 文件
+    console.log("使用 Promise 读取本地 JSON 文件------------------------")
+    const fetchLocalJSON = (filePath) => new Promise((resolve, reject) => {
+        // 使用 fetch API 请求文件 项目中会使用 axios 替换 fetch
+        fetch(filePath)
+            .then(response => {
+                if (!response.ok) {
+                    reject('网络响应失败');
+                }
+                return response.json(); // 将响应数据解析为 JSON
+            })
+            .then(data => resolve(data)) // 成功解析 JSON 后执行 resolve
+            .catch(error => reject(error)); // 处理任何错误
+    });
+
+
+    // 使用 Promise 链结合 fetch 第一次请求
+    fetchLocalJSON('5_data_person_10.json')
+        .then(serverResponse => {
+            // 处理第一次服务器返回的数据
+            console.log('第一次服务器返回的结果:', serverResponse);
+            // 第二次请求
+            return fetchLocalJSON('5_data_person_20.json')
+        })
+        .then(serverResponse => {
+            // 处理第二次服务器返回的数据
+            console.log('第二次服务器返回的结果:', serverResponse);
+            // 第三次请求,不存在会报错并在catch中捕获
+            return fetchLocalJSON('5_data_person_30.json')
+        })
+        .catch(error => {
+            // 处理请求中错误
+            console.error('发生错误啦啦啦:', error);
+        })
+</script>
+</body>
+</html>

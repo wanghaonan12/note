@@ -1,0 +1,3 @@
+com/whn/processor/AutoToString.class
+META-INF/services/javax.annotation.processing.Processor
+com/whn/processor/ToStringProcessor.class

@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="47501957-d0f3-49c4-aebe-88eade4e7c06" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/AllOfTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/CompleteTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ExceptionallyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ThenApplyTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/completableFuture/ThenComposeTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/forkJoin/SumCalculator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/threadPool/ThreadPoolDemo1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/threadPool/ThreadPoolTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/whn/volatile1/VolatileTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../JUC初级.md" beforeDir="false" afterPath="$PROJECT_DIR$/../JUC初级.md" afterDir="false" />
+    <list default="true" id="47501957-d0f3-49c4-aebe-88eade4e7c06" name="Changes" comment="添加修改">
+      <change afterPath="$PROJECT_DIR$/../../ElasticSearch/es_Learn/src/test/java/org/whn/dao/search.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/ApifoxUploaderProjectSetting.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/UniappTool.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../前端三剑客/ES6/.idea/ES6.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ElasticSearch/es_Learn/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../ElasticSearch/es_Learn/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../ElasticSearch/es_Learn/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../ElasticSearch/es_Learn/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../SpringBoot/springboot2-master/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../SpringBoot/springboot2-master/.idea/misc.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +33,8 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="$PROJECT_DIR$/../../../../../Tools/apache-maven-3.8.6" />
+        <option name="customMavenHome" value="$PROJECT_DIR$/../../../../../Tools/apache-maven-3.8.6" />
+        <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
         <option name="userSettingsFile" value="D:\Tools\apache-maven-3.8.6\conf\settings_pde.xml" />
       </MavenGeneralSettings>
     </option>
@@ -49,15 +49,23 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.CyclicBarrierTest.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LockSupportTest.executor&quot;: &quot;Run&quot;,
+    &quot;Application.One.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ReentrantReadWriteLockTest.executor&quot;: &quot;Run&quot;,
+    &quot;Application.SemaphoreTest.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/DeskTop/document/note/redis/juc_study/src/main/java/com/whn/notify&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -77,13 +85,13 @@
       <recent name="com.whn" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.VolatileTest">
-    <configuration name="AllOfTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.AllOfTest" />
+  <component name="RunManager" selected="Application.LockSupportTest">
+    <configuration name="CyclicBarrierTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.CyclicBarrierTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.completableFuture.*" />
+          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.CyclicBarrirt.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -91,12 +99,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ExceptionallyTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ExceptionallyTest" />
+    <configuration name="LockSupportTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.ThreadUtils.LockSupportTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.completableFuture.*" />
+          <option name="PATTERN" value="com.whn.ThreadUtils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -104,12 +112,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThenApplyTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ThenApplyTest" />
+    <configuration name="One" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.One" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.completableFuture.*" />
+          <option name="PATTERN" value="com.whn.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -117,12 +125,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ThenComposeTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.completableFuture.ThenComposeTest" />
+    <configuration name="ReentrantReadWriteLockTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.reentrantReadWriteLock.ReentrantReadWriteLockTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.completableFuture.*" />
+          <option name="PATTERN" value="com.whn.reentrantReadWriteLock.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -130,12 +138,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="VolatileTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.whn.volatile1.VolatileTest" />
+    <configuration name="SemaphoreTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.whn.jucAuxiliaryClass.Semaphore.SemaphoreTest" />
       <module name="juc_study" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whn.volatile1.*" />
+          <option name="PATTERN" value="com.whn.jucAuxiliaryClass.Semaphore.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -153,13 +161,21 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.VolatileTest" />
-        <item itemvalue="Application.ExceptionallyTest" />
-        <item itemvalue="Application.AllOfTest" />
-        <item itemvalue="Application.ThenComposeTest" />
-        <item itemvalue="Application.ThenApplyTest" />
+        <item itemvalue="Application.LockSupportTest" />
+        <item itemvalue="Application.CyclicBarrierTest" />
+        <item itemvalue="Application.SemaphoreTest" />
+        <item itemvalue="Application.ReentrantReadWriteLockTest" />
+        <item itemvalue="Application.One" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.19416.15" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.19416.15" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -186,11 +202,28 @@
       <workItem from="1711084423483" duration="8973000" />
       <workItem from="1711159103796" duration="6998000" />
       <workItem from="1711174061761" duration="927000" />
+      <workItem from="1746674386112" duration="5289000" />
+      <workItem from="1746843955521" duration="156000" />
+      <workItem from="1746857318854" duration="1023000" />
+      <workItem from="1746860596842" duration="4000" />
     </task>
+    <task id="LOCAL-00001" summary="添加修改">
+      <option name="closed" value="true" />
+      <created>1746844057323</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1746844057323</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="添加修改" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加修改" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -203,6 +236,24 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/whn/jucAuxiliaryClass/Semaphore/SemaphoreTest.java</url>
+          <line>12</line>
+          <properties class="com.whn.jucAuxiliaryClass.Semaphore.SemaphoreTest" method="main">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/whn/ThreadUtils/LockSupportTest.java</url>
+          <line>11</line>
+          <properties class="com.whn.ThreadUtils.LockSupportTest" method="main">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

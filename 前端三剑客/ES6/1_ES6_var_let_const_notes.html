@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES6_var_let_const_notes</title>
+</head>
+
+<body>
+<script>
+    function var_example() {
+        console.log('\n var_example 方法执行!')
+        console.log(x);  // undefined
+        var x = 10;
+        console.log(x);  // 10
+    }
+
+    // 执行
+    var_example();
+
+
+    function let_example() {
+        console.log('\n let_example 方法执行!')
+        // console.log(x);  //报错: ReferenceError: Cannot access 'x' before initialization
+        let x = 10;
+        console.log(x);  // 10
+    }
+
+    let_example();
+
+
+    {
+        let y = 5;
+        console.log(y);  // 5
+    }
+    // console.log(y);  //报错: ReferenceError: y is not defined
+    const x = 10;
+    // x = 20;  //报错: TypeError: Assignment to constant variable
+    const arr = [1, 2, 3];
+    // arr.push(4);  // 允许修改引用类型的内容
+    console.log(arr);  // [1, 2, 3, 4]
+</script>
+</body>
+
+</html>

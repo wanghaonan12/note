@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background-color: gold;
+            border: 2px solid #000;
+            border-radius: 0;
+            line-height: 200px;
+            text-align: center;
+            color: white;
+            font-size: 30px;
+        }
+
+        .box p {
+            opacity: 0;
+            transition: opacity 1s linear 0s;
+        }
+
+        .box:hover p {
+            opacity: 1;
+        }
+
+        .box1 {
+            transition: border-radius 2s linear 0s;
+        }
+
+        .box1:hover {
+            border-radius: 50%;
+        }
+
+        .box2 {
+            transition: width 2s linear 0s;
+        }
+
+        .box2:hover {
+            width: 700px;
+        }
+
+        .box3 {
+            transform: rotate(0deg);
+            transition: transform 2s linear 0s;
+        }
+
+        .box3:hover {
+            transform: rotate(90deg);
+        }
+
+        .box4 {
+            transition: transform 2s ease 0s;
+        }
+
+        .box4:hover {
+            transform: translate(100px, 100px);
+        }
+
+        .big {
+            width: 1800px;
+            height: 1200px;
+            background-color: wheat;
+            position: relative;
+            margin-top: 200px;
+        }
+
+        .big>.p {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            color: white;
+            font-size: 30px;
+            background-color: violet;
+            position: relative;
+            left: 0px;
+        }
+
+        .big>.p:nth-child(1) {
+            transition: left 2s linear 0s;
+        }
+
+        .big>.p:nth-child(2) {
+            transition: left 2s ease 0s;
+        }
+
+        .big>.p:nth-child(3) {
+            transition: left 2s ease-in 0s;
+        }
+
+        .big>.p:nth-child(4) {
+            transition: left 2s ease-out 0s;
+        }
+
+        .big>.p:nth-child(5) {
+            transition: left 2s ease-in-out 0s;
+        }
+
+        .big:hover>.p {
+            left: 1000px;
+        }
+
+        .animal {
+            perspective: 3000px;
+            width: 200px;
+            height: 200px;
+            margin: 200px auto;
+            position: relative;
+            border: 1px solid #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 200px;
+            color: white;
+            font-size: 30px;
+        }
+
+        .animal>div {
+            width: 200px;
+            height: 200px;
+            transition: transform 2s linear 0s;
+        }
+
+        .animal .cat {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            z-index: 9;
+            background-color: rgb(88, 73, 88);
+            transition-delay: 2s;
+        }
+
+        .animal .dog {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+            z-index: 99;
+            background-color: rgb(236, 219, 61);
+
+        }
+
+        .animal1:hover .dog1 {
+            transform-origin: left;
+            transform: rotateY(-180deg);
+        }
+        .animal1:hover .cat1 {
+            transform: rotate(360deg);
+        }
+        .animal2:hover .cat2 {
+            transform: rotate(360deg);
+        }
+        .animal3:hover .cat3 {
+            transform: rotate(360deg);
+        }
+
+        .animal2:hover .dog2 {
+            transform-origin: right;
+            transform: rotateY(-180deg);
+        }
+
+        .animal3:hover .dog3 {
+            transform-origin: top;
+            transform: rotateX(-180deg);
+        }
+    </style>
+</head>
+
+<body>
+<div class="box1 box">
+    <p>圆角变化</p>
+</div>
+<div class="box2 box">
+    <p>宽度变化</p>
+</div>
+<div class="box3 box">
+    <p>旋转变化</p>
+</div>
+<div class="box4 box">
+    <p>位移变化</p>
+</div>
+<div class="big">
+    <p class="p">linear</p>
+    <p class="p">ease</p>
+    <p class="p">ease-in</p>
+    <p class="p">ease-out</p>
+    <p class="p">ease-in-out</p>
+</div>
+<div class="animal1 animal">
+    <div class=" dog1 dog">dog1</div>
+    <div class="cat1 cat">cat1</div>
+</div>
+<div class="animal2 animal">
+    <div class="dog2 dog">dog2</div>
+    <div class="cat2 cat">cat2</div>
+</div>
+<div class="animal3 animal">
+    <div class="dog3 dog">dog3</div>
+    <div class="cat3 cat">cat3</div>
+</div>
+</body>
+
+</html>

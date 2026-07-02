@@ -7,5 +7,5 @@ spring:
     enabled: true
   elasticsearch:
     rest:
-      uris:  http://43.138.25.182:9200
+      uris:  http://10.20.40.104:7004
       connection-timeout:  5s

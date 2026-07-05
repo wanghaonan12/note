@@ -1,26 +1,20 @@
 
 
 # Claude 入门
-
-章节内容介绍：
-
-1. 常用终端命令行的功能介绍
-2. claude 客户端安装
-3. claude cli 安装
-4. claude 第一次使用
-5. claude 卸载
-
+[TOC]
 ## Claude简介
 
-本教程目标不会代码的人也可以直接进行使用`claude`进行` vibe coding`
+本教程目标不会代码的人也可以直接进行使用`claude`进行` vibe coding`，本章安装之后只要可以明确的说出自己的需求就可以进行使用了，后面的章节属于高级用法。
 
-> **本教程皆以 mac 系统命令为例，windows 不分命令不可用**
+> **本教程皆以 mac 系统命令为例，windows 部分命令不可用**
+>
+> 教程中所有的终端命令 `#` 表示这一行为解释，没有标注的则为命令，可直接复制使用。
 >
 > **教程中会出现各种技术的官网有兴趣可以点进去看看，官网才是最权威的说明书，虽然不好懂，但是看久了就知道了**
 
 ### 常用终端命令
 
-> 蛮重要的
+> 蛮重要的，不会也没关系 用的时候查一下
 
 ```shell
 # 展示所在当前文件夹路径
@@ -306,3 +300,19 @@ rm -f ~/.local/bin/claude
 rm -f /usr/local/bin/claude
 ```
 
+## 其它工具(VS code)
+
+> 不是必装软件，不想装可以跳过。
+> 在接下来的教程中我会使用一段时间的 终端命令行的模式 ，但是由于实用性我更推荐使用 VS Code 配合插件的形式
+
+[VS code 官网](https://code.visualstudio.com/) 在这里下载
+
+> 下面是我打开教程中 [claude 第一次使用](#claude 第一次使用) 创建的项目
+
+![image-20260702153545751](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20260702153545751.png)
+
+> 刚下载完成你们的软件中是没有 claude 区域的 需要下载插件搜索，然后 3 的位置有安装 点击下载，重启就可以开到 4 的未知有一个标志，就可以打开 claude 区域了。
+>
+> **注意插件的作者是 `Anthropic` 不要安装错了**[插件官方安装地址](https://code.claude.com/docs/zh-CN/vs-code)
+
+![image-20260702154439830](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20260702154439830.png)

@@ -280,7 +280,7 @@ Hero → Story → Image Showcase → Gallery → Highlight → Ending
 
 >  生成效果（消耗了0.21 元的 token）
 
-<video src="https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/itab.link-1782962109773.mp4"></video>
+[效果展示](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/itab.link-1782962109773.mp4)
 
 ## Claude 卸载
 

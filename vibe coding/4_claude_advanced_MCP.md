@@ -50,11 +50,11 @@ claude mcp remove github
 
 ![image-20260705212131286](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20260705212131286.png)
 
-跳转之后就可以看到这里的安装步骤，需要获取[Personal Access Token](https://github.com/settings/personal-access-tokens/new)，进入页面后填写一下信息![image-20260705212850443](/Users/richwang/Library/Application Support/typora-user-images/image-20260705212850443.png)
+跳转之后就可以看到这里的安装步骤，需要获取[Personal Access Token](https://github.com/settings/personal-access-tokens/new)，进入页面后填写一下信息![image-20260705212850443](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20260705212850443.png)
 
 点击创建之后会得到一个秘钥，**注意不要泄露！！！！！！**
 
-![image-20260705212948707](/Users/richwang/Library/Application Support/typora-user-images/image-20260705212948707.png)
+![image-20260705212948707](https://wang-rich.oss-cn-hangzhou.aliyuncs.com/img/image-20260705212948707.png)
 
 之后在终端中执行，这里的`YOUR_GITHUB_PAT` 替换成刚刚如上图的秘钥。
 

@@ -4,7 +4,7 @@
 
 ## 什么是  plugin
 
-**Plugin（插件）**可以理解成一个“打包好的能力扩展包”，它把 **Skill、Command、Agent、Hook、MCP 配置**等能力组合在一起，让 Claude Code 可以像安装软件一样加载一套完整工作流。
+**Plugin（插件）**可以理解成一个“打包好的能力扩展包”，它把 **Skill、Command、Agent、Hook、MCP 配置**等能力组合在一起，让 Claude Code 可以像安装软件一样加载一套完整工作流。[官方解释](https://code.claude.com/docs/zh-CN/agent-sdk/plugins#sdk-plugins)
 
 ## 安装 plugin
 

@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Threshold — A Visual Essay</title>
+<meta name="description" content="An editorial visual journey through light, space, and stillness.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- GSAP + ScrollTrigger + Lenis -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js" defer></script>
+<script src="https://unpkg.com/lenis@1.2.3/dist/lenis.min.js" defer></script>
+
+<style>
+/* ==============================================
+   ROOT — Design Tokens
+   ============================================== */
+:root {
+  --black: #0a0a0a;
+  --near-black: #141414;
+  --dark: #1c1c1c;
+  --warm-white: #f5f0eb;
+  --off-white: #e8e3de;
+  --light-gray: #d4cfca;
+  --mid-gray: #8a867f;
+  --text-primary: #1c1c1c;
+  --text-muted: #6b6863;
+  --text-light: #f5f0eb;
+  --accent: #8a7ca3;
+  --accent-green: #5d7352;
+  --accent-blue: #5e92a4;
+
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --section-gap: clamp(6rem, 12vw, 12rem);
+  --content-narrow: clamp(320px, 65vw, 700px);
+  --content-wide: clamp(320px, 92vw, 1360px);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+/* ==============================================
+   RESET & BASE
+   ============================================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--warm-white);
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(0.9375rem, 0.9vw + 0.2rem, 1.125rem);
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--warm-white);
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+  will-change: transform;
+}
+
+a { color: inherit; text-decoration: none; }
+
+::selection {
+  background: var(--text-primary);
+  color: var(--warm-white);
+}
+
+/* ==============================================
+   NOISE OVERLAY
+   ============================================== */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  mix-blend-mode: multiply;
+}
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  animation: noiseShift 0.5s steps(3) infinite;
+}
+@keyframes noiseShift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-5%, 3%); }
+  66% { transform: translate(3%, -5%); }
+}
+
+/* ==============================================
+   NAVIGATION
+   ============================================== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1.75rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  mix-blend-mode: difference;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: translateY(-100%);
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.nav.visible { transform: translateY(0); }
+.nav.hidden { transform: translateY(-100%); }
+.nav-logo { font-family: var(--font-heading); font-style: italic; font-size: 1.125rem; letter-spacing: 0.04em; text-transform: none; color: rgba(255,255,255,0.85); }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a { position: relative; color: rgba(255,255,255,0.6); transition: color 0.4s var(--ease-out-expo); }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.4);
+  transition: width 0.5s var(--ease-out-expo);
+}
+.nav-links a:hover { color: rgba(255,255,255,0.9); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ==============================================
+   SECTIONS — Shared
+   ============================================== */
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+/* ==============================================
+   LOADER
+   ============================================== */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1.2s var(--ease-out-expo), visibility 1.2s var(--ease-out-expo);
+  visibility: visible;
+}
+.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loader-line {
+  width: 48px;
+  height: 1px;
+  background: rgba(245,240,235,0.15);
+  overflow: hidden;
+}
+.loader-line-inner {
+  width: 100%;
+  height: 100%;
+  background: var(--warm-white);
+  transform-origin: left;
+}
+
+/* ==============================================
+   HERO
+   ============================================== */
+.hero {
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warm-white);
+  background: var(--black);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center center;
+  filter: brightness(0.4) saturate(0.8) contrast(1.1);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10,10,10,0.25) 0%,
+    rgba(10,10,10,0.3) 50%,
+    rgba(10,10,10,0.7) 100%
+  );
+}
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 40%, rgba(0,0,0,0.45) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  width: var(--content-narrow);
+}
+
+.hero-suptitle {
+  font-size: clamp(0.65rem, 0.55vw, 0.8rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(1rem);
+  color: rgba(245,240,235,0.5);
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  line-height: 1.08;
+  margin-bottom: 2rem;
+  letter-spacing: -0.01em;
+}
+.hero-title .line {
+  display: block;
+  overflow: hidden;
+}
+.hero-title .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.hero-subtitle {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  color: rgba(245,240,235,0.45);
+  opacity: 0;
+  transform: translateY(0.75rem);
+}
+
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+}
+.hero-scroll-indicator span {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.3);
+}
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(245,240,235,0.35), transparent);
+  animation: scrollPulse 2.4s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(0.6); }
+}
+
+/* ==============================================
+   STORY
+   ============================================== */
+.story {
+  background: var(--warm-white);
+  padding: var(--section-gap) 0;
+}
+
+.story-layout {
+  width: var(--content-wide);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+
+.story-text .section-label {
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.story-heading {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  transform: translateY(2rem);
+  opacity: 0;
+}
+
+.story-paragraph {
+  color: var(--text-muted);
+  max-width: 36em;
+  margin-left: 0;
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+.story-paragraph + .story-paragraph { margin-top: 1rem; }
+
+.story-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.story-image img {
+  height: clamp(360px, 42vw, 560px);
+  object-fit: cover;
+  filter: saturate(0.85) brightness(0.95);
+  transition: transform 1.4s var(--ease-out-expo), filter 1.4s var(--ease-out-expo);
+  transform-origin: center right;
+}
+.story-image:hover img {
+  transform: scale(1.04);
+  filter: saturate(1.02) brightness(1);
+}
+
+/* ==============================================
+   SHOWCASE — Dark Gallery Grid
+   ============================================== */
+.showcase {
+  background: var(--black);
+  color: var(--warm-white);
+  padding: var(--section-gap) 0;
+}
+
+.showcase-header {
+  width: var(--content-narrow);
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 4rem;
+}
+
+.showcase-header .section-label {
+  color: rgba(245,240,235,0.3);
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.showcase-header h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.3;
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.showcase-header p {
+  color: rgba(245,240,235,0.4);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.25rem;
+  width: var(--content-wide);
+  margin: 0 auto;
+}
+
+.showcase-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.showcase-item:first-child {
+  grid-row: span 2;
+  align-self: stretch;
+}
+
+.showcase-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.8) brightness(0.55);
+  transition: transform 1.4s var(--ease-out-expo), filter 1.4s var(--ease-out-expo);
+  transform: scale(1.06);
+}
+
+.showcase-item:hover img {
+  transform: scale(1.1);
+  filter: saturate(1) brightness(0.65);
+}
+
+.showcase-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem 1.5rem 1.5rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+.showcase-item:hover .showcase-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+.showcase-caption span {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.5);
+}
+.showcase-caption p {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-style: italic;
+  margin-top: 0.15rem;
+  color: rgba(245,240,235,0.9);
+}
+
+/* ==============================================
+   SCAPE — Full-bleed Parallax
+   ============================================== */
+.scape {
+  position: relative;
+  height: 90vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--dark);
+  color: var(--warm-white);
+}
+
+.scape-bg {
+  position: absolute;
+  inset: -15% -8%;
+  overflow: hidden;
+}
+.scape-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.45) saturate(0.75) contrast(1.1);
+}
+
+.scape-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10,10,10,0.5) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(10,10,10,0.5) 100%
+  );
+}
+
+.scape-content {
+  position: relative;
+  z-index: 2;
+  width: var(--content-narrow);
+  text-align: center;
+}
+
+.scape-quote {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(1.25rem, 3vw, 2.25rem);
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(2rem);
+}
+
+.scape-attribution {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.35);
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+/* ==============================================
+   HIGHLIGHT — Editorial Split
+   ============================================== */
+.highlight {
+  background: var(--warm-white);
+  overflow: hidden;
+}
+
+.highlight-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  min-height: 80vh;
+}
+
+.highlight-image {
+  position: relative;
+  overflow: hidden;
+}
+.highlight-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85) brightness(0.95);
+}
+
+.highlight-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2.5rem, 5vw, 5rem);
+}
+
+.highlight-number {
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 8vw, 8rem);
+  line-height: 1;
+  color: var(--mid-gray);
+  opacity: 0;
+  margin-bottom: -1.5rem;
+}
+
+.highlight-text h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+  transform: translateY(2rem);
+  opacity: 0;
+}
+
+.highlight-text p {
+  color: var(--text-muted);
+  max-width: 28em;
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.highlight-rule {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--text-primary);
+  margin: 1.5rem 0;
+  transform-origin: left;
+}
+
+/* ==============================================
+   GALLERY — Horizontal Drift
+   ============================================== */
+.gallery {
+  background: var(--near-black);
+  color: var(--warm-white);
+  padding: var(--section-gap) 0;
+  overflow: hidden;
+}
+
+.gallery-header {
+  width: var(--content-narrow);
+  margin: 0 auto calc(var(--section-gap) * 0.5);
+  text-align: center;
+}
+.gallery-header .section-label {
+  color: rgba(245,240,235,0.25);
+  transform: translateY(1rem);
+  opacity: 0;
+}
+
+.gallery-scroll-wrap {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.gallery-track {
+  display: flex;
+  gap: 1rem;
+  padding: 0 4rem;
+  width: max-content;
+}
+
+.gallery-item {
+  flex: 0 0 clamp(300px, 38vw, 500px);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.gallery-item img {
+  width: clamp(300px, 38vw, 500px);
+  height: clamp(340px, 48vh, 620px);
+  object-fit: cover;
+  filter: saturate(0.8) brightness(0.5);
+  transition: transform 1.4s var(--ease-out-expo), filter 1.4s var(--ease-out-expo);
+  transform: scale(1.08);
+}
+.gallery-item:hover img {
+  transform: scale(1.14);
+  filter: saturate(1) brightness(0.6);
+}
+
+.gallery-num {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: rgba(245,240,235,0.25);
+  font-weight: 400;
+}
+
+.gallery-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem 1.25rem 1.25rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 100%);
+}
+.gallery-label span {
+  display: block;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: rgba(245,240,235,0.8);
+}
+
+/* ==============================================
+   ENDING
+   ============================================== */
+.ending {
+  background: var(--warm-white);
+  padding: clamp(6rem, 18vh, 14rem) 0;
+  text-align: center;
+}
+
+.ending-inner {
+  width: var(--content-narrow);
+  margin: 0 auto;
+}
+
+.ending-inner .section-label {
+  color: rgba(107,104,99,0.35);
+  transform: translateY(1rem);
+  opacity: 0;
+}
+
+.ending-heading {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(1.5rem, 4vw, 3.5rem);
+  line-height: 1.3;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  transform: translateY(1.5rem);
+  opacity: 0;
+}
+
+.ending-credit {
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  transform: translateY(1rem);
+  opacity: 0;
+}
+
+.ending-divider {
+  width: 2rem;
+  height: 1px;
+  background: var(--light-gray);
+  margin: 2.5rem auto;
+  transform-origin: center;
+}
+
+.ending-footer {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  transform: translateY(1rem);
+  opacity: 0;
+}
+.ending-footer a:hover { color: var(--text-primary); transition: color 0.3s; }
+
+/* ==============================================
+   SECTION BLEED — Transition Dividers
+   ============================================== */
+.section-bleed {
+  height: 20vh;
+  min-height: 80px;
+  background: var(--warm-white);
+  position: relative;
+  z-index: 1;
+}
+.section-bleed-dark {
+  background: var(--black);
+}
+
+/* ==============================================
+   RESPONSIVE
+   ============================================== */
+@media (max-width: 900px) {
+  .story-layout {
+    grid-template-columns: 1fr;
+    width: var(--content-narrow);
+  }
+  .story-image img { height: 300px; }
+  .section-bleed { height: 10vh; }
+
+  .showcase-grid { grid-template-columns: 1fr; width: var(--content-narrow); }
+  .showcase-item:first-child { grid-row: auto; }
+  .showcase-item img { height: 300px; }
+
+  .highlight-layout { grid-template-columns: 1fr; min-height: auto; }
+  .highlight-image { min-height: 280px; }
+  .highlight-number { margin-bottom: -0.75rem; }
+
+  .gallery-track { padding: 0 1.5rem; }
+
+  .nav { padding: 1.25rem 1.5rem; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 600px) {
+  :root { --section-gap: 4rem; }
+
+  .nav { padding: 1rem 1.25rem; }
+
+  .showcase-item img { height: 220px; }
+  .gallery-item { flex: 0 0 85vw; }
+  .gallery-item img { width: 85vw; height: 300px; }
+
+  .highlight-text { padding: 2rem 1.5rem; }
+
+  .ending-footer { flex-direction: column; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     LOADER
+     ============================================ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-line">
+    <div class="loader-line-inner" id="loaderLine"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     NOISE
+     ============================================ -->
+<div class="noise-overlay" aria-hidden="true"></div>
+
+<!-- ============================================
+     NAV
+     ============================================ -->
+<nav class="nav" id="nav">
+  <span class="nav-logo">Threshold</span>
+  <div class="nav-links">
+    <a href="#story">Essay</a>
+    <a href="#showcase">Works</a>
+    <a href="#ending">Colophon</a>
+  </div>
+</nav>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg">
+    <img
+      src="static/th%20(3).jpeg"
+      alt=""
+      fetchpriority="high"
+    />
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-content">
+    <p class="hero-suptitle">A Visual Essay on Light &amp; Stillness</p>
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line"><span class="word">Between</span> <span class="word">the</span> <span class="word">Light</span></span>
+      <span class="line"><span class="word">and</span> <span class="word">the</span> <span class="word">Still</span></span>
+    </h1>
+    <p class="hero-subtitle">there exists a threshold</p>
+  </div>
+
+  <div class="hero-scroll-indicator" id="scrollIndicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ============================================
+     STORY
+     ============================================ -->
+<section class="story" id="story">
+  <div class="story-layout">
+    <div class="story-text">
+      <p class="section-label" data-fade="up">Chapter I</p>
+      <h2 class="story-heading" data-fade="up">The spaces we carry</h2>
+      <p class="story-paragraph" data-fade="up">
+        We spend our lives moving through spaces — rooms, streets, landscapes —
+        but rarely do we allow those spaces to move through us.
+      </p>
+      <p class="story-paragraph" data-fade="up">
+        The hands that shaped these walls, the light that finds these floors
+        daily — this is the quiet language of permanence. To dwell is to leave
+        a trace upon the surface of the world.
+      </p>
+      <p class="story-paragraph" data-fade="up">
+        What remains when we are gone is not the object, but the memory of
+        light upon it.
+      </p>
+    </div>
+    <div class="story-image" id="storyImage">
+      <img
+        src="static/th.jpeg"
+        alt="Landscape with purple and warm tones"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SHOWCASE
+     ============================================ -->
+<section class="showcase" id="showcase">
+  <div class="showcase-header">
+    <p class="section-label" data-fade="up">Chapter II</p>
+    <h2 data-fade="up">That which endures</h2>
+    <p data-fade="up">Three fragments from a landscape in transition.</p>
+  </div>
+
+  <div class="showcase-grid">
+    <div class="showcase-item" data-parallax-img>
+      <img
+        src="static/th%20(2).jpeg"
+        alt="Forest landscape with muted greens"
+        loading="lazy"
+      />
+      <div class="showcase-caption">
+        <span>01</span>
+        <p>Where the forest meets the clearing</p>
+      </div>
+    </div>
+    <div class="showcase-item" data-parallax-img>
+      <img
+        src="static/th%20(6).jpeg"
+        alt="Landscape with blue and water tones"
+        loading="lazy"
+      />
+      <div class="showcase-caption">
+        <span>02</span>
+        <p>The colour of distance</p>
+      </div>
+    </div>
+    <div class="showcase-item" data-parallax-img>
+      <img
+        src="static/th%20(5).jpeg"
+        alt="Olive-toned landscape"
+        loading="lazy"
+      />
+      <div class="showcase-caption">
+        <span>03</span>
+        <p>Earth, unbound</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SCAPE — Full-bleed Panorama
+     ============================================ -->
+<section class="scape" id="scape">
+  <div class="scape-bg" id="scapeBg">
+    <img
+      src="static/th%20(4).jpeg"
+      alt="Wide landscape panorama in neutral grey"
+      loading="lazy"
+    />
+  </div>
+  <div class="scape-overlay"></div>
+  <div class="scape-content">
+    <blockquote class="scape-quote" id="scapeQuote">
+      "The horizon is not a line.<br>It is a memory&nbsp;of where we have been."
+    </blockquote>
+    <p class="scape-attribution" id="scapeAttr">For the ones who walk</p>
+  </div>
+</section>
+
+<!-- ============================================
+     HIGHLIGHT
+     ============================================ -->
+<section class="highlight" id="highlight">
+  <div class="highlight-layout">
+    <div class="highlight-image" id="hlImg">
+      <img
+        src="static/th%20(1).jpeg"
+        alt="Warm-toned landscape"
+        loading="lazy"
+      />
+    </div>
+    <div class="highlight-text">
+      <div class="highlight-number">02</div>
+      <h2 data-fade="up">In the silence between moments</h2>
+      <div class="highlight-rule" data-scale-in></div>
+      <p data-fade="up">
+        The world reveals itself not in grand gestures, but in the quiet
+        intervals — when the wind stills, when the light shifts, when we
+        finally stop to notice.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     GALLERY — Horizontal Drift
+     ============================================ -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header">
+    <p class="section-label" data-fade="up">Endnotes</p>
+  </div>
+
+  <div class="gallery-scroll-wrap">
+    <div class="gallery-track" id="galleryTrack">
+      <div class="gallery-item">
+        <span class="gallery-num">01</span>
+        <img src="static/th%20(5).jpeg" alt="Olive landscape" loading="lazy" />
+        <div class="gallery-label"><span>The edge of the known</span></div>
+      </div>
+      <div class="gallery-item">
+        <span class="gallery-num">02</span>
+        <img src="static/th.jpeg" alt="Purple warm landscape" loading="lazy" />
+        <div class="gallery-label"><span>Light, after all</span></div>
+      </div>
+      <div class="gallery-item">
+        <span class="gallery-num">03</span>
+        <img src="static/th%20(6).jpeg" alt="Blue-toned waterscape" loading="lazy" />
+        <div class="gallery-label"><span>A stillness found</span></div>
+      </div>
+      <div class="gallery-item">
+        <span class="gallery-num">04</span>
+        <img src="static/th%20(1).jpeg" alt="Warm landscape" loading="lazy" />
+        <div class="gallery-label"><span>The hour between</span></div>
+      </div>
+      <div class="gallery-item">
+        <span class="gallery-num">05</span>
+        <img src="static/th%20(3).jpeg" alt="Dark forest" loading="lazy" />
+        <div class="gallery-label"><span>Where shadows rest</span></div>
+      </div>
+      <div class="gallery-item">
+        <span class="gallery-num">06</span>
+        <img src="static/th%20(2).jpeg" alt="Muted green forest" loading="lazy" />
+        <div class="gallery-label"><span>Return to earth</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     ENDING
+     ============================================ -->
+<section class="ending" id="ending">
+  <div class="ending-inner">
+    <p class="section-label" data-fade="up">Colophon</p>
+    <h2 class="ending-heading" data-fade="up">Every threshold is an invitation</h2>
+    <div class="ending-divider" data-scale-in></div>
+    <p class="ending-credit" data-fade="up">Designed with silence in mind</p>
+    <div class="ending-footer" data-fade="up">
+      <span>&copy; 2026 Threshold</span>
+      <a href="#">Back to top</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SCRIPTS
+     ============================================ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── Wait for GSAP + ScrollTrigger + Lenis ──
+  function ready(cb, n) {
+    n = n || 0;
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' && typeof Lenis !== 'undefined') {
+      cb();
+    } else if (n < 50) {
+      setTimeout(function() { ready(cb, n + 1); }, 200);
+    } else {
+      // Fallback: show content
+      document.getElementById('loader').classList.add('loader-hidden');
+      document.getElementById('nav').classList.add('visible');
+    }
+  }
+
+  ready(function() {
+
+    // =============================================
+    // LENIS — Smooth Scroll
+    // =============================================
+    var lenis = new Lenis({
+      duration: 1.15,
+      easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true,
+      wheelMultiplier: 0.85,
+      touchMultiplier: 1.2,
+    });
+
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+
+    // =============================================
+    // LOADER
+    // =============================================
+    var loaderLine = document.getElementById('loaderLine');
+    var loader = document.getElementById('loader');
+
+    gsap.to(loaderLine, {
+      scaleX: 1,
+      duration: 1.4,
+      ease: 'power3.inOut',
+      onComplete: function() {
+        gsap.to(loader, {
+          opacity: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          onComplete: function() {
+            loader.classList.add('loader-hidden');
+          }
+        });
+      }
+    });
+
+    // =============================================
+    // NAV — Reveal with delay, hide on scroll down
+    // =============================================
+    var nav = document.getElementById('nav');
+    var lastScroll = 0;
+
+    gsap.to(nav, {
+      y: 0,
+      duration: 0.8,
+      delay: 1.6,
+      ease: 'power3.out',
+    });
+
+    lenis.on('scroll', function(e) {
+      var dir = e.direction;
+      // direction: 1 = down, -1 = up
+      if (dir === 1 && e.velocity > 3) {
+        nav.classList.add('hidden');
+      } else if (dir === -1) {
+        nav.classList.remove('hidden');
+      }
+    });
+
+    // =============================================
+    // HERO — Animations
+    // =============================================
+    var heroTl = gsap.timeline({ delay: 1.8 });
+
+    // Hero image slow zoom (start at 1.15, end at 1)
+    heroTl.to('.hero-bg img', {
+      scale: 1,
+      duration: 2.6,
+      ease: 'power2.out',
+    }, 0);
+
+    // Suptitle
+    heroTl.to('.hero-suptitle', {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+    }, 0.6);
+
+    // Title words stagger — from translateY(100%)
+    heroTl.to('.hero-title .word', {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: 'power3.out',
+    }, 1.0);
+
+    // Subtitle
+    heroTl.to('.hero-subtitle', {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power2.out',
+    }, 2.0);
+
+    // Scroll indicator
+    heroTl.to('#scrollIndicator', {
+      opacity: 1,
+      duration: 1,
+      ease: 'power2.out',
+    }, 2.8);
+
+    // ── Hero parallax on scroll ──
+    gsap.to('.hero-bg', {
+      y: '22%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    });
+
+    // =============================================
+    // GENERIC SCROLL REVEALS
+    // =============================================
+
+    // [data-fade="up"] — fade + translate up
+    document.querySelectorAll('[data-fade="up"]').forEach(function(el) {
+      gsap.fromTo(el,
+        { y: '2.5rem', opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 87%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    });
+
+    // [data-scale-in] — horizontal scale
+    document.querySelectorAll('[data-scale-in]').forEach(function(el) {
+      gsap.fromTo(el,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    });
+
+    // =============================================
+    // STORY IMAGE — Reveal from right
+    // =============================================
+    var storyImg = document.querySelector('#storyImage img');
+    if (storyImg) {
+      gsap.fromTo(storyImg,
+        { x: '4rem', opacity: 0, scale: 1.02 },
+        {
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1.4,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '#storyImage',
+            start: 'top 82%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
+
+    // =============================================
+    // SHOWCASE ITEMS — Scroll-based parallax
+    // =============================================
+    document.querySelectorAll('[data-parallax-img]').forEach(function(el) {
+      var img = el.querySelector('img');
+      if (!img) return;
+
+      // Reveal
+      gsap.fromTo(img,
+        { scale: 1.08, opacity: 0 },
+        {
+          scale: 1.06,
+          opacity: 1,
+          duration: 1.4,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      // Subtle parallax within showcase item
+      gsap.to(img, {
+        y: '12%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.2,
+        },
+      });
+    });
+
+    // =============================================
+    // SCAPE — Parallax
+    // =============================================
+    gsap.to('#scapeBg', {
+      y: '18%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#scape',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    });
+
+    // Scape quote reveal
+    gsap.fromTo('#scapeQuote',
+      { y: '2.5rem', opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1.4,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#scape',
+          start: 'top 70%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
+    gsap.fromTo('#scapeAttr',
+      { y: '1.5rem', opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        delay: 0.4,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#scape',
+          start: 'top 70%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
+
+    // =============================================
+    // HIGHLIGHT — Image reveal + number
+    // =============================================
+    var hlImg = document.querySelector('#hlImg img');
+    if (hlImg) {
+      gsap.fromTo(hlImg,
+        { scale: 1.1, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 1.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '#hlImg',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
+
+    gsap.to('.highlight-number', {
+      opacity: 0.15,
+      duration: 1.5,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.highlight-text',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // =============================================
+    // GALLERY — Horizontal scroll
+    // =============================================
+    var galleryTrack = document.getElementById('galleryTrack');
+    if (galleryTrack) {
+
+      // Horizontal scroll on scrollTrigger
+      var gallerySec = document.getElementById('gallery');
+      var trackWidth = galleryTrack.scrollWidth;
+      var sectionWidth = gallerySec.offsetWidth;
+      var distance = trackWidth - sectionWidth;
+
+      // Only if scrollable
+      if (distance > 0) {
+        gsap.to(galleryTrack, {
+          x: -distance,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#gallery',
+            start: 'top top',
+            end: function() { return '+=' + (distance * 0.7); },
+            pin: false,
+            scrub: 1.2,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+
+      // Individual gallery item reveals
+      var galleryItems = galleryTrack.querySelectorAll('.gallery-item');
+      galleryItems.forEach(function(item, i) {
+        gsap.fromTo(item,
+          { opacity: 0, x: 40 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.9,
+            delay: i * 0.08,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
+    }
+
+    // =============================================
+    // REFRESH
+    // =============================================
+    ScrollTrigger.refresh();
+
+    window.addEventListener('resize', function() {
+      ScrollTrigger.refresh();
+    });
+
+    // Fallback loader hide
+    loader.classList.add('loader-hidden');
+
+  }); // end ready()
+
+})();
+</script>
+</body>
+</html>

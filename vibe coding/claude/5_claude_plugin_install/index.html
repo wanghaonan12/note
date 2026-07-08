@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Void — A Cinematic Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   DESIGN TOKENS
+   ============================================= */
+:root {
+  --color-black: #0a0a0f;
+  --color-black-soft: #12121a;
+  --color-dark: #1a1a24;
+  --color-dark-warm: #2a2a28;
+  --color-charcoal: #3a3a3e;
+  --color-stone: #6b6b6f;
+  --color-warm-stone: #8b8378;
+  --color-warm-light: #c4bdb0;
+  --color-cream: #f0ece4;
+  --color-cream-light: #f7f4ef;
+  --color-off-white: #faf8f4;
+  --color-accent-lavender: #8b7fa0;
+  --color-accent-lavender-light: #b8aec9;
+  --color-accent-sage: #6b8f6b;
+  --color-accent-sage-light: #8fb08f;
+  --color-accent-teal: #588a94;
+  --color-accent-teal-light: #7aacb8;
+  --color-accent-gold: #a8986a;
+  --color-accent-gold-light: #c4b78b;
+
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --section-padding: 12vh 8vw;
+  --max-width: 1200px;
+  --text-width: 680px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-slow: 1.8s;
+  --duration-med: 1.2s;
+  --duration-fast: 0.6s;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 8vh 6vw;
+  }
+}
+
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: auto;
+  background: var(--color-black);
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-black);
+  color: var(--color-cream);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* =============================================
+   GRAIN OVERLAY
+   ============================================= */
+.grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  animation: grainShift 0.5s steps(4) infinite;
+}
+@keyframes grainShift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5%, -5%); }
+  50% { transform: translate(-10%, 0); }
+  75% { transform: translate(-5%, 5%); }
+}
+
+/* =============================================
+   NAV
+   ============================================= */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 2rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  mix-blend-mode: difference;
+  color: white;
+  pointer-events: none;
+}
+.nav > * { pointer-events: auto; }
+.nav-logo {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: white;
+}
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+.nav-links a:hover { opacity: 1; }
+
+/* =============================================
+   SECTION BASE
+   ============================================= */
+.section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-black);
+}
+
+.hero-image-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.hero-image-wrap img {
+  object-fit: cover;
+  transform: scale(1.08);
+  will-change: transform;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10,10,15,0.3) 0%,
+    rgba(10,10,15,0.2) 40%,
+    rgba(10,10,15,0.6) 70%,
+    rgba(10,10,15,0.95) 100%
+  );
+}
+.hero-overlay-top {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,15,0.6) 0%, transparent 30%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  max-width: 900px;
+}
+
+.hero-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(3.5rem, 12vw, 9rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+.hero-title .line {
+  display: block;
+  overflow: hidden;
+}
+.hero-title .line span {
+  display: block;
+  will-change: transform;
+}
+
+.hero-subtitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: all 0.4s var(--ease-out-expo);
+  background: transparent;
+}
+.hero-cta:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.5);
+  gap: 1.2rem;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.4;
+}
+.hero-scroll-line {
+  width: 1px;
+  height: 60px;
+  background: white;
+  animation: scrollPulse 2.5s ease-in-out infinite;
+}
+.hero-scroll-text {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: white;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 0.8; transform: scaleY(1.2); }
+}
+
+/* =============================================
+   SECTION: STORY
+   ============================================= */
+.story {
+  padding: var(--section-padding);
+  background: var(--color-cream-light);
+  color: var(--color-black);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+  min-height: 100vh;
+}
+.story-text {
+  padding: 2rem 0;
+}
+.story-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: 1.5rem;
+}
+.story-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--color-black);
+}
+.story-title em {
+  font-style: italic;
+  color: var(--color-accent-lavender);
+}
+.story-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--color-charcoal);
+  max-width: var(--text-width);
+  font-weight: 300;
+}
+.story-body p + p {
+  margin-top: 1.2rem;
+  text-indent: 0;
+}
+
+.story-image {
+  position: relative;
+  height: 70vh;
+  min-height: 400px;
+  overflow: hidden;
+}
+.story-image img {
+  object-fit: cover;
+}
+.story-image-mask {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream-light);
+  transform-origin: left center;
+}
+
+@media (max-width: 768px) {
+  .story {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 4rem 6vw;
+  }
+  .story-image {
+    height: 50vh;
+    min-height: 300px;
+  }
+}
+
+/* =============================================
+   SECTION: SHOWCASE (full-bleed with mask)
+   ============================================= */
+.showcase {
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-black);
+}
+.showcase img {
+  object-fit: cover;
+  will-change: transform;
+}
+.showcase-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10,10,15,0.1) 0%,
+    rgba(10,10,15,0.4) 50%,
+    rgba(10,10,15,0.8) 100%
+  );
+  z-index: 1;
+}
+.showcase-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 6rem 8vw;
+}
+.showcase-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 1rem;
+}
+.showcase-quote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2.8rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.4;
+  color: white;
+  max-width: 700px;
+}
+.showcase-attribution {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+  margin-top: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.showcase-mask {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream-light);
+  z-index: 3;
+  transform-origin: center bottom;
+}
+
+/* =============================================
+   GALLERY (parallax multi-layer)
+   ============================================= */
+.gallery {
+  background: var(--color-black);
+  padding: 0;
+  position: relative;
+}
+
+.gallery-header {
+  padding: var(--section-padding);
+  padding-bottom: 0;
+  text-align: center;
+  background: var(--color-black);
+}
+.gallery-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 1rem;
+}
+.gallery-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 500;
+  color: white;
+  line-height: 1.1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.gallery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gallery-item {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.gallery-item img {
+  object-fit: cover;
+  will-change: transform;
+}
+.gallery-item-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+  z-index: 1;
+}
+.gallery-item-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 4rem 8vw;
+}
+.gallery-item-number {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 0.75rem;
+}
+.gallery-item-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 500;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+.gallery-item-desc {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.gallery-item:nth-child(even) .gallery-item-content {
+  text-align: right;
+}
+.gallery-item:nth-child(even) .gallery-item-desc {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .gallery-item-content {
+    padding: 3rem 6vw;
+  }
+  .gallery-item:nth-child(even) .gallery-item-content {
+    text-align: left;
+  }
+  .gallery-item:nth-child(even) .gallery-item-desc {
+    margin-left: 0;
+  }
+}
+
+/* =============================================
+   HIGHLIGHT
+   ============================================= */
+.highlight {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.highlight img {
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.highlight-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10,10,15,0.3) 0%,
+    rgba(10,10,15,0.1) 50%,
+    rgba(10,10,15,0.6) 100%
+  );
+  z-index: 1;
+}
+.highlight-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+}
+.highlight-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-accent-gold-light);
+  margin-bottom: 1.5rem;
+}
+.highlight-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  color: white;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.highlight-body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.7);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+}
+.highlight-cta {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 2rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: transparent;
+  transition: all 0.4s var(--ease-out-expo);
+  cursor: pointer;
+}
+.highlight-cta:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.4);
+}
+
+/* =============================================
+   ENDING
+   ============================================= */
+.ending {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-black);
+  padding: var(--section-padding);
+  text-align: center;
+  position: relative;
+}
+.ending-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  overflow: hidden;
+}
+.ending-bg img {
+  object-fit: cover;
+  filter: grayscale(1);
+}
+.ending-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--color-black) 0%, transparent 30%, transparent 70%, var(--color-black) 100%);
+}
+.ending-content {
+  position: relative;
+  z-index: 1;
+}
+.ending-label {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 2rem;
+}
+.ending-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 600;
+  line-height: 1.0;
+  color: white;
+  letter-spacing: -0.03em;
+  margin-bottom: 2rem;
+}
+.ending-text {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.4);
+  max-width: 420px;
+  margin: 0 auto 3rem;
+}
+.ending-divider {
+  width: 1px;
+  height: 80px;
+  background: rgba(255,255,255,0.1);
+  margin-bottom: 2rem;
+}
+.ending-footer {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.15);
+  font-weight: 300;
+}
+
+/* =============================================
+   CURTAIN TRANSITION
+   ============================================= */
+.curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 200;
+  pointer-events: none;
+}
+.curtain-top,
+.curtain-bottom {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: var(--color-black);
+}
+.curtain-top { top: 0; }
+.curtain-bottom { bottom: 0; }
+
+/* =============================================
+   RESPONSIVE FINE-TUNE
+   ============================================= */
+@media (max-width: 768px) {
+  .nav {
+    padding: 1.25rem 1.5rem;
+  }
+  .nav-links {
+    display: none;
+  }
+  .hero-title .line span {
+    font-size: clamp(2.8rem, 15vw, 4.5rem);
+  }
+  .story {
+    min-height: auto;
+  }
+  .gallery-item {
+    height: 70vh;
+  }
+  .highlight {
+    height: 80vh;
+  }
+  .hero-cta {
+    padding: 0.85rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title .line span {
+    font-size: 2.5rem;
+  }
+  .story-title {
+    font-size: 1.8rem;
+  }
+  .gallery-item {
+    height: 60vh;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== GRAIN OVERLAY ========== -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ========== CURTAIN ========== -->
+<div class="curtain" id="curtain">
+  <div class="curtain-top" id="curtainTop"></div>
+  <div class="curtain-bottom" id="curtainBottom"></div>
+</div>
+
+<!-- ========== NAV ========= -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">The Void</a>
+  <ul class="nav-links">
+    <li><a href="#story">Story</a></li>
+    <li><a href="#showcase">Works</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#ending">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="hero section" id="hero">
+  <div class="hero-image-wrap" id="heroImageWrap">
+    <img
+      src="static/th.jpeg"
+      alt="Celestial landscape"
+      loading="eager"
+      fetchpriority="high"
+    >
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-overlay-top"></div>
+
+  <div class="hero-content">
+    <p class="hero-label" id="heroLabel">Est. MMXXV</p>
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line"><span>Beyond the</span></span>
+      <span class="line"><span>Edge of</span></span>
+      <span class="line"><span>Everything</span></span>
+    </h1>
+    <p class="hero-subtitle" id="heroSub">— A journey through light, shadow, and silence —</p>
+    <a href="#story" class="hero-cta" id="heroCta">
+      <span>Enter the void</span>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M1 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <div class="hero-scroll">
+    <span class="hero-scroll-text">Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ========== STORY ========== -->
+<section class="story section" id="story">
+  <div class="story-text">
+    <p class="story-label">Chapter I</p>
+    <h2 class="story-title" id="storyTitle">
+      Where Light<br>
+      Meets <em>Stillness</em>
+    </h2>
+    <div class="story-body" id="storyBody">
+      <p>
+        There exists a place where time slows to a single note — a frequency
+        felt rather than heard. It is not marked on any map, yet every traveler
+        knows its pull. The horizon dissolves into haze; the earth breathes
+        in long, patient rhythms.
+      </p>
+      <p>
+        Here, the ordinary falls away. What remains is the essential: light
+        falling across stone, wind tracing the curve of a dune, the quiet
+        dialogue between shadow and form. This is not a destination. It is a
+        state of being.
+      </p>
+    </div>
+  </div>
+  <div class="story-image" id="storyImageWrap">
+    <img
+      src="static/th%20(1).jpeg"
+      alt="Warm desert landscape"
+      loading="lazy"
+    >
+    <div class="story-image-mask" id="storyImageMask"></div>
+  </div>
+</section>
+
+<!-- ========== SHOWCASE ========== -->
+<section class="showcase section" id="showcase">
+  <img
+    src="static/th%20(4).jpeg"
+    alt="Dark atmospheric landscape"
+    loading="lazy"
+    id="showcaseImg"
+  >
+  <div class="showcase-overlay"></div>
+  <div class="showcase-content" id="showcaseContent">
+    <p class="showcase-label">Aperture</p>
+    <blockquote class="showcase-quote" id="showcaseQuote">
+      "The most profound moments arrive not with a crash, but as a
+      slow unfolding — a silhouette emerging from the dark."
+    </blockquote>
+    <p class="showcase-attribution">— From the field journals</p>
+  </div>
+  <div class="showcase-mask" id="showcaseMask"></div>
+</section>
+
+<!-- ========== GALLERY ========== -->
+<section class="gallery section" id="gallery">
+  <div class="gallery-header" id="galleryHeader">
+    <p class="gallery-label">Visual Archive</p>
+    <h2 class="gallery-title">Landscapes of the Unseen</h2>
+  </div>
+
+  <div class="gallery-grid" id="galleryGrid">
+
+    <div class="gallery-item" id="galleryItem1">
+      <img
+        src="static/th%20(2).jpeg"
+        alt="Verdant forest valley"
+        loading="lazy"
+      >
+      <div class="gallery-item-overlay"></div>
+      <div class="gallery-item-content">
+        <p class="gallery-item-number">01</p>
+        <h3 class="gallery-item-title">The Green Veil</h3>
+        <p class="gallery-item-desc">Where the earth exhales in moss and shadow, and every path unwinds into silence.</p>
+      </div>
+    </div>
+
+    <div class="gallery-item" id="galleryItem2">
+      <img
+        src="static/th%20(3).jpeg"
+        alt="Deep forest darkness"
+        loading="lazy"
+      >
+      <div class="gallery-item-overlay"></div>
+      <div class="gallery-item-content">
+        <p class="gallery-item-number">02</p>
+        <h3 class="gallery-item-title">Into the Deep</h3>
+        <p class="gallery-item-desc">Darkness not as absence, but as presence — a space where the unseen takes form.</p>
+      </div>
+    </div>
+
+    <div class="gallery-item" id="galleryItem3">
+      <img
+        src="static/th%20(6).jpeg"
+        alt="Water and sky meeting horizon"
+        loading="lazy"
+      >
+      <div class="gallery-item-overlay"></div>
+      <div class="gallery-item-content">
+        <p class="gallery-item-number">03</p>
+        <h3 class="gallery-item-title">Meridian</h3>
+        <p class="gallery-item-desc">The boundary between above and below dissolves into a single, endless tone.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== HIGHLIGHT ========== -->
+<section class="highlight section" id="highlight">
+  <img
+    src="static/th%20(5).jpeg"
+    alt="Golden field landscape"
+    loading="lazy"
+    id="highlightImg"
+  >
+  <div class="highlight-overlay"></div>
+  <div class="highlight-content" id="highlightContent">
+    <p class="highlight-eyebrow">The Distance Between</p>
+    <h2 class="highlight-title" id="highlightTitle">
+      Silence<br>Speaks
+    </h2>
+    <p class="highlight-body">
+      In a world that never stops, the most radical act is to pause.
+      To stand still and let the landscape fill the space you've left empty.
+    </p>
+    <a href="#ending" class="highlight-cta">Continue the journey</a>
+  </div>
+</section>
+
+<!-- ========== ENDING ========== -->
+<section class="ending section" id="ending">
+  <div class="ending-bg">
+    <img
+      src="static/th%20(3).jpeg"
+      alt=""
+      loading="lazy"
+      aria-hidden="true"
+    >
+    <div class="ending-bg-overlay"></div>
+  </div>
+
+  <div class="ending-content">
+    <p class="ending-label">Epilogue</p>
+    <h2 class="ending-title" id="endingTitle">
+      The Void<br>Remembers
+    </h2>
+    <p class="ending-text">
+      Not every place needs a name. Some are simply felt — a resonance that
+      lingers long after you've returned.
+    </p>
+    <div class="ending-divider"></div>
+    <p class="ending-footer">&copy; MMXXV &middot; The Void</p>
+  </div>
+</section>
+
+<!-- =============================================
+     GSAP + SCROLLTRIGGER
+     ============================================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ── Wait for fonts ────────────────────────────
+  let fontsReady = false;
+  let imagesReady = false;
+
+  function bootAnimations() {
+    if (!fontsReady || !imagesReady) return;
+    init();
+  }
+
+  document.fonts.ready.then(() => { fontsReady = true; bootAnimations(); });
+
+  // ── Image check ───────────────────────────────
+  let pendingImages = 0;
+  function trackImage(img) {
+    if (img.complete) return;
+    pendingImages++;
+    img.addEventListener('load', () => { pendingImages--; if (pendingImages === 0) { imagesReady = true; bootAnimations(); } });
+    img.addEventListener('error', () => { pendingImages--; if (pendingImages === 0) { imagesReady = true; bootAnimations(); } });
+  }
+
+  document.querySelectorAll('img').forEach(trackImage);
+  if (pendingImages === 0) { imagesReady = true; bootAnimations(); }
+
+  // =============================================
+  // MAIN ANIMATION ENGINE
+  // =============================================
+  function init() {
+    const mm = gsap.matchMedia();
+
+  // ── REDUCED MOTION SUPPORT ──────────────────
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    // Set all elements to visible immediately, disable all GSAP animations
+    gsap.set('.grain', { opacity: 0 });
+    gsap.set('#curtain', { autoAlpha: 0 });
+    gsap.set('.hero-title .line span', { y: '0%' });
+    gsap.set('#heroLabel, #heroSub, #heroCta', { opacity: 1, y: 0 });
+    gsap.set('#storyImageMask', { scaleX: 0 });
+    gsap.set('#showcaseMask', { scaleY: 0 });
+    gsap.set('#storyTitle, #storyBody p, #showcaseQuote, #galleryHeader, #highlightContent, #highlightTitle, #endingTitle, #ending .ending-text, #ending .ending-divider', { opacity: 1, y: 0 });
+    gsap.set('.gallery-item, .gallery-item .gallery-item-number, .gallery-item .gallery-item-title, .gallery-item .gallery-item-desc', { opacity: 1, y: 0 });
+    gsap.set('#heroImageWrap img', { scale: 1 });
+    ScrollTrigger.getAll().forEach(t => t.disable());
+    document.querySelector('.hero-scroll').style.display = 'none';
+    return;
+  }
+    const tl = gsap.timeline({ defaults: { ease: 'power3.inOut' } });
+    tl.to('#curtainTop', { scaleY: 0, transformOrigin: 'top center', duration: 1.6 })
+      .to('#curtainBottom', { scaleY: 0, transformOrigin: 'bottom center', duration: 1.6 }, '<')
+      .to('#curtain', { autoAlpha: 0, duration: 0.4 }, '-=0.3');
+
+    // ── HERO ENTRANCE ─────────────────────────
+    tl.from('#heroLabel', { y: 20, opacity: 0, duration: 1.0, ease: 'power3.out' }, '-=0.2')
+      .from('.hero-title .line span', {
+        y: '100%',
+        duration: 1.4,
+        stagger: 0.12,
+        ease: 'power4.out',
+      }, '-=0.6')
+      .from('#heroSub', { y: 30, opacity: 0, duration: 1.0, ease: 'power3.out' }, '-=0.6')
+      .from('#heroCta', { y: 20, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+
+    // ── HERO SLOW ZOOM ───────────────────────
+    gsap.to('#heroImageWrap img', {
+      scale: 1,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    });
+
+    // ── HERO PARALLAX ────────────────────────
+    gsap.to('#heroImageWrap', {
+      y: '15%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    });
+
+    // ── HERO FADE ON SCROLL ──────────────────
+    gsap.to('.hero-content', {
+      opacity: 0,
+      y: -60,
+      filter: 'blur(8px)',
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom 30%',
+        scrub: 1,
+      },
+    });
+
+    // ── HERO SCROLL INDICATOR ────────────────
+    gsap.to('.hero-scroll', {
+      opacity: 0,
+      y: 20,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom 70%',
+        scrub: 1,
+      },
+    });
+
+    // ── STORY REVEAL ─────────────────────────
+    gsap.from('#storyTitle', {
+      y: 60,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#story',
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.from('#storyBody p', {
+      y: 40,
+      opacity: 0,
+      duration: 1.0,
+      stagger: 0.3,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#storyBody',
+        start: 'top 70%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // ── STORY IMAGE MASK REVEAL ──────────────
+    gsap.to('#storyImageMask', {
+      scaleX: 0,
+      transformOrigin: 'right center',
+      ease: 'power3.inOut',
+      scrollTrigger: {
+        trigger: '#storyImageWrap',
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+        duration: 2,
+      },
+      duration: 1.6,
+    });
+
+    // ── SHOWCASE MASK REVEAL ─────────────────
+    gsap.to('#showcaseMask', {
+      scaleY: 0,
+      transformOrigin: 'top center',
+      ease: 'power3.inOut',
+      scrollTrigger: {
+        trigger: '#showcase',
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+      },
+      duration: 1.6,
+    });
+
+    // ── SHOWCASE IMAGE PARALLAX ──────────────
+    gsap.to('#showcaseImg', {
+      scale: 1.15,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#showcase',
+        start: 'bottom bottom',
+        end: 'top top',
+        scrub: 1.5,
+      },
+    });
+
+    // ── SHOWCASE CONTENT REVEAL ──────────────
+    gsap.from('#showcaseQuote', {
+      y: 50,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#showcase',
+        start: 'top 55%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // ── GALLERY ENTRANCE ─────────────────────
+    gsap.from('#galleryHeader', {
+      y: 60,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#gallery',
+        start: 'top 70%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // ── GALLERY ITEMS - parallax + fade ──────
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach((item, i) => {
+      const img = item.querySelector('img');
+
+      // Parallax
+      gsap.to(img, {
+        y: '15%',
+        scale: 1.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.5,
+        },
+      });
+
+      // Opacity fade-in
+      gsap.from(item, {
+        opacity: 0,
+        y: 80,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Content stagger
+      gsap.from(item.querySelector('.gallery-item-number'), {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 65%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      gsap.from(item.querySelector('.gallery-item-title'), {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 65%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      gsap.from(item.querySelector('.gallery-item-desc'), {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.3,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 65%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    });
+
+    // ── HIGHLIGHT ─────────────────────────────
+    gsap.from('#highlightContent', {
+      opacity: 0,
+      y: 60,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#highlight',
+        start: 'top 65%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.from('#highlightTitle', {
+      y: 50,
+      opacity: 0,
+      duration: 1.0,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#highlight',
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.to('#highlightImg', {
+      scale: 1.12,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#highlight',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    });
+
+    // ── ENDING ────────────────────────────────
+    gsap.from('#endingTitle', {
+      y: 60,
+      opacity: 0,
+      duration: 1.4,
+      ease: 'power4.out',
+      scrollTrigger: {
+        trigger: '#ending',
+        start: 'top 70%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.from('#ending .ending-text', {
+      y: 40,
+      opacity: 0,
+      duration: 1.0,
+      delay: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '#ending',
+        start: 'top 65%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.from('#ending .ending-divider', {
+      scaleY: 0,
+      transformOrigin: 'top center',
+      duration: 1.2,
+      ease: 'power3.inOut',
+      scrollTrigger: {
+        trigger: '#ending',
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // ── NAV HIDE/SHOW ON SCROLL ──────────────
+    let lastScroll = 0;
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 200) {
+        nav.style.transform = 'translateY(-100%)';
+      } else {
+        nav.style.transform = 'translateY(0)';
+      }
+      lastScroll = current;
+    }, { passive: true });
+
+    // ── SCROLLTRIGGER REFRESH ────────────────
+    ScrollTrigger.refresh();
+
+    console.log('[The Void] — All animations initialized.');
+  }
+})();
+</script>
+</body>
+</html>

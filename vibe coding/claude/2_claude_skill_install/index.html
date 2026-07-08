@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Light Meets Shadow · A Cinematic Visual Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="static/th.jpeg">
+<style>
+/* =========================================
+   1. RESET & BASE
+   ========================================= */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f0eb;color:#1a1a1a;overflow-x:hidden;line-height:1.6}
+img{display:block;max-width:100%;height:auto}
+::selection{background:rgba(11,107,122,0.15);color:#1a1a1a}
+
+/* =========================================
+   2. DESIGN TOKENS
+   ========================================= */
+:root{
+  --bg:#f5f0eb;
+  --text:#1a1a1a;
+  --text-light:#8a8580;
+  --text-muted:#b5aea5;
+  --accent:#0b6b7a;
+  --accent-light:#128fa0;
+  --dark-bg:#1a1814;
+  --overlay:rgba(0,0,0,0.15);
+  --overlay-strong:rgba(0,0,0,0.45);
+  --font-serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --font-sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --section-py:clamp(4rem,10vh,8rem);
+  --content-max:1180px;
+  --text-max:640px;
+}
+
+/* =========================================
+   3. GRAIN OVERLAY
+   ========================================= */
+.grain-overlay{
+  position:fixed;inset:0;z-index:9999;pointer-events:none;
+  opacity:0.022;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  background-repeat:repeat;
+  mix-blend-mode:multiply;
+}
+
+/* =========================================
+   4. SCROLL PROGRESS
+   ========================================= */
+.scroll-progress{
+  position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:10001;
+  width:0%;will-change:width;
+}
+
+/* =========================================
+   5. HERO
+   ========================================= */
+.hero{
+  position:relative;width:100%;height:100vh;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+}
+.hero-bg{
+  position:absolute;inset:-10%;width:120%;height:120%;
+  background:url('static/th.jpeg') center/cover no-repeat;
+  will-change:transform;
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.45) 100%);
+}
+.hero-content{
+  position:relative;z-index:2;text-align:center;padding:0 1.5rem;max-width:960px;
+}
+.hero-content h1{
+  font-family:var(--font-serif);
+  font-size:clamp(2.8rem,8vw,6rem);
+  font-weight:400;line-height:1.1;letter-spacing:-0.015em;
+  margin-bottom:1.5rem;
+}
+.hero-content h1 .word-reveal{
+  display:inline-block;overflow:hidden;vertical-align:top;
+}
+.hero-content h1 .word-reveal .char-wrap{
+  display:inline-block;
+  transform:translateY(100%);
+  opacity:0;
+}
+.hero-sub{
+  font-family:var(--font-sans);
+  font-size:clamp(0.95rem,1.6vw,1.25rem);
+  font-weight:300;letter-spacing:0.3em;text-transform:uppercase;
+  opacity:0;color:rgba(255,255,255,0.7);
+}
+.scroll-indicator{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+  font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);font-weight:400;
+}
+.scroll-indicator .line{
+  width:1px;height:3rem;background:rgba(255,255,255,0.25);overflow:hidden;
+}
+.scroll-indicator .line-inner{
+  height:100%;width:100%;background:rgba(255,255,255,0.6);
+  animation:scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine{
+  0%{transform:translateY(-100%)}
+  60%{transform:translateY(0%)}
+  100%{transform:translateY(100%)}
+}
+.scroll-indicator-text{opacity:0;}
+
+/* =========================================
+   6. STORY
+   ========================================= */
+.story{
+  position:relative;padding:var(--section-py) 1.5rem;
+  background:var(--bg);
+}
+.story-inner{
+  max-width:var(--content-max);margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+}
+.story-text{padding-right:2rem;}
+.story-text .label{
+  font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--text-light);margin-bottom:1.5rem;font-weight:500;
+}
+.story-text h2{
+  font-family:var(--font-serif);
+  font-size:clamp(2rem,4.5vw,3.75rem);
+  font-weight:400;line-height:1.15;margin-bottom:1.5rem;
+  color:var(--text);
+}
+.story-text h2 .word-reveal-scroll{
+  display:inline-block;overflow:hidden;vertical-align:top;
+}
+.story-text h2 .word-reveal-scroll span{
+  display:inline-block;transform:translateY(100%);opacity:0;
+}
+.story-text p{
+  font-size:clamp(0.95rem,1.1vw,1.125rem);
+  line-height:1.8;color:var(--text-light);font-weight:300;
+  max-width:var(--text-max);
+  transform:translateY(2rem);opacity:0;
+}
+.story-text p + p{margin-top:1rem;}
+.story-image{
+  position:relative;overflow:hidden;border-radius:2px;
+  clip-path:inset(0 100% 0 0);
+  aspect-ratio:4/3;
+}
+.story-image img{
+  width:100%;height:100%;object-fit:cover;will-change:transform;
+}
+.story-image .img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(245,240,235,0.3),transparent 60%);
+}
+
+/* =========================================
+   7. GALLERY
+   ========================================= */
+.gallery{
+  position:relative;padding:var(--section-py) 1.5rem;
+  background:var(--bg);overflow:hidden;
+}
+.gallery-header{
+  max-width:var(--content-max);margin:0 auto 4rem;
+}
+.gallery-header .label{
+  font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--text-light);margin-bottom:1rem;font-weight:500;
+}
+.gallery-header h2{
+  font-family:var(--font-serif);
+  font-size:clamp(1.8rem,4vw,3.5rem);
+  font-weight:400;line-height:1.15;color:var(--text);
+}
+.gallery-grid{
+  max-width:var(--content-max);margin:0 auto;
+  display:grid;grid-template-columns:1fr;gap:6rem;
+}
+.gallery-item{
+  position:relative;overflow:hidden;border-radius:1px;
+  will-change:transform;
+}
+.gallery-item img{
+  width:100%;height:auto;display:block;
+  transition:transform 1.2s cubic-bezier(0.25,0.46,0.45,0.94),
+              filter 1.2s cubic-bezier(0.25,0.46,0.45,0.94);
+  will-change:transform;
+}
+.gallery-item:hover img{
+  transform:scale(1.02);
+  filter:brightness(0.95) contrast(1.05);
+}
+.gallery-item:nth-child(1){
+  width:85%;margin-left:0;
+}
+.gallery-item:nth-child(2){
+  width:80%;margin-left:auto;
+}
+.gallery-caption{
+  margin-top:1rem;
+  font-size:0.85rem;color:var(--text-light);font-weight:300;
+  letter-spacing:0.02em;max-width:480px;
+}
+.gallery-caption .num{
+  font-family:var(--font-serif);font-size:0.75rem;
+  color:var(--text-muted);margin-right:0.75rem;
+
+}
+
+/* =========================================
+   8. CONTRAST (full-bleed dark)
+   ========================================= */
+.contrast{
+  position:relative;height:100vh;overflow:hidden;
+  background:var(--dark-bg);color:#fff;
+}
+.contrast-bg-wrapper{
+  position:absolute;inset:0;
+  clip-path:circle(0% at 50% 50%);
+}
+.contrast-bg-wrapper img{
+  width:100%;height:100%;object-fit:cover;will-change:transform;
+}
+.contrast-bg-wrapper::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(26,24,20,0.5) 0%,rgba(26,24,20,0.2) 100%);
+}
+.contrast-content{
+  position:relative;z-index:2;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:0 1.5rem;max-width:720px;margin:0 auto;
+}
+.contrast-content .eyebrow{
+  font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:1.5rem;font-weight:500;
+  opacity:0;transform:translateY(1rem);
+}
+.contrast-content h2{
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,5vw,4.5rem);
+  font-weight:400;line-height:1.12;margin-bottom:1.5rem;
+  opacity:0;transform:translateY(2rem);
+}
+.contrast-content p{
+  font-size:clamp(0.95rem,1.1vw,1.125rem);
+  line-height:1.8;font-weight:300;color:rgba(255,255,255,0.6);
+  max-width:540px;
+  opacity:0;transform:translateY(2rem);
+}
+
+/* =========================================
+   9. HIGHLIGHT
+   ========================================= */
+.highlight{
+  position:relative;padding:var(--section-py) 0;
+  background:var(--bg);overflow:hidden;
+}
+.highlight-image-wrap{
+  position:relative;overflow:hidden;
+  max-width:calc(var(--content-max) + 4rem);margin:0 auto;
+  border-radius:1px;
+  transform:translateY(6rem);opacity:0;
+}
+.highlight-image-wrap img{
+  width:100%;height:auto;display:block;
+  will-change:transform;
+}
+.highlight-image-wrap::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(245,240,235,0.15),transparent 40%);
+}
+.highlight-text{
+  max-width:var(--content-max);margin:3rem auto 0;padding:0 1.5rem;
+}
+.highlight-text .label{
+  font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--text-light);margin-bottom:0.75rem;font-weight:500;
+  opacity:0;transform:translateY(1rem);
+}
+.highlight-text h2{
+  font-family:var(--font-serif);
+  font-size:clamp(1.8rem,4vw,3.25rem);
+  font-weight:400;line-height:1.15;color:var(--text);margin-bottom:0.75rem;
+  letter-spacing:-0.01em;
+  opacity:0;transform:translateY(1.5rem);
+}
+.highlight-text p{
+  font-size:clamp(0.9rem,1.05vw,1.05rem);
+  line-height:1.7;color:var(--text-light);font-weight:300;
+  max-width:var(--text-max);
+  opacity:0;transform:translateY(1.5rem);
+}
+
+/* =========================================
+   10. ENDING
+   ========================================= */
+.ending{
+  position:relative;height:100vh;overflow:hidden;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+}
+.ending-bg{
+  position:absolute;inset:0;
+}
+.ending-bg img{
+  width:100%;height:100%;object-fit:cover;will-change:transform;
+}
+.ending-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.5) 100%);
+}
+.ending-content{
+  position:relative;z-index:2;text-align:center;
+  padding:0 1.5rem;max-width:800px;
+}
+.ending-content h2{
+  font-family:var(--font-serif);
+  font-size:clamp(2.2rem,6vw,5rem);
+  font-weight:400;line-height:1.1;letter-spacing:-0.01em;margin-bottom:1.5rem;
+  opacity:0;filter:blur(12px);
+}
+.ending-content .sub{
+  font-size:clamp(0.9rem,1.2vw,1.15rem);
+  font-weight:300;letter-spacing:0.25em;text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+  opacity:0;filter:blur(8px);
+}
+.ending-content .divider{
+  width:2rem;height:1px;background:rgba(255,255,255,0.2);
+  margin:2rem auto;
+  opacity:0;transform:scaleX(0);
+}
+
+/* =========================================
+   11. RESPONSIVE
+   ========================================= */
+@media(max-width:968px){
+  .story-inner{grid-template-columns:1fr;gap:2.5rem;}
+  .story-text{padding-right:0;}
+  .story-image{aspect-ratio:16/10;}
+  .gallery-item:nth-child(1),
+  .gallery-item:nth-child(2){width:100%;}
+}
+@media(max-width:640px){
+  :root{--section-py:clamp(3rem,8vh,5rem);}
+  .hero-content h1{font-size:clamp(2rem,10vw,3rem);}
+  .story-text h2{font-size:clamp(1.5rem,7vw,2.2rem);}
+  .gallery-header h2{font-size:clamp(1.4rem,7vw,2rem);}
+  .gallery-grid{gap:3rem;}
+  .contrast-content h2{font-size:clamp(1.6rem,8vw,2.5rem);}
+  .ending-content h2{font-size:clamp(1.8rem,9vw,3rem);}
+  .scroll-indicator{display:none;}
+}
+@media(max-width:420px){
+  .hero-content h1{font-size:clamp(1.6rem,9vw,2.2rem);}
+
+  .story{padding:2.5rem 1rem;}
+  .gallery{padding:2.5rem 1rem;}
+  .highlight-text{padding:0 1rem;}
+}
+
+/* =========================================
+   12. UTILITY & SAFARI FIXES
+   ========================================= */
+@media(hover:none){
+  .gallery-item:hover img{transform:none;filter:none;}
+}
+
+/* Prevent FOUC */
+.hero-content h1 .word-reveal .char-wrap{transform:translateY(100%);opacity:0;}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" role="progressbar" aria-label="Scroll progress"></div>
+
+<!-- Grain Overlay -->
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- ==============================
+     HERO
+     ============================== -->
+<section class="hero" data-section="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1 id="hero-title" aria-label="Where Light Meets Shadow">
+      Where Light<br>Meets Shadow
+    </h1>
+    <p class="hero-sub">A Cinematic Visual Journey</p>
+  </div>
+  <div class="scroll-indicator" aria-hidden="true">
+    <span class="scroll-indicator-text">Scroll</span>
+    <div class="line"><div class="line-inner"></div></div>
+  </div>
+</section>
+
+<!-- ==============================
+     STORY
+     ============================== -->
+<section class="story" data-section="story">
+  <div class="story-inner">
+    <div class="story-text">
+      <p class="label">Chapter I</p>
+      <h2 id="story-title">The Art of Stillness</h2>
+      <p>At twilight a quiet descends. The world holds its breath between day and night. In that suspended moment we find not darkness but a deeper kind of seeing.</p>
+      <p>Shadows lengthen, colors deepen, and the familiar becomes mysterious. It is in these liminal spaces that beauty reveals itself most fully.</p>
+    </div>
+    <div class="story-image" data-reveal="clip">
+      <img src="static/th%20(1).jpeg" alt="Misty landscape at twilight" loading="lazy" decoding="async">
+      <div class="img-overlay"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     GALLERY
+     ============================== -->
+<section class="gallery" data-section="gallery">
+  <div class="gallery-header">
+    <p class="label">Chapter II</p>
+    <h2>Through the Lens</h2>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item" data-parallax="1">
+      <img src="static/th%20(2).jpeg" alt="Golden fields stretching to the horizon" loading="lazy" decoding="async">
+      <p class="gallery-caption"><span class="num">01</span>Fields of gold: light transforms the ordinary into the sublime.</p>
+    </div>
+    <div class="gallery-item" data-parallax="2">
+      <img src="static/th%20(4).jpeg" alt="Mist rising from a valley at dawn" loading="lazy" decoding="async">
+      <p class="gallery-caption"><span class="num">02</span>Mist rising, where earth dissolves into atmosphere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     CONTRAST
+     ============================== -->
+<section class="contrast" data-section="contrast">
+  <div class="contrast-bg-wrapper">
+    <img src="static/th%20(3).jpeg" alt="Dark landscape with deep shadows" decoding="async">
+  </div>
+  <div class="contrast-content">
+    <p class="eyebrow">Chapter III</p>
+    <h2>In Darkness, Light</h2>
+    <p>The deepest shadows are not absences of light but its counterpoint, defining edges, carving form from formlessness, revealing what brightness alone cannot show.</p>
+  </div>
+</section>
+
+<!-- ==============================
+     HIGHLIGHT
+     ============================== -->
+<section class="highlight" data-section="highlight">
+  <div class="highlight-image-wrap">
+    <img src="static/th%20(5).jpeg" alt="Warm earth tones stretching across a landscape" loading="lazy" decoding="async">
+  </div>
+  <div class="highlight-text">
+    <p class="label">Chapter IV</p>
+    <h2>Rooted</h2>
+    <p>Between earth and sky, between what was and what will be: we stand on ground that remembers. From this foundation, everything grows.</p>
+  </div>
+</section>
+
+<!-- ==============================
+     ENDING
+     ============================== -->
+<section class="ending" data-section="ending">
+  <div class="ending-bg">
+    <img src="static/th%20(6).jpeg" alt="Teal waters fading into the distance" loading="lazy" decoding="async">
+  </div>
+  <div class="ending-content">
+    <h2 id="ending-title">Every Ending<br>Is a Beginning</h2>
+    <p class="sub">The journey continues</p>
+    <div class="divider"></div>
+  </div>
+</section>
+
+<!-- ==============================
+     GSAP + SCROLLTRIGGER
+     ============================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js">
+</script>
+
+<script>
+(function(){
+'use strict';
+
+// -------------------------------------------------
+// 1. TEXT SPLITTER — wraps words/chars in spans
+// -------------------------------------------------
+function splitText(el, {by='chars'}={}){
+  if(!el) return;
+  const text = el.textContent.trim();
+  if(by === 'chars'){
+    el.innerHTML = '';
+    const words = text.split(' ');
+    words.forEach((word, wi) => {
+      const wordSpan = document.createElement('span');
+      wordSpan.className = 'word-reveal';
+      wordSpan.style.display = 'inline-block';
+      wordSpan.style.overflow = 'hidden';
+      wordSpan.style.verticalAlign = 'top';
+      [...word].forEach(ch => {
+        const chSpan = document.createElement('span');
+        chSpan.className = 'char-wrap';
+        chSpan.textContent = ch === ' ' ? ' ' : ch;
+        wordSpan.appendChild(chSpan);
+      });
+      el.appendChild(wordSpan);
+      if(wi < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  }
+}
+
+// Split hero title into character spans for word-by-word reveal
+splitText(document.getElementById('hero-title'), {by:'chars'});
+
+// -------------------------------------------------
+// 2. PAGE LOAD ANIMATION — Hero
+// -------------------------------------------------
+const heroTL = gsap.timeline({defaults:{ease:'power3.out'}});
+
+// Slow zoom on hero background
+heroTL.fromTo('.hero-bg', {scale:1.12},{scale:1,duration:12,ease:'power1.out'},0);
+
+// Word-by-word character reveal
+heroTL.fromTo('.hero-content .word-reveal .char-wrap',
+  {y:'100%',opacity:0},
+  {y:'0%',opacity:1,duration:1.1,stagger:0.04,ease:'power3.out'},
+  0.6
+);
+
+// Subtitle fade in
+heroTL.to('.hero-sub',{opacity:1,duration:1.2,ease:'power2.out'},1.6);
+
+// Scroll indicator
+heroTL.to('.scroll-indicator-text',{opacity:1,duration:0.8},2.2);
+
+// -------------------------------------------------
+// 3. SCROLL TRIGGER ANIMATIONS
+// -------------------------------------------------
+gsap.registerPlugin(ScrollTrigger);
+
+// -- 3a. Scroll progress bar --
+gsap.to('.scroll-progress',{
+  width:'100%',ease:'none',
+  scrollTrigger:{scrub:0.3,start:'top top',end:'bottom bottom'}
+});
+
+// -- 3b. Story section --
+// Story heading word reveal (scroll-triggered split)
+const storyH2 = document.querySelector('#story-title');
+if(storyH2){
+  const stText = storyH2.textContent.trim();
+  storyH2.innerHTML = '';
+  stText.split(' ').forEach((word, i) => {
+    const span = document.createElement('span');
+    span.className = 'word-reveal-scroll';
+    span.style.display = 'inline-block';
+    span.style.overflow = 'hidden';
+    span.style.verticalAlign = 'top';
+    const inner = document.createElement('span');
+    inner.textContent = word + (i < stText.split(' ').length - 1 ? ' ' : '');
+    inner.style.display = 'inline-block';
+    inner.style.transform = 'translateY(100%)';
+    inner.style.opacity = '0';
+    span.appendChild(inner);
+    storyH2.appendChild(span);
+  });
+  gsap.to('#story-title .word-reveal-scroll span',{
+    y:'0%',opacity:1,duration:0.9,stagger:0.12,ease:'power3.out',
+    scrollTrigger:{trigger:'.story',start:'top 70%'}
+  });
+}
+
+// Story image clip reveal
+gsap.to('.story-image',{
+  clipPath:'inset(0 0% 0 0)',duration:1.4,ease:'power2.out',
+  scrollTrigger:{trigger:'.story-image',start:'top 75%'}
+});
+
+// Story paragraphs
+gsap.to('.story-text p',{
+  y:0,opacity:1,duration:1,stagger:0.2,ease:'power3.out',
+  scrollTrigger:{trigger:'.story-text',start:'top 72%'}
+});
+
+// -- 3c. Gallery parallax --
+// Different scroll speeds for depth
+gsap.to('[data-parallax="1"]',{
+  yPercent:8,ease:'none',
+  scrollTrigger:{trigger:'.gallery',start:'top bottom',end:'bottom top',scrub:1.5}
+});
+gsap.to('[data-parallax="2"]',{
+  yPercent:-6,ease:'none',
+  scrollTrigger:{trigger:'.gallery',start:'top bottom',end:'bottom top',scrub:1.5}
+});
+
+// Gallery header fade-up
+gsap.fromTo('.gallery-header',{y:40,opacity:0},{y:0,opacity:1,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.gallery-header',start:'top 80%'}
+});
+
+// Gallery captions
+gsap.fromTo('.gallery-caption',{y:20,opacity:0},{y:0,opacity:1,duration:0.8,stagger:0.3,ease:'power2.out',
+  scrollTrigger:{trigger:'.gallery-grid',start:'top 70%'}
+});
+
+// -- 3d. Contrast circle reveal --
+gsap.to('.contrast-bg-wrapper',{
+  clipPath:'circle(100% at 50% 50%)',duration:1.6,ease:'power2.inOut',
+  scrollTrigger:{trigger:'.contrast',start:'top 55%'}
+});
+
+// Contrast content stagger
+gsap.to('.contrast-content .eyebrow',{
+  y:0,opacity:1,duration:0.8,ease:'power3.out',
+  scrollTrigger:{trigger:'.contrast-content',start:'top 65%'}
+});
+gsap.to('.contrast-content h2',{
+  y:0,opacity:1,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.contrast-content',start:'top 65%',offset:0.15}
+});
+gsap.to('.contrast-content p',{
+  y:0,opacity:1,duration:1,ease:'power3.out',
+  scrollTrigger:{trigger:'.contrast-content',start:'top 65%',offset:0.3}
+});
+
+// -- 3e. Highlight slide-up --
+gsap.to('.highlight-image-wrap',{
+  y:0,opacity:1,duration:1.4,ease:'power3.out',
+  scrollTrigger:{trigger:'.highlight-image-wrap',start:'top 75%'}
+});
+
+// Subtle scale on highlight image
+gsap.fromTo('.highlight-image-wrap img',{scale:1.02},{scale:1,duration:0.8,ease:'power1.out',
+  scrollTrigger:{trigger:'.highlight-image-wrap',start:'top 70%'}
+});
+
+// Highlight text stagger
+gsap.to('.highlight-text .label',{
+  y:0,opacity:1,duration:0.7,ease:'power3.out',
+  scrollTrigger:{trigger:'.highlight-text',start:'top 80%'}
+});
+gsap.to('.highlight-text h2',{
+  y:0,opacity:1,duration:0.9,ease:'power3.out',
+  scrollTrigger:{trigger:'.highlight-text',start:'top 75%'}
+});
+gsap.to('.highlight-text p',{
+  y:0,opacity:1,duration:0.9,ease:'power3.out',
+  scrollTrigger:{trigger:'.highlight-text',start:'top 70%'}
+});
+
+// -- 3f. Ending fade-in with blur --
+gsap.to('.ending-content h2',{
+  opacity:1,filter:'blur(0px)',duration:1.8,ease:'power2.out',
+  scrollTrigger:{trigger:'.ending',start:'top 65%'}
+});
+gsap.to('.ending-content .sub',{
+  opacity:1,filter:'blur(0px)',duration:1.5,ease:'power2.out',
+  scrollTrigger:{trigger:'.ending',start:'top 65%',offset:0.2}
+});
+gsap.to('.ending-content .divider',{
+  opacity:1,scaleX:1,duration:1.2,ease:'power3.out',
+  scrollTrigger:{trigger:'.ending',start:'top 65%',offset:0.3}
+});
+
+// Subtle slow zoom on ending background
+gsap.fromTo('.ending-bg img',{scale:1.06},{scale:1,duration:1.5,ease:'power1.out',
+  scrollTrigger:{trigger:'.ending',start:'top bottom',end:'bottom top',scrub:1.5}
+});
+
+// -------------------------------------------------
+// 4. PARALLAX ON STORY IMAGE (floating effect)
+// -------------------------------------------------
+gsap.to('.story-image img',{
+  yPercent:6,ease:'none',
+  scrollTrigger:{trigger:'.story',start:'top bottom',end:'bottom top',scrub:1}
+});
+
+// -------------------------------------------------
+// 5. SplitText for ending title
+// -------------------------------------------------
+const endingH2 = document.getElementById('ending-title');
+if(endingH2){
+  const et = endingH2.textContent.trim();
+  endingH2.innerHTML = '';
+  et.split(' ').forEach((word, i) => {
+    const ws = document.createElement('span');
+    ws.style.display = 'inline-block';
+    ws.style.overflow = 'hidden';
+    ws.style.verticalAlign = 'top';
+    const inner = document.createElement('span');
+    inner.textContent = word + (i < et.split(' ').length - 1 ? ' ' : '');
+    inner.style.display = 'inline-block';
+    inner.style.transform = 'translateY(100%)';
+    inner.style.opacity = '0';
+    ws.appendChild(inner);
+    endingH2.appendChild(ws);
+  });
+  gsap.to('#ending-title span span',{
+    y:'0%',opacity:1,duration:1,stagger:0.08,ease:'power3.out',
+    scrollTrigger:{trigger:'.ending',start:'top 60%'}
+  });
+}
+
+// -------------------------------------------------
+// 6. Refresh ScrollTrigger after fonts & images load
+// -------------------------------------------------
+window.addEventListener('load', ()=>{
+  ScrollTrigger.refresh();
+  // Re-refresh after a moment for layout shifts
+  setTimeout(()=>ScrollTrigger.refresh(),1000);
+});
+
+// Refresh on resize
+let resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>ScrollTrigger.refresh(),200);
+});
+
+})();
+</script>
+
+</body>
+</html>
